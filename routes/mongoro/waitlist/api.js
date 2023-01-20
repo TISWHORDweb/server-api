@@ -111,4 +111,15 @@ router.post('/create', async (req, res) => {
 
 })
 
+
+router.get("/get", async (req, res) =>{
+    try {
+        const waitlist = await MongoroWaitlistModel.find();
+        res.status(200).json(waitlist.reverse());
+    } catch (err) {
+        res.status(500).json(err);
+    }
+})
+
+
 module.exports = router

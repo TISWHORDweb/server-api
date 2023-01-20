@@ -5,6 +5,8 @@ const mongoroWaitlistRoute = require('./routes/mongoro/waitlist/api')
 const reefWaitlistRoute = require('./routes/reef/waitlist/api')
 const mongoose=require('mongoose')
 const cors = require('cors')
+// const dotenv = require("dotenv")
+// dotenv.config()
 
 
 app.use(bodyParser.json())
@@ -17,7 +19,7 @@ app.use("/reef_waitlist", reefWaitlistRoute)
 
 mongoose.set("strictQuery", true);
 mongoose
-    .connect("mongodb+srv://mongoro:mongoro@mongoro.dbwd7pc.mongodb.net/?retryWrites=true&w=majority")
+    .connect(process.env.MONGO_URL)
     .then(() => {
         console.log("MongoDB Connected!!!")
     })
@@ -25,7 +27,7 @@ mongoose
 
 
 
-const PORT = process.env.PORT || 3010;
-app.listen(PORT, () => {
-    console.log('Server is running on port '+PORT);
+const port = process.env.PORT || 3000; 
+app.listen(port, () => {
+    console.log('Server is running on port '+port);
 })
