@@ -6,26 +6,26 @@ const MongoroWaitlistModel = require("../../../models/mongoro/mongoroWaitlist_md
 
 router.post('/create', async (req, res) => {
     console.log(req.body)
-    try {
-        if (!req.body.name ) return res.status(402).json({ msg: 'please Ente your Full name ?' })
-        if (!req.body.email || !emailValidator.validate(req.body.email)) return res.status(402).json({ msg: 'please check the fields Invalid Emails?' })
+    if (emailValidator.validate(req.body.email)) {
+        try {
+            if (!req.body.email || !req.body.name) return res.status(402).json({ msg: 'please check the fields ?' })
 
-        const validate = await MongoroWaitlistModel.findOne({ email: req.body.email })
-        if (validate) return res.status(404).json({ msg: 'There is another user with this email !' })
+            const validate = await MongoroWaitlistModel.findOne({ email: req.body.email })
+            if (validate) return res.status(404).json({ msg: 'There is another user with this email !' })
 
-        let transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: 'ebatimehin@gmail.com',
-                pass: 'ojjovobpnmyozynb'
-            }
-        });
+            let transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                    user: 'ebatimehin@gmail.com',
+                    pass: 'ojjovobpnmyozynb'
+                }
+            });
 
-        let mailOptions = {
-            from: 'ebatimehin@gmail.com',
-            to: req.body.email,
-            subject: 'Verification code',
-            html: `<!DOCTYPE html>
+            let mailOptions = {
+                from: 'ebatimehin@gmail.com',
+                to: req.body.email,
+                subject: 'Verification code',
+                html: `<!DOCTYPE html>
             <html lang="en">
             <head>
                 <meta charset="UTF-8">
@@ -80,40 +80,42 @@ router.post('/create', async (req, res) => {
                 </div>
             </body>
             </html>`
-        };
+            };
 
-        transporter.sendMail(mailOptions, function (error, info) {
-            if (error) {
-                console.log(error);
-            } else {
-                console.log('Email sent: ' + info.response);
-            }
-        });
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log('Email sent: ' + info.response);
+                }
+            });
 
-        let user = await new MongoroWaitlistModel(req.body)
-        await user.save().then(user => {
-            return res.status(200).json({
-                msg: 'Congratulation you just join our Waitlist!!! !',
-                user: {
-                    id: user.id,
-                    email: user.email,
-                    name: user.name,
-                    time_created: user.time_created
-                },
+            let user = await new MongoroWaitlistModel(req.body)
+            await user.save().then(user => {
+                return res.status(200).json({
+                    msg: 'Congratulation you just join our Waitlist!!! !',
+                    user: {
+                        id: user.id,
+                        email: user.email,
+                        name: user.name,
+                        time_created: user.time_created
+                    },
+                })
             })
-        })
 
-    } catch (error) {
-        res.status(500).json({
-            msg: 'there is an unknown error sorry !'
-        })
+        } catch (error) {
+            res.status(500).json({
+                msg: 'there is an unknown error sorry !'
+            })
+        }
+    } else {
+        res.status(404).json({ msg: 'Invalid email !' })
     }
-
 
 })
 
 
-router.get("/get", async (req, res) =>{
+router.get("/get", async (req, res) => {
     try {
         const waitlist = await MongoroWaitlistModel.find();
         res.status(200).json(waitlist.reverse());
@@ -141,21 +143,24 @@ router.get("/get", async (req, res) =>{
 
 //DELETE
 
-router.delete("/waitlists/:id", async (req, res) =>{
-        try{
-            await MongoroWaitlistModel.findByIdAndDelete(req.params.id);
-            res.status(200).json("user deleted....");
-        }catch(err){
-            res.status(500).json(err);
-        }
+
+
+router.delete("/waitlists/:id", async (req, res) => {
+    try {
+        await MongoroWaitlistModel.findByIdAndDelete(req.params.id);
+        res.status(200).json("user deleted....");
+    } catch (err) {
+        res.status(500).json(err);
+    }
 });
 
+
 //GET
-router.get("/waitlists/:id",async (req,res)=>{
-    try{
-        let waitlist=await MongoroWaitlistModel.find({_id:req.params.id})
+router.get("/waitlists/:id", async (req, res) => {
+    try {
+        let waitlist = await MongoroWaitlistModel.find({ _id: req.params.id })
         res.status(200).json(waitlist);
-    }catch(err){
+    } catch (err) {
         res.status(500).json(err);
     }
 })
