@@ -141,8 +141,6 @@ router.get("/get", async (req, res) =>{
 
 //DELETE
 
-
-
 router.delete("/waitlists/:id", async (req, res) =>{
         try{
             await MongoroWaitlistModel.findByIdAndDelete(req.params.id);
@@ -151,7 +149,6 @@ router.delete("/waitlists/:id", async (req, res) =>{
             res.status(500).json(err);
         }
 });
-
 
 //GET
 router.get("/waitlists/:id",async (req,res)=>{
