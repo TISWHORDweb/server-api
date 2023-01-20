@@ -120,4 +120,25 @@ router.get("/get", async (req, res) =>{
 })
 
 
+router.delete("/waitlists/:id", async (req, res) =>{
+    try{
+        await ReefWaitlistModel.findByIdAndDelete(req.params.id);
+        res.status(200).json("waitlists deleted....");
+    }catch(err){
+        res.status(500).json(err);
+    }
+});
+
+
+//GET
+router.get("/waitlists/:id",async (req,res)=>{
+try{
+    let waitlist=await ReefWaitlistModel.find({_id:req.params.id})
+    res.status(200).json(waitlist);
+}catch(err){
+    res.status(500).json(err);
+}
+})
+
+
 module.exports = router

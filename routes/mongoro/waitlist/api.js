@@ -122,4 +122,45 @@ router.get("/get", async (req, res) =>{
 })
 
 
+//UPDATE
+// router.put("/:id",  async (req, res) =>{
+//     if(req.waitlist.id === req.params.id ){
+//         try{
+//             const updatedWaitlist = await MongoroWaitlistModel.findByIdAndUpdate(req.params.id, {
+//                 $set:req.body
+//             }, { new: true });
+//             res.status(200).json(updatedWaitlist);
+//         }catch(err){
+//             res.status(500).json("Check your internet ");
+//         }
+//     }else{
+//         res.status(403).json("you can update only your account !")
+//     }
+// })
+
+//DELETE
+
+
+
+router.delete("/waitlists/:id", async (req, res) =>{
+        try{
+            await MongoroWaitlistModel.findByIdAndDelete(req.params.id);
+            res.status(200).json("user deleted....");
+        }catch(err){
+            res.status(500).json(err);
+        }
+});
+
+
+//GET
+router.get("/waitlists/:id",async (req,res)=>{
+    try{
+        let waitlist=await MongoroWaitlistModel.find({_id:req.params.id})
+        res.status(200).json(waitlist);
+    }catch(err){
+        res.status(500).json(err);
+    }
+})
+
+
 module.exports = router
