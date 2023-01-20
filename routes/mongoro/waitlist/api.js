@@ -3,7 +3,7 @@ const router = express.Router()
 const nodemailer = require('nodemailer');
 const MongoroWaitlistModel = require("../../../models/mongoro/mongoroWaitlist_md")
 
-
+// CREATE
 router.post('/create', async (req, res) => {
     console.log(req.body)
     try {
@@ -111,8 +111,8 @@ router.post('/create', async (req, res) => {
 
 })
 
-
-router.get("/get", async (req, res) =>{
+//GET ALL
+router.get("/waitlists", async (req, res) =>{
     try {
         const waitlist = await MongoroWaitlistModel.find();
         res.status(200).json(waitlist.reverse());
@@ -140,18 +140,18 @@ router.get("/get", async (req, res) =>{
 
 //DELETE
 
-router.delete("/waitlists/:id", async (req, res) =>{
+// delete
+router.delete("/delete/:id", async (req, res) =>{
         try{
             await MongoroWaitlistModel.findByIdAndDelete(req.params.id);
-            res.status(200).json("user deleted....");
+            res.status(200).json("Waitlists deleted....");
         }catch(err){
             res.status(500).json(err);
         }
 });
 
 
-//GET
-router.get("/waitlists/:id",async (req,res)=>{
+router.get("/find/:id",async (req,res)=>{
     try{
         let waitlist=await MongoroWaitlistModel.find({_id:req.params.id})
         res.status(200).json(waitlist);

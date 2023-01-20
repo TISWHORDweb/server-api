@@ -4,6 +4,7 @@ const nodemailer = require('nodemailer');
 const ReefWaitlistModel = require("../../../models/reef/reefWaitlist_md")
 
 
+// CREATE
 router.post('/create', async (req, res) => {
     console.log(req.body)
     try {
@@ -110,7 +111,8 @@ router.post('/create', async (req, res) => {
 
 })
 
-router.get("/get", async (req, res) =>{
+// GET ALL
+router.get("/waitlists", async (req, res) =>{
     try {
         const waitlist = await ReefWaitlistModel.find();
         res.status(200).json(waitlist.reverse());
@@ -119,7 +121,7 @@ router.get("/get", async (req, res) =>{
     }
 })
 
-
+// DELETE
 router.delete("/waitlists/:id", async (req, res) =>{
     try{
         await ReefWaitlistModel.findByIdAndDelete(req.params.id);
@@ -130,7 +132,7 @@ router.delete("/waitlists/:id", async (req, res) =>{
 });
 
 
-//GET
+//GET BY ID
 router.get("/waitlists/:id",async (req,res)=>{
 try{
     let waitlist=await ReefWaitlistModel.find({_id:req.params.id})
