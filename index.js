@@ -11,6 +11,7 @@ app.use(bodyParser.json())
 
 app.use(cors())
 
+
 app.use("/mongoro_waitlist", mongoroWaitlistRoute)
 app.use("/reef_waitlist", reefWaitlistRoute)
 
