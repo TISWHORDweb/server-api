@@ -2,30 +2,29 @@ const express = require('express')
 const router = express.Router()
 const nodemailer = require('nodemailer');
 const ReefWaitlistModel = require("../../../models/reef/reefWaitlist_md")
-const emailValidator = require("email-validator")
+
 
 router.post('/create', async (req, res) => {
     console.log(req.body)
-    if (emailValidator.validate(req.body.email)) {
-        try {
-            if (!req.body.email ) return res.status(402).json({ msg: 'please check the fields' })
+    try {
+        if (!req.body.email) return res.status(402).json({ msg: 'please check the fields ?' })
 
-            const validate = await ReefWaitlistModel.findOne({ email: req.body.email })
-            if (validate) return res.status(404).json({ msg: 'There is another user with this email !' })
+        const validate = await ReefWaitlistModel.findOne({ email: req.body.email })
+        if (validate) return res.status(404).json({ msg: 'There is another user with this email !' })
 
-            let transporter = nodemailer.createTransport({
-                service: 'gmail',
-                auth: {
-                    user: 'ebatimehin@gmail.com',
-                    pass: 'ojjovobpnmyozynb'
-                }
-            });
+        let transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: 'ebatimehin@gmail.com',
+                pass: 'ojjovobpnmyozynb'
+            }
+        });
 
-            let mailOptions = {
-                from: 'ebatimehin@gmail.com',
-                to: req.body.email,
-                subject: 'Verification code',
-                html: `<!DOCTYPE html>
+        let mailOptions = {
+            from: 'ebatimehin@gmail.com',
+            to: req.body.email,
+            subject: 'Verification code',
+            html: `<!DOCTYPE html>
             <html lang="en">
             <head>
                 <meta charset="UTF-8">
@@ -80,40 +79,38 @@ router.post('/create', async (req, res) => {
                 </div>
             </body>
             </html>`
-            };
+        };
 
-            transporter.sendMail(mailOptions, function (error, info) {
-                if (error) {
-                    console.log(error);
-                } else {
-                    console.log('Email sent: ' + info.response);
-                }
-            });
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log('Email sent: ' + info.response);
+            }
+        });
 
-            let user = await new ReefWaitlistModel(req.body)
-            await user.save().then(user => {
-                return res.status(200).json({
-                    msg: 'Congratulation you just join our Waitlist!!! !',
-                    user: {
-                        id: user.id,
-                        email: user.email,
-                        time_created: user.time_created
-                    },
-                })
+        let user = await new ReefWaitlistModel(req.body)
+        await user.save().then(user => {
+            return res.status(200).json({
+                msg: 'Congratulation you just join our Waitlist!!! !',
+                user: {
+                    id: user.id,
+                    email: user.email,
+                    time_created: user.time_created
+                },
             })
+        })
 
-        } catch (error) {
-            res.status(500).json({
-                msg: 'there is an unknown error sorry !'
-            })
-        }
-    } else {
-        res.status(404).json({ msg: 'Invalid email !' })
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !'
+        })
     }
+
 
 })
 
-router.get("/get", async (req, res) => {
+router.get("/get", async (req, res) =>{
     try {
         const waitlist = await ReefWaitlistModel.find();
         res.status(200).json(waitlist.reverse());
@@ -123,24 +120,24 @@ router.get("/get", async (req, res) => {
 })
 
 
-router.delete("/waitlists/:id", async (req, res) => {
-    try {
+router.delete("/waitlists/:id", async (req, res) =>{
+    try{
         await ReefWaitlistModel.findByIdAndDelete(req.params.id);
         res.status(200).json("waitlists deleted....");
-    } catch (err) {
+    }catch(err){
         res.status(500).json(err);
     }
 });
 
 
 //GET
-router.get("/waitlists/:id", async (req, res) => {
-    try {
-        let waitlist = await ReefWaitlistModel.find({ _id: req.params.id })
-        res.status(200).json(waitlist);
-    } catch (err) {
-        res.status(500).json(err);
-    }
+router.get("/waitlists/:id",async (req,res)=>{
+try{
+    let waitlist=await ReefWaitlistModel.find({_id:req.params.id})
+    res.status(200).json(waitlist);
+}catch(err){
+    res.status(500).json(err);
+}
 })
 
 
