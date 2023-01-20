@@ -7,7 +7,8 @@ const MongoroWaitlistModel = require("../../../models/mongoro/mongoroWaitlist_md
 router.post('/create', async (req, res) => {
     console.log(req.body)
     try {
-        if (!req.body.name || !req.body.email) return res.status(402).json({ msg: 'please check the fields ?' })
+        if (!req.body.name ) return res.status(402).json({ msg: 'please Ente your Full name ?' })
+        if (!req.body.email || !emailValidator.validate(req.body.email)) return res.status(402).json({ msg: 'please check the fields Invalid Emails?' })
 
         const validate = await MongoroWaitlistModel.findOne({ email: req.body.email })
         if (validate) return res.status(404).json({ msg: 'There is another user with this email !' })

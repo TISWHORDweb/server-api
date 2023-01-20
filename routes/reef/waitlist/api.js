@@ -2,12 +2,12 @@ const express = require('express')
 const router = express.Router()
 const nodemailer = require('nodemailer');
 const ReefWaitlistModel = require("../../../models/reef/reefWaitlist_md")
-
+const emailValidator = require("email-validator")
 
 router.post('/create', async (req, res) => {
     console.log(req.body)
     try {
-        if (!req.body.email) return res.status(402).json({ msg: 'please check the fields ?' })
+        if (!req.body.email || !emailValidator.validate(req.body.email)) return res.status(402).json({ msg: 'please check the fields Invalid Emails?' })
 
         const validate = await ReefWaitlistModel.findOne({ email: req.body.email })
         if (validate) return res.status(404).json({ msg: 'There is another user with this email !' })
