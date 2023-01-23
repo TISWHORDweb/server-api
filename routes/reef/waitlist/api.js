@@ -59,7 +59,7 @@ router.post('/create', async (req, res) => {
                                             <table width=100%>
                                                 <tr>
                                                     <td>
-                                                        <h3 class="header" style='color: #161616'>Hi, @${req.body.email}</h3>
+                                                        <h3 class="header" style='color: #161616'>Hi, ${req.body.email}</h3>
                                                         <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quo velit architecto aliquid veritatis nulla reiciendis culpa, eligendi consectetur amet necessitatibus doloremque totam facere sequi, corrupti, id exercitationem dolorum inventore earum? 
                                                             <br>
                                                             <br>

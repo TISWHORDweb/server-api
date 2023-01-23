@@ -33,6 +33,11 @@ const mongoroRegisterSchema=new mongoose.Schema({
         type:String,
         required:[true, 'field is required']
     },
+    isverified:{
+        type:Boolean,
+        default: false,
+        required:[true, 'field is required']
+    },
     role:{
         type:Boolean,
         default: false,

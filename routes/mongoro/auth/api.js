@@ -144,7 +144,8 @@ router.post('/register', upload.any(), async (req, res) => {
                 password: req.body.password,
                 verification_code: req.body.verification_code,
                 time_created: user.time_created,
-                image: req.body.image
+                image: req.body.image,
+                isverified: req.body.isverified
             },
         })
         })
@@ -159,6 +160,27 @@ router.post('/register', upload.any(), async (req, res) => {
 
 })
 
+router.post("/verify", async (req,res)=>{
+    console.log(req.body)
+    try {
+        let user= await MongoroRegiserModel.findOne({email: req.body.email})
+        if(user==null){
+            res.status(402).json({ msg: 'The email you input does not exists please check the fields ?' })
+        }else if(user.verification_code !=req.body.verification_code){
+            res.status(404).json({ msg: "Incorrect verification code press code resend and try again" })
+            
+        }else{
+            await MongoroRegiserModel.updateOne({isverified: true})
+            return res.status(200).json({
+                msg: 'Congratulation you Account is verified !!!',
+            })
+        }
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !'
+        })
+    }
 
+})
 
 module.exports = router
