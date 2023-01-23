@@ -45,7 +45,7 @@ router.post('/create', async (req, res) => {
                                 <a>
                                     <img 
                                         style='width: 5rem; display: block; margin: 0 auto'
-                                        src='https://reeflimited.slack.com/archives/C017J2YQJTA/p1674128854181129?thread_ts=1674127457.421849&cid=C017J2YQJTA' 
+                                        src='http://res.cloudinary.com/dszrk3lcz/image/upload/v1674126541/pmej6d15nla5v5sbzlpt.webp' 
                                         alt=''
                                     />
                                 </a>
@@ -59,7 +59,7 @@ router.post('/create', async (req, res) => {
                                             <table width=100%>
                                                 <tr>
                                                     <td>
-                                                        <h3 class="header" style='color: #161616'>Hi, ${req.body.name}</h3>
+                                                        <h3 class="header" style='color: #161616'>Hi, @${req.body.email}</h3>
                                                         <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quo velit architecto aliquid veritatis nulla reiciendis culpa, eligendi consectetur amet necessitatibus doloremque totam facere sequi, corrupti, id exercitationem dolorum inventore earum? 
                                                             <br>
                                                             <br>
