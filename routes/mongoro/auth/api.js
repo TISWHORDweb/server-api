@@ -170,10 +170,11 @@ router.post("/verify", async (req,res)=>{
             res.status(404).json({ msg: "Incorrect verification code press code resend and try again" })
             
         }else{
-            await MongoroRegiserModel.updateOne({isverified: true})
+            await MongoroRegiserModel.updateOne({isverified:false},{$set:{isverified:true}})
             return res.status(200).json({
                 msg: 'Congratulation you Account is verified !!!',
             })
+           
         }
     } catch (error) {
         res.status(500).json({
