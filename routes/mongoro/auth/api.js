@@ -25,8 +25,7 @@ let upload = multer({ storage })
 
 
 //CREATE
-router.post('/register', upload.any(), async (req, res) => {
-    // CryptoJS.AES.encrypt(req.body.password, process.env.SECRET_KEY).toString(),
+router.post('/register', async (req, res) => {
    
     req.body.verification_code = Math.floor(100000 + Math.random() * 900000)
 
@@ -35,7 +34,7 @@ router.post('/register', upload.any(), async (req, res) => {
     }
 
     try {
-        if (!req.body.email || !req.body.first_name || !req.body.last_name || !req.body.phone || !req.body.address || !req.body.username || !req.body.password) return res.status(402).json({ msg: 'please check the fields ?' })
+        if (!req.body.email || !req.body.name  || !req.body.password || !req.body.confirm_password || !req.body.phone || !req.body.username ) return res.status(402).json({ msg: 'please check the fields ?' })
 
         const validate = await MongoroRegiserModel.findOne({ email: req.body.email })
         if (validate) return res.status(404).json({ msg: 'There is another user with this email !' })
@@ -122,31 +121,10 @@ router.post('/register', upload.any(), async (req, res) => {
         
     let user = await new MongoroRegiserModel(req.body)
 
-    req.files.map(e => {
-        switch (e.fieldname) {
-            case "image":
-                user.image = e.filename
-                break;
-        }
-    })
     await user.save().then(user => {
-        console.log("user")
         return res.status(200).json({
             msg: 'Congratulation you just Created your Mongoro Account !!!',
-            user: {
-                id: user.id,
-                username: req.body.username,
-                email: req.body.email,
-                first_name: req.body.first_name,
-                last_name: req.body.last_name,
-                address: req.body.address,
-                phone: req.body.phone,
-                password: req.body.password,
-                verification_code: req.body.verification_code,
-                time_created: user.time_created,
-                image: req.body.image,
-                isverified: req.body.isverified
-            },
+            user: user
         })
         })
 
@@ -161,18 +139,14 @@ router.post('/register', upload.any(), async (req, res) => {
 })
 
 router.post("/verify", async (req,res)=>{
-    console.log(req.body)
     try {
-        let user= await MongoroRegiserModel.findOne({email: req.body.email})
-        if(user==null){
-            res.status(402).json({ msg: 'The email you input does not exists please check the fields ?' })
-        }else if(user.verification_code !=req.body.verification_code){
+        let code= await MongoroRegiserModel.findOne({verification_code: req.body.verification_code})
+        if(!code){
             res.status(404).json({ msg: "Incorrect verification code press code resend and try again" })
-            
         }else{
             await MongoroRegiserModel.updateOne({isverified:false},{$set:{isverified:true}})
             return res.status(200).json({
-                msg: 'Congratulation you Account is verified !!!',
+                msg: 'Congratulation you Account is verified !!!'
             })
            
         }

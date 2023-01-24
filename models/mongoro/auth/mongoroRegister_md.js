@@ -1,15 +1,35 @@
 const mongoose = require('mongoose')
 
+
+const setupSchema=new mongoose.Schema({
+    address:{
+        type:String,
+    },
+    country:{
+        type:String,
+    },
+    state:{
+        type:String,    
+    },
+    city:{
+        type:Boolean,
+        default: false,
+    },
+    gender:{
+        type:String,
+    },
+    occupation:{
+        type:String,
+    },
+    purpose:{
+        type:Boolean,
+        default: false,
+    }
+})
+
+
 const mongoroRegisterSchema=new mongoose.Schema({
-    first_name:{
-        type:String,
-        required:[true, 'field is required']
-    },
-    last_name:{
-        type:String,
-        required:[true, 'field is required']
-    },
-    image:{
+    name:{
         type:String,
         required:[true, 'field is required']
     },
@@ -21,15 +41,16 @@ const mongoroRegisterSchema=new mongoose.Schema({
         type:String,    
         required:[true, 'field is required']
     },
-    address:{
+    agreement:{
+        type:Boolean,
+        default: false,
+        required:[true, 'field is required']
+    },
+    verification_code:{
         type:String,
         required:[true, 'field is required']
     },
     username:{
-        type:String,
-        required:[true, 'field is required']
-    },
-    verification_code:{
         type:String,
         required:[true, 'field is required']
     },
@@ -47,6 +68,11 @@ const mongoroRegisterSchema=new mongoose.Schema({
         type:String,
         required:[true, 'field is required']
     },
+    confirm_password:{
+        type:String,
+        required:[true, 'field is required']
+    },
+    account_setup:[setupSchema],
     time_created:{type:Number, default:()=>Date.now()}		
 })
 
@@ -55,11 +81,3 @@ const MongoroRegiserModel=mongoose.model("mongoro_register", mongoroRegisterSche
 
 module.exports=MongoroRegiserModel
 
-
-
-// const projectSchema = new mongoose.Schema({
-//     isUsed: {
-//         type: Boolean,
-//         default: false
-//     }
-// });
