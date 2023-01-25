@@ -1,7 +1,37 @@
 const mongoose = require('mongoose')
 
 
-const setupSchema=new mongoose.Schema({
+const mongoroRegisterSchema=new mongoose.Schema({
+    name:{
+        type:String,
+    },
+    email:{
+        type:String,
+    },
+    phone:{
+        type:String,    
+    },
+    agreement:{
+        type:Boolean,
+        default: false,
+    },
+    verification_code:{
+        type:String,
+    },
+    username:{
+        type:String,
+    },
+    isverified:{
+        type:Boolean,
+        default: false,
+    },
+    role:{
+        type:Boolean,
+        default: false,
+    },
+    password:{
+        type:String,
+    },
     address:{
         type:String,
     },
@@ -12,8 +42,7 @@ const setupSchema=new mongoose.Schema({
         type:String,    
     },
     city:{
-        type:Boolean,
-        default: false,
+        type:String,    
     },
     gender:{
         type:String,
@@ -22,57 +51,8 @@ const setupSchema=new mongoose.Schema({
         type:String,
     },
     purpose:{
-        type:Boolean,
-        default: false,
-    }
-})
-
-
-const mongoroRegisterSchema=new mongoose.Schema({
-    name:{
-        type:String,
-        required:[true, 'field is required']
-    },
-    email:{
-        type:String,
-        required:[true, 'field is required']
-    },
-    phone:{
         type:String,    
-        required:[true, 'field is required']
     },
-    agreement:{
-        type:Boolean,
-        default: false,
-        required:[true, 'field is required']
-    },
-    verification_code:{
-        type:String,
-        required:[true, 'field is required']
-    },
-    username:{
-        type:String,
-        required:[true, 'field is required']
-    },
-    isverified:{
-        type:Boolean,
-        default: false,
-        required:[true, 'field is required']
-    },
-    role:{
-        type:Boolean,
-        default: false,
-        required:[true, 'field is required']
-    },
-    password:{
-        type:String,
-        required:[true, 'field is required']
-    },
-    confirm_password:{
-        type:String,
-        required:[true, 'field is required']
-    },
-    account_setup:[setupSchema],
     time_created:{type:Number, default:()=>Date.now()}		
 })
 

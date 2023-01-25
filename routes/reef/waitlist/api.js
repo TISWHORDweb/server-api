@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const nodemailer = require('nodemailer');
 const ReefWaitlistModel = require("../../../models/reef/reefWaitlist_md")
-
+const verify = require("../../../verifyToken")
 
 // CREATE
 router.post('/create', async (req, res) => {
@@ -112,33 +112,39 @@ router.post('/create', async (req, res) => {
 })
 
 // GET ALL
-router.get("/waitlists", async (req, res) =>{
+router.get("/waitlists", verify, async (req, res) =>{
     try {
         const waitlist = await ReefWaitlistModel.find();
         res.status(200).json(waitlist.reverse());
     } catch (err) {
-        res.status(500).json(err);
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !'
+        })
     }
 })
 
 // DELETE
-router.delete("/waitlists/:id", async (req, res) =>{
+router.delete("/delete", verify, async (req, res) =>{
     try{
-        await ReefWaitlistModel.findByIdAndDelete(req.params.id);
+        await ReefWaitlistModel.findByIdAndDelete({_id:req.body.id});
         res.status(200).json("waitlists deleted....");
     }catch(err){
-        res.status(500).json(err);
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !'
+        })
     }
 });
 
 
 //GET BY ID
-router.get("/waitlists/:id",async (req,res)=>{
+router.get("/find",verify,async (req,res)=>{
 try{
-    let waitlist=await ReefWaitlistModel.find({_id:req.params.id})
+    let waitlist=await ReefWaitlistModel.find({_id:req.body.id})
     res.status(200).json(waitlist);
 }catch(err){
-    res.status(500).json(err);
+    res.status(500).json({
+        msg: 'there is an unknown error sorry !'
+    })
 }
 })
 

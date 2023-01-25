@@ -2,6 +2,8 @@ const express = require('express')
 const router = express.Router()
 const nodemailer = require('nodemailer');
 const MongoroWaitlistModel = require("../../../models/mongoro/mongoroWaitlist_md")
+const verify = require("../../../verifyToken")
+
 
 // CREATE
 router.post('/create', async (req, res) => {
@@ -13,15 +15,15 @@ router.post('/create', async (req, res) => {
         if (validate) return res.status(404).json({ msg: 'There is another user with this email !' })
 
         let transporter = nodemailer.createTransport({
-            service: 'gmail',
+            service: "hotmail",
             auth: {
-                user: 'ebatimehin@gmail.com',
-                pass: 'ojjovobpnmyozynb'
+                user: 'sales@reeflimited.com',
+                pass: 'cmcxsbpkqvkgpwmk'
             }
         });
 
         let mailOptions = {
-            from: 'ebatimehin@gmail.com',
+            from: 'sales@reeflimited.com',
             to: req.body.email,
             subject: 'Verification code',
             html: `<!DOCTYPE html>
@@ -112,51 +114,41 @@ router.post('/create', async (req, res) => {
 })
 
 //GET ALL
-router.get("/waitlists", async (req, res) =>{
+router.get("/waitlists", verify, async (req, res) => {
     try {
         const waitlist = await MongoroWaitlistModel.find();
         res.status(200).json(waitlist.reverse());
     } catch (err) {
-        res.status(500).json(err);
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !'
+        })
     }
 })
 
 
-//UPDATE
-// router.put("/:id",  async (req, res) =>{
-//     if(req.waitlist.id === req.params.id ){
-//         try{
-//             const updatedWaitlist = await MongoroWaitlistModel.findByIdAndUpdate(req.params.id, {
-//                 $set:req.body
-//             }, { new: true });
-//             res.status(200).json(updatedWaitlist);
-//         }catch(err){
-//             res.status(500).json("Check your internet ");
-//         }
-//     }else{
-//         res.status(403).json("you can update only your account !")
-//     }
-// })
-
-//DELETE
-
 // delete
-router.delete("/delete/:id", async (req, res) =>{
-        try{
-            await MongoroWaitlistModel.findByIdAndDelete(req.params.id);
-            res.status(200).json("Waitlists deleted....");
-        }catch(err){
-            res.status(500).json(err);
-        }
+router.delete("/delete", verify, async (req, res) => {
+    try {
+        if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?' })
+
+        await MongoroWaitlistModel.deleteOne({ _id: req.body.id });
+        res.status(200).json("Waitlists deleted....");
+    } catch (err) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !'
+        })
+    }
 });
 
 
-router.get("/find/:id",async (req,res)=>{
-    try{
-        let waitlist=await MongoroWaitlistModel.find({_id:req.params.id})
+router.get("/find", verify, async (req, res) => {
+    try {
+        let waitlist = await MongoroWaitlistModel.find({ _id: req.body.id })
         res.status(200).json(waitlist);
-    }catch(err){
-        res.status(500).json(err);
+    } catch (err) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !'
+        })
     }
 })
 
