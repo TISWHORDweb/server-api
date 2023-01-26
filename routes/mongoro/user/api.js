@@ -70,6 +70,7 @@ router.put('/edit', verify, async (req, res) => {
 })
 
 router.put('/edit_password', verify, async (req, res) => {
+
     const user = await MongoroRegiserModel.findOne({ _id: req.body.id });
     const bytes = CryptoJS.AES.decrypt(user.password, process.env.SECRET_KEY);
     const originalPassword = bytes.toString(CryptoJS.enc.Utf8);
@@ -80,10 +81,12 @@ router.put('/edit_password', verify, async (req, res) => {
         if(originalPassword != req.body.password){
             res.status(401).json("wrong password !");
         }else{
-            await MongoroRegiserModel.updateOne({ _id: req.body.id }, {password: req.body.new_password}).then(async () => {
+            const newPassword = CryptoJS.AES.encrypt(req.body.new_password, "mongoro").toString()
+            await MongoroRegiserModel.updateOne({ _id: req.body.id }, {password: newPassword}).then(async () => {
+                const Newuser = await MongoroRegiserModel.findOne({ _id: req.body.id });
                 return res.status(200).json({
                     msg: 'Account Setup Successfully !!!',
-                    user: user
+                    user: Newuser
                 })
             }).catch((err) => {
                 res.send(err)
