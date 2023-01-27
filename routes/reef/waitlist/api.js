@@ -25,7 +25,7 @@ router.post('/create', async (req, res) => {
         let mailOptions = {
             from: 'sales@reeflimited.com',
             to: req.body.email,
-            subject: 'Verification code',
+            subject: 'Welcome Onboard',
             html: `<!DOCTYPE html>
             <html lang="en">
             <head>

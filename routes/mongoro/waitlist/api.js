@@ -22,11 +22,10 @@ router.post('/create', async (req, res) => {
             }
         });
 
-
         let mailOptions = {
             from: 'sales@reeflimited.com',
             to: req.body.email,
-            subject: 'Waitlist',
+            subject: 'Welcome Onboard',
             html: `<!DOCTYPE html>
             <html lang="en">
             <head>
