@@ -180,7 +180,7 @@ router.post("/login", async (req, res) => {
             process.env.SECRET_KEY,
             { expiresIn: "3h" }
         );
-        res.status(200).json({msg: 'there is an unknown error sorry !', user: user, token: accessToken });
+        res.status(200).json({msg: 'logged in successfuly !', user: user, token: accessToken });
     }
 
 })
