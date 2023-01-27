@@ -173,7 +173,7 @@ router.post("/login", async (req, res) => {
         console.log("User does not exists");
         res.status(401).json("wrong password or username !");
     }else if(originalPassword !=req.body.password){
-        res.status(401).json("wrong password !");
+        res.status(401).json({msg: 'wrong password !',});
     }else{
         const accessToken = jwt.sign(
             { id: user._id, isverified: user.isverified },
