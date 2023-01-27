@@ -7,6 +7,7 @@ const mongoroAuth = require('./routes/mongoro/auth/api')
 const mongoroAuthKyc = require('./routes/mongoro/auth/kyc')
 const mongoroUser = require('./routes/mongoro/user/api')
 const mongoroMpos = require('./routes/mongoro/mpos/pos')
+const mongoroSuperAdmin = require('./routes/mongoro/Admin/super/api')
 const mongoose=require('mongoose')
 const cors = require('cors')
 // const dotenv = require("dotenv")
@@ -23,6 +24,7 @@ app.use("/mongoro/auth", mongoroAuth)
 app.use("/mongoro/auth/kyc", mongoroAuthKyc)
 app.use("/mongoro/user", mongoroUser)
 app.use("/mongoro/pos", mongoroMpos)
+app.use("/mongoro/admin/super", mongoroSuperAdmin)
 
 
 mongoose.set("strictQuery", true);

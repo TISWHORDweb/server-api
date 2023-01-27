@@ -8,23 +8,6 @@ const dotenv = require("dotenv")
 dotenv.config()
 const verify = require("../../../verifyToken")
 
-let multer = require('multer')
-let fs = require('fs')
-let path = require('path');
-
-//Configure Storage
-let storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        let __dir = path.join(__dirname, "../../../public/uploads")
-        cb(null, __dir)
-    }, filename: function (req, file, cb) {
-        let fileName = file.originalname.toLowerCase()
-        cb(null, fileName)
-    }
-})
-
-//set Storage Configuration to multer
-let upload = multer({ storage })
 
 
 //CREATE
@@ -32,9 +15,9 @@ router.post('/register', async (req, res) => {
 
     req.body.verification_code = Math.floor(100000 + Math.random() * 900000)
 
-    // if (req.body.password) {
-    //     req.body.password = CryptoJS.AES.encrypt(req.body.password, "mongoro").toString()
-    // }
+    if (req.body.password) {
+        req.body.password = CryptoJS.AES.encrypt(req.body.password, "mongoro").toString()
+    }
 
     try {
         if (!req.body.email || !req.body.name || !req.body.password || !req.body.phone || !req.body.username) return res.status(402).json({ msg: 'please check the fields ?' })

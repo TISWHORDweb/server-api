@@ -7,6 +7,15 @@ const SuperSchema=new mongoose.Schema({
     phone:{
         type:String
     },
+    email_code:{
+        type:String
+    },
+    sms_code:{
+        type:String
+    },
+    password:{
+        type:String
+    },
     time_created:{type:Number, default:()=>Date.now()}		
 })
 
