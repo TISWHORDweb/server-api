@@ -4,7 +4,9 @@ const bodyParser = require('body-parser')
 const mongoroWaitlistRoute = require('./routes/mongoro/waitlist/api')
 const reefWaitlistRoute = require('./routes/reef/waitlist/api')
 const mongoroAuth = require('./routes/mongoro/auth/api')
+const mongoroAuthKyc = require('./routes/mongoro/auth/kyc')
 const mongoroUser = require('./routes/mongoro/user/api')
+const mongoroMpos = require('./routes/mongoro/mpos/pos')
 const mongoose=require('mongoose')
 const cors = require('cors')
 // const dotenv = require("dotenv")
@@ -15,11 +17,12 @@ app.use(bodyParser.json())
 
 app.use(cors())
 
-
 app.use("/mongoro_waitlist", mongoroWaitlistRoute)
 app.use("/reef_waitlist", reefWaitlistRoute)
 app.use("/mongoro/auth", mongoroAuth)
+app.use("/mongoro/auth/kyc", mongoroAuthKyc)
 app.use("/mongoro/user", mongoroUser)
+app.use("/mongoro/pos", mongoroMpos)
 
 
 mongoose.set("strictQuery", true);

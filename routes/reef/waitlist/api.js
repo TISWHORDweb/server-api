@@ -13,16 +13,17 @@ router.post('/create', async (req, res) => {
         const validate = await ReefWaitlistModel.findOne({ email: req.body.email })
         if (validate) return res.status(404).json({ msg: 'There is another user with this email !' })
 
+       
         let transporter = nodemailer.createTransport({
-            service: 'gmail',
+            service: "hotmail",
             auth: {
-                user: 'ebatimehin@gmail.com',
-                pass: 'ojjovobpnmyozynb'
+                user: 'sales@reeflimited.com',
+                pass: 'cmcxsbpkqvkgpwmk'
             }
         });
 
         let mailOptions = {
-            from: 'ebatimehin@gmail.com',
+            from: 'sales@reeflimited.com',
             to: req.body.email,
             subject: 'Verification code',
             html: `<!DOCTYPE html>
@@ -31,7 +32,7 @@ router.post('/create', async (req, res) => {
                 <meta charset="UTF-8">
                 <meta http-equiv="X-UA-Compatible" content="IE=edge">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Mongoro</title>
+                <title>Reef</title>
                 <script src="https://kit.fontawesome.com/13437b109b.js" crossorigin="anonymous"></script>
                 <link rel="preconnect" href="https://fonts.googleapis.com">
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -43,11 +44,14 @@ router.post('/create', async (req, res) => {
                         <tr>
                             <td>
                                 <a>
-                                    <img 
-                                        style='width: 5rem; display: block; margin: 0 auto'
-                                        src='http://res.cloudinary.com/dszrk3lcz/image/upload/v1674126541/pmej6d15nla5v5sbzlpt.webp' 
-                                        alt=''
-                                    />
+                                    <div style='padding: 1rem; background: #F7FAFE;'>
+                                        <img 
+                                            style='width: 5rem; display: block; margin: 0 auto'
+                                            src='http://res.cloudinary.com/dszrk3lcz/image/upload/v1674126541/pmej6d15nla5v5sbzlpt.webp' 
+                                            alt=''
+                                        />
+                                    </div>
+                                    
                                 </a>
                             </td>
                         </tr>
@@ -59,15 +63,25 @@ router.post('/create', async (req, res) => {
                                             <table width=100%>
                                                 <tr>
                                                     <td>
-                                                        <h3 class="header" style='color: #161616'>Hi, ${req.body.email}</h3>
-                                                        <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quo velit architecto aliquid veritatis nulla reiciendis culpa, eligendi consectetur amet necessitatibus doloremque totam facere sequi, corrupti, id exercitationem dolorum inventore earum? 
+                                                        <h3 class="header" style='color: #161616'>Dear, @${req.body.email}</h3>
+                                                        <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
+                                                            So nice to meet you. Mongoro is coming live soon, and we couldn't be more excited to have you. As a business owner, what can you expect as you get started on your payment collections adventure? We would love to hear from you. 
                                                             <br>
                                                             <br>
-                                                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus, ab! Praesentium maiores nisi consectetur repellat sapiente temporibus natus cum veniam. Qui nulla, perferendis animi maxime assumenda ad libero doloremque suscipit?</p>
-            
                                                             <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
-                                                                <span>Need some help getting set up, book a session with one of our people.</span>
+                                                                <span>You’ll be notified as soon as we launch! 🚀🚀🚀 </span>
                                                             </p>
+            ​
+                                                            <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
+                                                                <span><b>Reef Financial Solutions Limited Team</b></span>
+                                                            </p>
+                                                            <hr 
+                                                                style='border: none; border-bottom: 0.6px solid #6297ee'
+                                                            />
+                                                            <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'>+234 09169451169</p>
+                                                            <p style='color: #666666; text-align: center; font-size: 14px;'>sales@reeflimited.com</p>
+                                                            <p style='color: #666666; text-align: center; font-size: 14px;'>Space 27, Novare Mall, Wuse Zone 5, Abuja</p>
+                                                            <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'> Having trouble viewing this email? Click here to view in your browser.</p>
                                                     </td>
                                                 </tr>
                                             </table>

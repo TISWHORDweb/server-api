@@ -22,10 +22,11 @@ router.post('/create', async (req, res) => {
             }
         });
 
+
         let mailOptions = {
             from: 'sales@reeflimited.com',
             to: req.body.email,
-            subject: 'Verification code',
+            subject: 'Waitlist',
             html: `<!DOCTYPE html>
             <html lang="en">
             <head>
@@ -44,11 +45,14 @@ router.post('/create', async (req, res) => {
                         <tr>
                             <td>
                                 <a>
-                                    <img 
-                                        style='width: 5rem; display: block; margin: 0 auto'
-                                        src='http://res.cloudinary.com/dszrk3lcz/image/upload/v1674128779/jx0ptubgqjuuj8dran8e.webp' 
-                                        alt=''
-                                    />
+                                    <div style='padding: 1rem; background: #FFF7E6;'>
+                                        <img 
+                                            style='width: 5rem; display: block; margin: 0 auto'
+                                            src='http://res.cloudinary.com/dszrk3lcz/image/upload/v1674128779/jx0ptubgqjuuj8dran8e.webp' 
+                                            alt=''
+                                        />
+                                    </div>
+                                    
                                 </a>
                             </td>
                         </tr>
@@ -60,15 +64,25 @@ router.post('/create', async (req, res) => {
                                             <table width=100%>
                                                 <tr>
                                                     <td>
-                                                        <h3 class="header" style='color: #161616'>Hi, ${req.body.name}</h3>
-                                                        <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quo velit architecto aliquid veritatis nulla reiciendis culpa, eligendi consectetur amet necessitatibus doloremque totam facere sequi, corrupti, id exercitationem dolorum inventore earum? 
+                                                        <h3 class="header" style='color: #161616'>Dear, ${req.body.name}</h3>
+                                                        <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
+                                                            So nice to meet you. Mongoro is coming live soon, and we couldn't be more excited to have you. As a business owner, what can you expect as you get started on your payment collections adventure? We would love to hear from you. 
                                                             <br>
                                                             <br>
-                                                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus, ab! Praesentium maiores nisi consectetur repellat sapiente temporibus natus cum veniam. Qui nulla, perferendis animi maxime assumenda ad libero doloremque suscipit?</p>
-            
                                                             <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
-                                                                <span>Need some help getting set up, book a session with one of our people.</span>
+                                                                <span>You’ll be notified as soon as we launch! 🚀🚀🚀 </span>
                                                             </p>
+            ​
+                                                            <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
+                                                                <span><b>Reef Financial Solutions Limited Team</b></span>
+                                                            </p>
+                                                            <hr 
+                                                                style='border: none; border-bottom: 0.6px solid #FFF7E6'
+                                                            />
+                                                            <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'>+234 09169451169</p>
+                                                            <p style='color: #666666; text-align: center; font-size: 14px;'>sales@mongoro.com</p>
+                                                            <p style='color: #666666; text-align: center; font-size: 14px;'>Space 27, Novare Mall, Wuse Zone 5, Abuja</p>
+                                                            <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'> Having trouble viewing this email? Click here to view in your browser.</p>
                                                     </td>
                                                 </tr>
                                             </table>

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 
-const mongoroRegisterSchema=new mongoose.Schema({
+const mongoroUserSchema=new mongoose.Schema({
     name:{
         type:String,
     },
@@ -53,11 +53,23 @@ const mongoroRegisterSchema=new mongoose.Schema({
     purpose:{
         type:String,    
     },
+    bvn:{
+        type:String
+    },
+    national_id:{
+        type:String
+    },
+    international_passport:{
+        type:String
+    },
+    myidentikey:{
+        type:String
+    },
     time_created:{type:Number, default:()=>Date.now()}		
 })
 
 
-const MongoroRegiserModel=mongoose.model("mongoro_register", mongoroRegisterSchema)
+const MongoroUserModel=mongoose.model("mongoro_register", mongoroUserSchema)
 
-module.exports=MongoroRegiserModel
+module.exports=MongoroUserModel
 

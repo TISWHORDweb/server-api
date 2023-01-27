@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const nodemailer = require('nodemailer');
-const MongoroRegiserModel = require("../../../models/mongoro/auth/mongoroRegister_md")
+const MongoroUserModel = require("../../../models/mongoro/auth/mongoroUser_md")
 const CryptoJS = require("crypto-js")
 const jwt = require("jsonwebtoken")
 const dotenv = require("dotenv")
@@ -39,20 +39,20 @@ router.post('/register', async (req, res) => {
     try {
         if (!req.body.email || !req.body.name || !req.body.password || !req.body.phone || !req.body.username) return res.status(402).json({ msg: 'please check the fields ?' })
 
-        const validate = await MongoroRegiserModel.findOne({ email: req.body.email })
+        const validate = await MongoroUserModel.findOne({ email: req.body.email })
         if (validate) return res.status(404).json({ msg: 'There is another user with this email !' })
 
 
         let transporter = nodemailer.createTransport({
-            service: 'gmail',
+            service: "hotmail",
             auth: {
-                user: 'ebatimehin@gmail.com',
-                pass: 'ojjovobpnmyozynb'
+                user: 'sales@reeflimited.com',
+                pass: 'cmcxsbpkqvkgpwmk'
             }
         });
 
         let mailOptions = {
-            from: 'ebatimehin@gmail.com',
+            from: 'sales@reeflimited.com',
             to: req.body.email,
             subject: 'Verification code',
             html: `<!DOCTYPE html>
@@ -122,7 +122,7 @@ router.post('/register', async (req, res) => {
 
 
 
-        let user = await new MongoroRegiserModel(req.body)
+        let user = await new MongoroUserModel(req.body)
 
         await user.save().then(user => {
             return res.status(200).json({
@@ -143,11 +143,11 @@ router.post('/register', async (req, res) => {
 
 router.post("/verify",  async (req, res) => {
     try {
-        let code = await MongoroRegiserModel.findOne({ verification_code: req.body.verification_code })
+        let code = await MongoroUserModel.findOne({ verification_code: req.body.verification_code })
         if (!code) {
             res.status(404).json({ msg: "Incorrect verification code press code resend and try again" })
         } else {
-            await MongoroRegiserModel.update({ isverified: false }, { $set: { isverified: true } })
+            await MongoroUserModel.update({ isverified: false }, { $set: { isverified: true } })
             return res.status(200).json({
                 msg: 'Congratulation you Account is verified !!!'
             })
@@ -165,7 +165,7 @@ router.post("/verify",  async (req, res) => {
 //LOGIN
 router.post("/login", async (req, res) => {
 
-    const user = await MongoroRegiserModel.findOne({ email: req.body.email });
+    const user = await MongoroUserModel.findOne({ email: req.body.email });
     const bytes = CryptoJS.AES.decrypt(user.password, process.env.SECRET_KEY);
     const originalPassword = bytes.toString(CryptoJS.enc.Utf8);
 
@@ -196,8 +196,8 @@ router.put('/settings', verify, async (req, res) => {
     try {
         if (!req.body.address || !req.body.purpose || !req.body.country || !req.body.state || !req.body.city || !req.body.gender || !req.body.occupation) return res.status(402).json({ msg: 'please check the fields ?' })
 
-        await MongoroRegiserModel.updateOne({ _id: id }, body).then(async () => {
-            let user = await MongoroRegiserModel.findOne({ _id: id })
+        await MongoroUserModel.updateOne({ _id: id }, body).then(async () => {
+            let user = await MongoroUserModel.findOne({ _id: id })
             return res.status(200).json({
                 msg: 'Account Setup Successfully !!!',
                 user: user
