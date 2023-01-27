@@ -53,16 +53,7 @@ const mongoroUserSchema=new mongoose.Schema({
     purpose:{
         type:String,    
     },
-    bvn:{
-        type:String
-    },
-    national_id:{
-        type:String
-    },
-    international_passport:{
-        type:String
-    },
-    myidentikey:{
+    pin:{
         type:String
     },
     time_created:{type:Number, default:()=>Date.now()}		
