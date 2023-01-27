@@ -32,9 +32,9 @@ router.post('/register', async (req, res) => {
 
     req.body.verification_code = Math.floor(100000 + Math.random() * 900000)
 
-    if (req.body.password) {
-        req.body.password = CryptoJS.AES.encrypt(req.body.password, "mongoro").toString()
-    }
+    // if (req.body.password) {
+    //     req.body.password = CryptoJS.AES.encrypt(req.body.password, "mongoro").toString()
+    // }
 
     try {
         if (!req.body.email || !req.body.name || !req.body.password || !req.body.phone || !req.body.username) return res.status(402).json({ msg: 'please check the fields ?' })

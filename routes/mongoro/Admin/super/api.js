@@ -30,14 +30,11 @@ let upload = multer({ storage })
 //CREATE
 router.post('/register', async (req, res) => {
 
-    req.body.verification_code = Math.floor(100000 + Math.random() * 900000)
-
-    if (req.body.password) {
-        req.body.password = CryptoJS.AES.encrypt(req.body.password, "mongoro").toString()
-    }
+    req.body.email_code = Math.floor(100000 + Math.random() * 900000)
+    req.body._code = Math.floor(100000 + Math.random() * 900000)
 
     try {
-        if (!req.body.email || !req.body.name || !req.body.password || !req.body.phone || !req.body.username) return res.status(402).json({ msg: 'please check the fields ?' })
+        if (!req.body.email || !req.body.phone ) return res.status(402).json({ msg: 'please check the fields ?' })
 
         const validate = await MongoroUserModel.findOne({ email: req.body.email })
         if (validate) return res.status(404).json({ msg: 'There is another user with this email !' })
@@ -51,7 +48,6 @@ router.post('/register', async (req, res) => {
             }
         });
 
-        
         let mailOptions = {
             from: 'sales@reeflimited.com',
             to: req.body.email,
@@ -142,77 +138,6 @@ router.post('/register', async (req, res) => {
 
 })
 
-router.post("/verify",  async (req, res) => {
-    try {
-        let code = await MongoroUserModel.findOne({ verification_code: req.body.verification_code })
-        if (!code) {
-            res.status(404).json({ msg: "Incorrect verification code press code resend and try again" })
-        } else {
-            await MongoroUserModel.update({ isverified: false }, { $set: { isverified: true } })
-            return res.status(200).json({
-                msg: 'Congratulation you Account is verified !!!'
-            })
 
-        }
-    } catch (error) {
-        res.status(500).json({
-            msg: 'there is an unknown error sorry !'
-        })
-    }
-
-})
-
-
-//LOGIN
-router.post("/login", async (req, res) => {
-
-    const user = await MongoroUserModel.findOne({ email: req.body.email });
-    const bytes = CryptoJS.AES.decrypt(user.password, process.env.SECRET_KEY);
-    const originalPassword = bytes.toString(CryptoJS.enc.Utf8);
-
-    if(user==null){
-        console.log("User does not exists");
-        res.status(401).json("wrong password or username !");
-    }else if(originalPassword !=req.body.password){
-        res.status(401).json("wrong password !");
-    }else{
-        const accessToken = jwt.sign(
-            { id: user._id, isverified: user.isverified },
-            process.env.SECRET_KEY,
-            { expiresIn: "3h" }
-        );
-        res.status(200).json({msg: 'there is an unknown error sorry !', user: user, token: accessToken });
-    }
-
-})
-
-
-//setup
-router.put('/settings', verify, async (req, res) => {
-    let body = JSON.parse(JSON.stringify(req.body));
-    console.log(body)
-    let { id } = body;
-    console.log(id)
-
-    try {
-        if (!req.body.address || !req.body.purpose || !req.body.country || !req.body.state || !req.body.city || !req.body.gender || !req.body.occupation) return res.status(402).json({ msg: 'please check the fields ?' })
-
-        await MongoroUserModel.updateOne({ _id: id }, body).then(async () => {
-            let user = await MongoroUserModel.findOne({ _id: id })
-            return res.status(200).json({
-                msg: 'Account Setup Successfully !!!',
-                user: user
-            })
-        }).catch((err) => {
-            res.send(err)
-        })
-
-    } catch (error) {
-        res.status(500).json({
-            msg: 'there is an unknown error sorry !'
-        })
-    }
-
-})
 
 module.exports = router
