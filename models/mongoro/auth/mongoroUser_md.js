@@ -56,6 +56,9 @@ const mongoroUserSchema=new mongoose.Schema({
     pin:{
         type:String
     },
+    ip:{
+        type:String
+    },
     image:{
         type:String
     },

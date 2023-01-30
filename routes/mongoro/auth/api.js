@@ -4,6 +4,7 @@ const nodemailer = require('nodemailer');
 const MongoroUserModel = require("../../../models/mongoro/auth/mongoroUser_md")
 const CryptoJS = require("crypto-js")
 const jwt = require("jsonwebtoken")
+const requestIp = require('request-ip');
 const dotenv = require("dotenv")
 dotenv.config()
 const verify = require("../../../verifyToken")
@@ -124,7 +125,7 @@ router.post('/register', async (req, res) => {
 
 })
 
-router.post("/verify",  async (req, res) => {
+router.post("/verify", async (req, res) => {
     try {
         let code = await MongoroUserModel.findOne({ verification_code: req.body.verification_code })
         if (!code) {
@@ -152,20 +153,26 @@ router.post("/login", async (req, res) => {
     const bytes = CryptoJS.AES.decrypt(user.password, process.env.SECRET_KEY);
     const originalPassword = bytes.toString(CryptoJS.enc.Utf8);
 
-    if(user==null){
+    if (user == null) {
         console.log("User does not exists");
         res.status(401).json("wrong password or username !");
-    }else if(originalPassword !=req.body.password){
-        res.status(401).json({msg: 'wrong password !',});
-    }else{
+    } else if (originalPassword != req.body.password) {
+        res.status(401).json({ msg: 'wrong password !', });
+    } else {
         const accessToken = jwt.sign(
             { id: user._id, isverified: user.isverified },
             process.env.SECRET_KEY,
             { expiresIn: "3h" }
         );
-        res.status(200).json({msg: 'logged in successfuly !', user: user, token: accessToken });
+
+        res.status(200).json({ msg: 'logged in successfuly !', user: user, token: accessToken, });
     }
 
+})
+
+router.get('/ip', (req, res)=> { 
+    res.send({ ip : req.ip})
+    
 })
 
 
