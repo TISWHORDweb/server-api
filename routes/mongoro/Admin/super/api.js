@@ -3,6 +3,9 @@ const router = express.Router()
 const nodemailer = require('nodemailer');
 const SuperModel = require("../../../../models/mongoro/admin/super_admin/super_md")
 const dotenv = require("dotenv")
+const speakeasy = require('speakeasy')
+const Qrcode = require('qrcode')
+const commons = require('./commons');
 dotenv.config()
 const request = require('request');
 
@@ -17,7 +20,7 @@ router.post('/create', async (req, res) => {
 
         const validate = await SuperModel.findOne({ email: req.body.email })
         if (validate) return res.status(404).json({ msg: 'There is another user with this email !' })
-       
+
         var data = {
             "to": req.body.phone,
             "from": "N-Alert",
@@ -39,7 +42,7 @@ router.post('/create', async (req, res) => {
             if (error) throw new Error(error);
             console.log(response.body);
         });
-        
+
 
         let transporter = nodemailer.createTransport({
             service: "hotmail",
@@ -95,13 +98,13 @@ router.post("/check", async (req, res) => {
 
     const user = await SuperModel.findOne({ email_code: req.body.email_code });
 
-    if(user==null){
+    if (user == null) {
         console.log("Wrong Inputs");
-        res.status(401).json({msg:"wrong Inputs !"});
-    }else if(user.email_code !=req.body.email_code || user.sms_code !=req.body.sms_code){
-        res.status(401).json({msg: 'wrong Codes !',});
-    }else{
-        res.status(200).json({msg: 'Super Admin verified successfuly !'});
+        res.status(401).json({ msg: "wrong Inputs !" });
+    } else if (user.email_code != req.body.email_code || user.sms_code != req.body.sms_code) {
+        res.status(401).json({ msg: 'wrong Codes !', });
+    } else {
+        res.status(200).json({ msg: 'Super Admin verified successfuly !' });
     }
 })
 
@@ -110,7 +113,7 @@ router.put('/password', async (req, res) => {
     let { id } = body;
 
     try {
-        if (!req.body.id ) return res.status(402).json({ msg: 'provide the id ?' })
+        if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?' })
 
         await SuperModel.updateOne({ _id: id }, body).then(async () => {
             let user = await SuperModel.findOne({ _id: id })
@@ -121,7 +124,7 @@ router.put('/password', async (req, res) => {
         }).catch((err) => {
             res.send(err)
         })
-        
+
     } catch (error) {
         res.status(500).json({
             msg: 'there is an unknown error sorry !'
@@ -130,6 +133,42 @@ router.put('/password', async (req, res) => {
 
 })
 
+
+router.get('/token', async (req, res) => {
+
+    let secret = speakeasy.generateSecret({
+        name: "Mongoro"
+    })
+
+    Qrcode.toDataURL(secret.otpauth_url, async function (err, data) {
+        return res.status(200).json({
+            msg: 'token created Successfully !!!',
+            secret: secret,
+            data: data
+        })
+    })
+
+})
+
+router.post('/verify', async (req, res) => {
+
+    let verified = speakeasy.totp.verify({
+        secret: req.body.secret,
+        encodeing: 'ascii',
+        token: req.body.token
+    })
+
+    if(verified == true){
+        return res.status(200).json({
+            msg: 'verified Successfully !!!'
+        })
+    }else{
+        res.status(500).json({
+            msg: 'incorrect code !'
+        })
+    }
+
+})
 
 
 module.exports = router
