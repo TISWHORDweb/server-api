@@ -65,22 +65,18 @@ router.post('/create', async (req, res) => {
                                                     <td>
                                                         <h3 class="header" style='color: #161616'>Dear, @${req.body.email}</h3>
                                                         <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
-                                                            So nice to meet you. Mongoro is coming live soon, and we couldn't be more excited to have you. As a business owner, what can you expect as you get started on your payment collections adventure? We would love to hear from you. 
+                                                            Thanks so much for reaching out! We look forward to getting back to you as soon as we begin to roll out our products targeted at expanding your business payment options and security.
                                                             <br>
                                                             <br>
-                                                            <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
-                                                                <span>You’ll be notified as soon as we launch! 🚀🚀🚀 </span>
-                                                            </p>
-            ​
                                                             <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
                                                                 <span><b>Reef Financial Solutions Limited Team</b></span>
                                                             </p>
                                                             <hr 
                                                                 style='border: none; border-bottom: 0.6px solid #6297ee'
                                                             />
-                                                            <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'>+234 09169451169</p>
+                                                            <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'>+2348033550170</p>
                                                             <p style='color: #666666; text-align: center; font-size: 14px;'>sales@reeflimited.com</p>
-                                                            <p style='color: #666666; text-align: center; font-size: 14px;'>Space 27, Novare Mall, Wuse Zone 5, Abuja</p>
+                                                            <p style='color: #666666; text-align: center; font-size: 14px;'>21 Blantyre Crescent, Wuse 2. Abuja</p>
                                                             <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'> Having trouble viewing this email? Click here to view in your browser.</p>
                                                     </td>
                                                 </tr>

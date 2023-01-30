@@ -19,14 +19,14 @@ const TicketSchema=new mongoose.Schema({
     description:{
         type:String
     },
-    userId:{
+    ID:{
         type:String
     },
     time_created:{type:Number, default:()=>Date.now()}		
 })
 
 
-const TicketModel=mongoose.model("pos", TicketSchema)
+const TicketModel=mongoose.model("tickets", TicketSchema)
 
 module.exports=TicketModel
 
