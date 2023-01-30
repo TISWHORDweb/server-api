@@ -56,6 +56,9 @@ const mongoroUserSchema=new mongoose.Schema({
     pin:{
         type:String
     },
+    image:{
+        type:String
+    },
     time_created:{type:Number, default:()=>Date.now()}		
 })
 

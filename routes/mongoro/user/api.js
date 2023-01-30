@@ -4,6 +4,25 @@ const MongoroUserModel = require("../../../models/mongoro/auth/mongoroUser_md")
 const verify = require("../../../verifyToken")
 const CryptoJS = require("crypto-js")
 
+let multer = require('multer')
+let fs = require('fs')
+let path = require('path');
+
+//Configure Storage
+let storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        let __dir = path.join(__dirname, "../../../public/uploads")
+        cb(null, __dir)
+    }, filename: function (req, file, cb) {
+        let fileName = file.originalname.toLowerCase()
+        cb(null, fileName)
+    }
+})
+
+//set Storage Configuration to multer
+let upload = multer({ storage })
+
+
 router.get("/all", async (req, res) => {
     try {
         const user = await MongoroUserModel.find();
@@ -65,7 +84,6 @@ router.put('/edit', verify, async (req, res) => {
             msg: 'there is an unknown error sorry !'
         })
     }
-
 
 })
 
@@ -177,6 +195,41 @@ router.put('/edit_pin', verify, async (req, res) => {
         })
     }
 
+})
+
+router.put('/image', verify, upload.any(), async (req, res) => {
+    // let body = JSON.parse(JSON.stringify(req.body));
+    // let { id } = body;
+
+    try {
+        if (!req.body.id ) return res.status(402).json({ msg: 'provide the id ?' })
+        let user = await new MongoroUserModel(req.body)
+
+
+        req.files.map(e => {
+            switch (e.fieldname) {
+                case "image":
+                    user.image = e.filename
+                    break;
+            }
+        })
+
+        const image = user.image
+
+        await MongoroUserModel.updateOne({ _id: req.body.id }, {image: user.image}).then(async () => {
+            let user = await MongoroUserModel.findOne({ _id: req.body.id })
+            return res.status(200).json({
+                msg: 'Image Setup Successfully !!!',
+                image: user.image
+            })
+        }).catch((err) => {
+            res.send(err)
+        })
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !'
+        })
+    }
 
 })
 
