@@ -5,6 +5,7 @@ const CategoryModel = require("../../../../../models/mongoro/admin/super_admin/c
 const dotenv = require("dotenv")
 dotenv.config()
 
+
 //CREATE
 router.post('/create', async (req, res) => {
 
@@ -30,6 +31,7 @@ router.post('/create', async (req, res) => {
     }
 })
 
+
 router.get("/all", async (req, res) => {
     try {
         const category = await CategoryModel.find();
@@ -52,7 +54,7 @@ router.put('/edit', async (req, res) => {
         await CategoryModel.updateOne({ _id: id }, body).then(async () => {
            
             let category = await CategoryModel.findOne({ _id: id })
-            await CategoryModel.update({ updated_at: req.body.updated_at }, { $set: { updated_at: Date.now() } })
+            await CategoryModel.updateOne({ updated_at: category.updated_at }, { $set: { updated_at: Date.now() } })
             return res.status(200).json({
                 msg: 'Category Updated Successfully !!!',
                 category: category
