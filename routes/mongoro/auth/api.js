@@ -8,6 +8,7 @@ const requestIp = require('request-ip');
 const dotenv = require("dotenv")
 dotenv.config()
 const verify = require("../../../verifyToken")
+const address = require('address');
 
 
 
@@ -165,14 +166,13 @@ router.post("/login", async (req, res) => {
             { expiresIn: "3h" }
         );
 
-        res.status(200).json({ msg: 'logged in successfuly !', user: user, token: accessToken, });
+        const ip = address.ip();   // '192.168.0.2'
+        console.log(ip)
+        await MongoroUserModel.updateOne({ _id: user._id }, { $set: { ip: ip } })
+
+        res.status(200).json({ msg: 'logged in successfuly !', user: user, token: accessToken, ip_address: ip });
     }
 
-})
-
-router.get('/ip', (req, res)=> { 
-    res.send({ ip : req.ip})
-    
 })
 
 
