@@ -32,6 +32,9 @@ const mongoroUserSchema=new mongoose.Schema({
     password:{
         type:String,
     },
+    category:{
+        type:String,
+    },
     address:{
         type:String,
     },

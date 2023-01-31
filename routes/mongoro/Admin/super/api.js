@@ -22,7 +22,7 @@ router.post('/create', async (req, res) => {
 
         var data = {
             "to": req.body.phone,
-            "from": "N-Alert",
+            "from": "mongoro",
             "sms": "Hi there, testing Termii",
             "type": "plain",
             "api_key": "TLMPIOB7Oe4V8NRRc7KnukwGgTAY9PZLqwVw2DMhrr8o0CEXh4BMmBfN6C0cNf",

@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const nodemailer = require('nodemailer');
+const MongoroUserModel = require("../../../../../models/mongoro/auth/mongoroUser_md")
 const CategoryModel = require("../../../../../models/mongoro/admin/super_admin/category/category")
 const dotenv = require("dotenv")
 dotenv.config()
@@ -83,7 +83,41 @@ router.delete("/delete", async (req, res) => {
 
 });
 
+//INVITE    
+router.post("/invite", async (req, res) => {
 
+    const user = await MongoroUserModel.findOne({ email: req.body.email });
+
+    const validate = await CategoryModel.findOne({ name: req.body.category })
+    if (!validate) return res.status(404).json({ msg: 'There is no such category !' })
+
+    if (user == null) {
+        console.log("User does not exists");
+        res.status(401).json("wrong Email !");
+    } else {
+        await MongoroUserModel.updateOne({ _id: user._id }, { $set: { category: req.body.category } })
+
+        res.status(200).json({ msg: 'User Invited successfuly !' });
+    }
+
+})
+
+router.post("/disable", async (req, res) => {
+
+    const user = await MongoroUserModel.findOne({ _id: req.body.id });
+
+    if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?' })
+
+    if (user == null) {
+        console.log("User does not exists");
+        res.status(401).json("wrong Email !");
+    } else {
+        await MongoroUserModel.updateOne({ _id: user._id }, { $set: { category: "none" } })
+
+        res.status(200).json({ msg: 'User Disabled successfuly !' });
+    }
+
+})
 
 
 module.exports = router
