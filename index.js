@@ -20,7 +20,7 @@ const mongoose=require('mongoose')
 
 app.use(bodyParser.json())
 
-// app.use(cors({origin: "*"}))
+app.use(cors({origin: "*"}))
 
 app.use("/mongoro_waitlist", mongoroWaitlistRoute)
 app.use("/reef_waitlist", reefWaitlistRoute)
@@ -35,13 +35,13 @@ app.use("/mongoro/super_admin/category", mongoroSuperAdminCategory)
 
 
 // Add headers
-app.use(function (req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-    res.setHeader('Access-Control-Allow-Credentials', true);
-    next();
-});
+// app.use(function (req, res, next) {
+//     res.setHeader('Access-Control-Allow-Origin', '*');
+//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+//     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+//     res.setHeader('Access-Control-Allow-Credentials', true);
+//     next();
+// });
 
 
 mongoose.set("strictQuery", true);
