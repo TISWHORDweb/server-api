@@ -5,7 +5,6 @@ const SuperModel = require("../../../../models/mongoro/admin/super_admin/super_m
 const dotenv = require("dotenv")
 const speakeasy = require('speakeasy')
 const Qrcode = require('qrcode')
-const commons = require('./commons');
 dotenv.config()
 const request = require('request');
 

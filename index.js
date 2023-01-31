@@ -10,6 +10,7 @@ const mongoroMpos = require('./routes/mongoro/mpos/pos')
 const mongoroSuperAdmin = require('./routes/mongoro/Admin/super/api')
 const mongoroTransaction = require('./routes/mongoro/Transaction/api')
 const mongoroTickets = require('./routes/mongoro/Tickets/api')
+const mongoroSuperAdminCategory = require('./routes/mongoro/Admin/super/category/category')
 const mongoose=require('mongoose')
 const cors = require('cors')
 // const dotenv = require("dotenv")
@@ -29,6 +30,7 @@ app.use("/mongoro/pos", mongoroMpos)
 app.use("/mongoro/transaction", mongoroTransaction)
 app.use("/mongoro/admin/super", mongoroSuperAdmin)
 app.use("/mongoro/tickets", mongoroTickets)
+app.use("/mongoro/super_admin/category", mongoroSuperAdminCategory)
 
 
 mongoose.set("strictQuery", true);
