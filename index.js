@@ -17,7 +17,6 @@ const mongoose=require('mongoose')
 // const dotenv = require("dotenv")
 // dotenv.config()
 
-
 app.use(bodyParser.json())
 
 app.use(cors({origin: "*"}))
@@ -43,13 +42,13 @@ app.use("/mongoro/super_admin/category", mongoroSuperAdminCategory)
 //     next();
 // });
 
-
 mongoose.set("strictQuery", true);
-mongoose
-    .connect(process.env.MONGO_URL)
+mongoose .connect("mongodb+srv://mongoro:mongoro@mongoro.dbwd7pc.mongodb.net/?retryWrites=true&w=majority")
+    // .connect(process.env.MONGO_URL)
     .then(() => {
         console.log("MongoDB Connected!!!")
     })
+    
     .catch((err) => console.log(err));
 
 const port = process.env.PORT || 3000; 
