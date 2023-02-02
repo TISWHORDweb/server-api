@@ -29,7 +29,8 @@ router.get("/all", async (req, res) => {
         res.status(200).json(user.reverse());
     } catch (err) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !'
+            msg: 'there is an unknown error sorry !',
+            status: 500
         })
     }
 })
@@ -42,7 +43,8 @@ router.delete("/delete", verify, async (req, res) => {
         res.status(200).json("User deleted....");
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !'
+            msg: 'there is an unknown error sorry !',
+            status: 500
         })
     }
 
@@ -56,7 +58,8 @@ router.get("/single", verify, async (req, res) => {
         res.status(200).json(user);
     } catch (err) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !'
+            msg: 'there is an unknown error sorry !',
+            status: 500
         })
     }
 })
@@ -67,13 +70,14 @@ router.put('/edit', verify, async (req, res) => {
     let { id } = body;
 
     try {
-        if (!req.body.id ) return res.status(402).json({ msg: 'provide the id ?' })
+        if (!req.body.id ) return res.status(402).json({ msg: 'provide the id ?' ,status: 402})
 
         await MongoroUserModel.updateOne({ _id: id }, body).then(async () => {
             let user = await MongoroUserModel.findOne({ _id: id })
             return res.status(200).json({
                 msg: 'Account Setup Successfully !!!',
-                user: user
+                user: user,
+                status: 200
             })
         }).catch((err) => {
             res.send(err)
@@ -81,7 +85,8 @@ router.put('/edit', verify, async (req, res) => {
 
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !'
+            msg: 'there is an unknown error sorry !',
+            status: 500
         })
     }
 
@@ -94,17 +99,18 @@ router.put('/edit_password', verify, async (req, res) => {
     const originalPassword = bytes.toString(CryptoJS.enc.Utf8);
 
     try {
-        if (!req.body.id ) return res.status(402).json({ msg: 'provide the id ?' })
+        if (!req.body.id ) return res.status(402).json({ msg: 'provide the id ?' ,status: 402})
 
         if(originalPassword != req.body.password){
-            res.status(401).json("wrong password !");
+            res.status(401).json({msg: "wrong password !", status: 401});
         }else{
             const newPassword = CryptoJS.AES.encrypt(req.body.new_password, "mongoro").toString()
             await MongoroUserModel.updateOne({ _id: req.body.id }, {password: newPassword}).then(async () => {
                 const Newuser = await MongoroUserModel.findOne({ _id: req.body.id });
                 return res.status(200).json({
                     msg: 'Account Setup Successfully !!!',
-                    user: Newuser
+                    user: Newuser,
+                    status: 200
                 })
             }).catch((err) => {
                 res.send(err)
@@ -113,7 +119,8 @@ router.put('/edit_password', verify, async (req, res) => {
      
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !'
+            msg: 'there is an unknown error sorry !',
+            status: 500
         })
     }
 
@@ -137,7 +144,8 @@ router.put('/create_pin', verify, async (req, res) => {
             let user = await MongoroUserModel.findOne({ _id: id })
             return res.status(200).json({
                 msg: 'Pin created Successfully !!!',
-                user: user
+                user: user,
+                status: 200
             })
         }).catch((err) => {
             res.send(err)
@@ -145,7 +153,8 @@ router.put('/create_pin', verify, async (req, res) => {
 
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !'
+            msg: 'there is an unknown error sorry !',
+            status: 500
         })
     }
 
@@ -154,13 +163,14 @@ router.put('/create_pin', verify, async (req, res) => {
 
 router.get("/user_pin", verify, async (req, res) => {
     try {
-        if (!req.body.id ) return res.status(402).json({ msg: 'provide the id ?' })
+        if (!req.body.id ) return res.status(402).json({ msg: 'provide the id ?',status: 402 })
 
         let user = await MongoroUserModel.find({ _id: req.body.id })
         res.status(200).json(user);
     } catch (err) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !'
+            msg: 'there is an unknown error sorry !',
+            status: 500
         })
     }
 })
@@ -172,17 +182,18 @@ router.put('/edit_pin', verify, async (req, res) => {
     const originalPin = bytes.toString(CryptoJS.enc.Utf8);
 
     try {
-        if (!req.body.id ) return res.status(402).json({ msg: 'provide the id ?' })
+        if (!req.body.id ) return res.status(402).json({ msg: 'provide the id ?',status: 402 })
 
         if(originalPin!= req.body.pin){
-            res.status(401).json("wrong password !");
+            res.status(401).json({msg: "wrong password !",status: 401});
         }else{
             const newPin = CryptoJS.AES.encrypt(req.body.new_pin, "mongoro").toString()
             await MongoroUserModel.updateOne({ _id: req.body.id }, {pin: newPin}).then(async () => {
                 const Newuser = await MongoroUserModel.findOne({ _id: req.body.id });
                 return res.status(200).json({
                     msg: 'Account Setup Successfully !!!',
-                    user: Newuser
+                    user: Newuser,
+                    status: 200
                 })
             }).catch((err) => {
                 res.send(err)
@@ -191,7 +202,8 @@ router.put('/edit_pin', verify, async (req, res) => {
      
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !'
+            msg: 'there is an unknown error sorry !',
+            status: 500
         })
     }
 
@@ -220,14 +232,16 @@ router.put('/image', verify, upload.any(), async (req, res) => {
             let user = await MongoroUserModel.findOne({ _id: req.body.id })
             return res.status(200).json({
                 msg: 'Image Setup Successfully !!!',
-                image: user.image
+                image: user.image,
+                status: 200
             })
         }).catch((err) => {
             res.send(err)
         })
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !'
+            msg: 'there is an unknown error sorry !',
+            status: 500
         })
     }
 

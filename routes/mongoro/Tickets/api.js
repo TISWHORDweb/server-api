@@ -9,7 +9,8 @@ router.get("/all", verify, async (req, res) => {
         res.status(200).json(tickets.reverse());
     } catch (err) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !'
+            msg: 'there is an unknown error sorry !',
+            status: 500
         })
     }
 })
@@ -27,13 +28,15 @@ router.post('/create', verify,async (req, res) => {
         await tickets.save().then(tickets => {
             return res.status(200).json({
                 msg: 'Ticket created successful !!!',
-                tickets: tickets
+                tickets: tickets,
+                status: 200
             })
         })
 
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !'
+            msg: 'there is an unknown error sorry !',
+            status: 500
         })
     }
 })
@@ -47,21 +50,23 @@ router.delete("/delete", verify, async (req, res) => {
         res.status(200).json("Tickets deleted....");
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !'
+            msg: 'there is an unknown error sorry !',
+            status: 500
         })
     }
 
 });
 
-router.get("/single", verify, async (req, res) => {
+router.get("/:id", verify, async (req, res) => {
     try {
-        if (!req.body.id ) return res.status(402).json({ msg: 'provide the id ?' })
+        if (!req.params.id ) return res.status(402).json({ msg: 'provide the id ?' })
 
-        let tickets = await TicketModel.find({ _id: req.body.id })
+        let tickets = await TicketModel.find({ _id: req.params.id })
         res.status(200).json(tickets);
     } catch (err) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !'
+            msg: 'there is an unknown error sorry !',
+            status: 500
         })
     }
 })
@@ -77,7 +82,8 @@ router.put('/edit', verify, async (req, res) => {
             let tickets = await TicketModel.findOne({ _id: id })
             return res.status(200).json({
                 msg: 'Ticket Edited Successfully !!!',
-                tickets: tickets
+                tickets: tickets,
+                status: 200
             })
         }).catch((err) => {
             res.send(err)
@@ -85,12 +91,14 @@ router.put('/edit', verify, async (req, res) => {
 
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !'
+            msg: 'there is an unknown error sorry !',
+            status: 500
         })
     }
 
 
 })
+
 
 
 

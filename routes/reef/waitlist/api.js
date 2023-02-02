@@ -8,10 +8,10 @@ const verify = require("../../../verifyToken")
 router.post('/create', async (req, res) => {
     console.log(req.body)
     try {
-        if (!req.body.email) return res.status(402).json({ msg: 'please check the fields ?' })
+        if (!req.body.email) return res.status(402).json({ msg: 'please check the fields ?',status: 402 })
 
         const validate = await ReefWaitlistModel.findOne({ email: req.body.email })
-        if (validate) return res.status(404).json({ msg: 'There is another user with this email !' })
+        if (validate) return res.status(404).json({ msg: 'There is another user with this email !',status: 401 })
 
        
         let transporter = nodemailer.createTransport({
@@ -104,6 +104,7 @@ router.post('/create', async (req, res) => {
         await user.save().then(user => {
             return res.status(200).json({
                 msg: 'Congratulation you just join our Waitlist!!! !',
+                status: 200,
                 user: {
                     id: user.id,
                     email: user.email,
@@ -114,7 +115,8 @@ router.post('/create', async (req, res) => {
 
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !'
+            msg: 'there is an unknown error sorry !',
+            status: 500
         })
     }
 
@@ -128,7 +130,8 @@ router.get("/waitlists", verify, async (req, res) =>{
         res.status(200).json(waitlist.reverse());
     } catch (err) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !'
+            msg: 'there is an unknown error sorry !',
+            status: 500
         })
     }
 })
@@ -137,10 +140,11 @@ router.get("/waitlists", verify, async (req, res) =>{
 router.delete("/delete", verify, async (req, res) =>{
     try{
         await ReefWaitlistModel.findByIdAndDelete({_id:req.body.id});
-        res.status(200).json("waitlists deleted....");
+        res.status(200).json({msg:"waitlists deleted....",status: 200});
     }catch(err){
         res.status(500).json({
-            msg: 'there is an unknown error sorry !'
+            msg: 'there is an unknown error sorry !',
+            status: 500
         })
     }
 });
@@ -153,7 +157,8 @@ try{
     res.status(200).json(waitlist);
 }catch(err){
     res.status(500).json({
-        msg: 'there is an unknown error sorry !'
+        msg: 'there is an unknown error sorry !',
+        status: 500
     })
 }
 })

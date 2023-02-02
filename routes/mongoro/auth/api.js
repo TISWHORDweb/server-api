@@ -22,10 +22,10 @@ router.post('/register', async (req, res) => {
     }
 
     try {
-        if (!req.body.email || !req.body.name || !req.body.password || !req.body.phone || !req.body.username) return res.status(402).json({ msg: 'please check the fields ?' })
+        if (!req.body.email || !req.body.name || !req.body.password || !req.body.phone || !req.body.username) return res.status(402).json({ msg: 'please check the fields ?',status: 402 })
 
         const validate = await MongoroUserModel.findOne({ email: req.body.email })
-        if (validate) return res.status(404).json({ msg: 'There is another user with this email !' })
+        if (validate) return res.status(404).json({ msg: 'There is another user with this email !',status: 404})
 
 
         let transporter = nodemailer.createTransport({
@@ -112,14 +112,16 @@ router.post('/register', async (req, res) => {
         await user.save().then(user => {
             return res.status(200).json({
                 msg: 'Congratulation you just Created your Mongoro Account !!!',
-                user: user
+                user: user,
+                status: 200
             })
         })
 
 
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !'
+            msg: 'there is an unknown error sorry !',
+            status: 500
         })
     }
 
@@ -130,17 +132,19 @@ router.post("/verify", async (req, res) => {
     try {
         let code = await MongoroUserModel.findOne({ verification_code: req.body.verification_code })
         if (!code) {
-            res.status(404).json({ msg: "Incorrect verification code press code resend and try again" })
+            res.status(404).json({ msg: "Incorrect verification code press code resend and try again",status: 404 })
         } else {
             await MongoroUserModel.update({ isverified: false }, { $set: { isverified: true } })
             return res.status(200).json({
-                msg: 'Congratulation you Account is verified !!!'
+                msg: 'Congratulation you Account is verified !!!',
+                status: 200
             })
 
         }
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !'
+            msg: 'there is an unknown error sorry !',
+            status: 500
         })
     }
 
@@ -158,7 +162,7 @@ router.post("/login", async (req, res) => {
         console.log("User does not exists");
         res.status(401).json("wrong password or username !");
     } else if (originalPassword != req.body.password) {
-        res.status(401).json({ msg: 'wrong password !', });
+        res.status(401).json({ msg: 'wrong password !', status: 401 });
     } else {
         const accessToken = jwt.sign(
             { id: user._id, isverified: user.isverified },
@@ -167,10 +171,10 @@ router.post("/login", async (req, res) => {
         );
 
         const ip = address.ip();   // '192.168.0.2'
-        console.log(ip)
+
         await MongoroUserModel.updateOne({ _id: user._id }, { $set: { ip: ip } })
 
-        res.status(200).json({ msg: 'logged in successfuly !', user: user, token: accessToken, ip_address: ip });
+        res.status(200).json({ msg: 'logged in successfuly !', user: user, token: accessToken, ip_address: ip, status: 200 });
     }
 
 })
@@ -190,7 +194,8 @@ router.put('/settings', verify, async (req, res) => {
             let user = await MongoroUserModel.findOne({ _id: id })
             return res.status(200).json({
                 msg: 'Account Setup Successfully !!!',
-                user: user
+                user: user,
+                status: 200
             })
         }).catch((err) => {
             res.send(err)
@@ -198,7 +203,8 @@ router.put('/settings', verify, async (req, res) => {
 
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !'
+            msg: 'there is an unknown error sorry !',
+            status: 500
         })
     }
 

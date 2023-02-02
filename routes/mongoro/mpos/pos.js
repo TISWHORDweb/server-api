@@ -9,7 +9,8 @@ router.get("/all", verify, async (req, res) => {
         res.status(200).json(user.reverse());
     } catch (err) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !'
+            msg: 'there is an unknown error sorry !',
+            status: 500
         })
     }
 })
@@ -21,21 +22,23 @@ router.post('/request', verify,async (req, res) => {
 
     try {
         const validate = await Mpos.findOne({ business_name: req.body.business_name })
-        if (validate) return res.status(404).json({ msg: 'This Business name is already picked !' })
+        if (validate) return res.status(404).json({ msg: 'This Business name is already picked !',status: 404 })
 
         let user = await new Mpos(req.body)
 
         await user.save().then(user => {
             return res.status(200).json({
                 msg: 'Congratulation Your request is successful !!!',
-                user: user
+                user: user,
+                status: 200
             })
         })
 
 
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !'
+            msg: 'there is an unknown error sorry !',
+            status: 500
         })
     }
 })
@@ -46,10 +49,11 @@ router.delete("/delete", verify, async (req, res) => {
         if (!req.body.id ) return res.status(402).json({ msg: 'provide the id ?' })
 
         await Mpos.deleteOne({ _id: req.body.id })
-        res.status(200).json("Request deleted....");
+        res.status(200).json({msg:"Request deleted....",status: 200});
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !'
+            msg: 'there is an unknown error sorry !',
+            status: 500
         })
     }
 
@@ -57,13 +61,14 @@ router.delete("/delete", verify, async (req, res) => {
 
 router.get("/single", verify, async (req, res) => {
     try {
-        if (!req.body.id ) return res.status(402).json({ msg: 'provide the id ?' })
+        if (!req.body.id ) return res.status(402).json({ msg: 'provide the id ?',status: 402 })
 
         let user = await Mpos.find({ _id: req.body.id })
         res.status(200).json(user);
     } catch (err) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !'
+            msg: 'there is an unknown error sorry !',
+            status: 500
         })
     }
 })
@@ -74,16 +79,17 @@ router.put('/edit', verify, async (req, res) => {
     let { id } = body;
 
     const validate = await Mpos.findOne({ business_name: req.body.business_name })
-    if (validate) return res.status(404).json({ msg: 'This Business name is already picked !' })
+    if (validate) return res.status(404).json({ msg: 'This Business name is already picked !',status: 404 })
 
     try {
-        if (!req.body.id ) return res.status(402).json({ msg: 'provide the id ?' })
+        if (!req.body.id ) return res.status(402).json({ msg: 'provide the id ?',status: 402 })
 
         await Mpos.updateOne({ _id: id }, body).then(async () => {
             let user = await Mpos.findOne({ _id: id })
             return res.status(200).json({
                 msg: 'Pos request Setup Successfully !!!',
-                user: user
+                user: user,
+                status: 200
             })
         }).catch((err) => {
             res.send(err)
@@ -91,7 +97,8 @@ router.put('/edit', verify, async (req, res) => {
 
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !'
+            msg: 'there is an unknown error sorry !',
+            status: 500
         })
     }
 
