@@ -239,19 +239,18 @@ router.post('/charge_ng', async (req, res) => {
 
   try {
 
-    const payload = {
-      "tx_ref": req.body.tx_ref,
-      "amount": req.body.amount,
-      "email": req.body.email,
-      "currency": req.body.currency,
-     "subaccounts": [
-      {
-        "id": req.body.id
-      }
-    ]
+    const payload = { 
+    "tx_ref": req.body.tx_ref,
+    "amount": req.body.amount,
+    "account_bank": req.body.account_bank,
+    "account_number": req.body.account_number,
+    "currency": req.body.currency,
+    "email": req.body.email,
+    "phone_number": req.body.phone_number, 
+    "fullname": req.body.fullname
     }
 
-    const response = await flw.Charge.bank_transfer(payload)
+    const response = await flw.Charge.ng(payload)
 
     return res.status(200).json({
       response: response,
