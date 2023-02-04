@@ -265,6 +265,35 @@ router.post('/charge_ng', async (req, res) => {
 
 })
 
+router.post('/ussd', async (req, res) => {
+
+  try {
+
+    const payload = {
+      "tx_ref": req.body.tx_ref,
+      "account_bank": req.body.account_bank,
+      "amount": req.body.amount,
+      "currency": req.body.currency,
+      "email": req.body.email,
+      "phone_number": req.body.phone_number,
+      "fullname": req.body.fullname
+  }
+
+    const response = await flw.Charge.ussd(payload)
+
+    return res.status(200).json({
+      response: response,
+      status: 200
+    })
+  } catch (error) {
+    res.status(500).json({
+      msg: 'there is an unknown error sorry !',
+      status: 500
+    })
+  }
+
+})
+
 
 
 module.exports = router
