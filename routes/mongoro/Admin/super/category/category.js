@@ -6,7 +6,7 @@ const dotenv = require("dotenv")
 dotenv.config()
 
 
-//CREATE
+//CREATEr
 router.post('/create', async (req, res) => {
 
     try {

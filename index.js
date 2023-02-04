@@ -27,20 +27,13 @@ app.use("/mongoro/auth", mongoroAuth)
 app.use("/mongoro/auth/kyc", mongoroAuthKyc)
 app.use("/mongoro/user", mongoroUser)
 app.use("/mongoro/pos", mongoroMpos)
-app.use("/mongoro/transaction", mongoroTransaction)
+app.use("/mongoro", mongoroTransaction)
 app.use("/mongoro/admin/super", mongoroSuperAdmin)
 app.use("/mongoro/tickets", mongoroTickets)
 app.use("/mongoro/super_admin/category", mongoroSuperAdminCategory)
 
 
-// Add headers
-// app.use(function (req, res, next) {
-//     res.setHeader('Access-Control-Allow-Origin', '*');
-//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-//     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-//     res.setHeader('Access-Control-Allow-Credentials', true);
-//     next();
-// });
+
 
 mongoose.set("strictQuery", true);
 mongoose .connect("mongodb+srv://mongoro:mongoro@mongoro.dbwd7pc.mongodb.net/?retryWrites=true&w=majority")
@@ -48,7 +41,6 @@ mongoose .connect("mongodb+srv://mongoro:mongoro@mongoro.dbwd7pc.mongodb.net/?re
     .then(() => {
         console.log("MongoDB Connected!!!")
     })
-    
     .catch((err) => console.log(err));
 
 const port = process.env.PORT || 3000; 
