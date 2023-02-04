@@ -203,7 +203,68 @@ router.post('/card', async (req, res) => {
 
 })
 
+router.post('/bank_transfer', async (req, res) => {
 
+  try {
+
+    const payload = {
+      "tx_ref": req.body.tx_ref,
+      "amount": req.body.amount,
+      "email": req.body.email,
+      "currency": req.body.currency,
+     "subaccounts": [
+      {
+        "id": req.body.id
+      }
+    ]
+    }
+
+    const response = await flw.Charge.bank_transfer(payload)
+
+    return res.status(200).json({
+      response: response,
+      status: 200
+    })
+  } catch (error) {
+    res.status(500).json({
+      msg: 'there is an unknown error sorry !',
+      status: 500
+    })
+  }
+
+})
+
+
+router.post('/charge_ng', async (req, res) => {
+
+  try {
+
+    const payload = {
+      "tx_ref": req.body.tx_ref,
+      "amount": req.body.amount,
+      "email": req.body.email,
+      "currency": req.body.currency,
+     "subaccounts": [
+      {
+        "id": req.body.id
+      }
+    ]
+    }
+
+    const response = await flw.Charge.bank_transfer(payload)
+
+    return res.status(200).json({
+      response: response,
+      status: 200
+    })
+  } catch (error) {
+    res.status(500).json({
+      msg: 'there is an unknown error sorry !',
+      status: 500
+    })
+  }
+
+})
 
 
 
