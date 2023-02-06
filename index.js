@@ -36,8 +36,8 @@ app.use("/mongoro/super_admin/category", mongoroSuperAdminCategory)
 
 
 mongoose.set("strictQuery", true);
-mongoose .connect("mongodb+srv://mongoro:mongoro@mongoro.dbwd7pc.mongodb.net/?retryWrites=true&w=majority")
-    // .connect(process.env.MONGO_URL)
+mongoose //.connect("mongodb+srv://mongoro:mongoro@mongoro.dbwd7pc.mongodb.net/?retryWrites=true&w=majority")
+    .connect(process.env.MONGO_URL)
     .then(() => {
         console.log("MongoDB Connected!!!")
     })

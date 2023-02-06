@@ -212,11 +212,11 @@ router.post('/bank_transfer', async (req, res) => {
       "amount": req.body.amount,
       "email": req.body.email,
       "currency": req.body.currency,
-     "subaccounts": [
-      {
-        "id": req.body.id
-      }
-    ]
+      "subaccounts": [
+        {
+          "id": req.body.id
+        }
+      ]
     }
 
     const response = await flw.Charge.bank_transfer(payload)
@@ -239,15 +239,15 @@ router.post('/charge_ng', async (req, res) => {
 
   try {
 
-    const payload = { 
-    "tx_ref": req.body.tx_ref,
-    "amount": req.body.amount,
-    "account_bank": req.body.account_bank,
-    "account_number": req.body.account_number,
-    "currency": req.body.currency,
-    "email": req.body.email,
-    "phone_number": req.body.phone_number, 
-    "fullname": req.body.fullname
+    const payload = {
+      "tx_ref": req.body.tx_ref,
+      "amount": req.body.amount,
+      "account_bank": req.body.account_bank,
+      "account_number": req.body.account_number,
+      "currency": req.body.currency,
+      "email": req.body.email,
+      "phone_number": req.body.phone_number,
+      "fullname": req.body.fullname
     }
 
     const response = await flw.Charge.ng(payload)
@@ -277,7 +277,7 @@ router.post('/ussd', async (req, res) => {
       "email": req.body.email,
       "phone_number": req.body.phone_number,
       "fullname": req.body.fullname
-  }
+    }
 
     const response = await flw.Charge.ussd(payload)
 
@@ -294,6 +294,140 @@ router.post('/ussd', async (req, res) => {
 
 })
 
+
+router.post('/ussd', async (req, res) => {
+
+  try {
+
+    const payload = {
+      "tx_ref": req.body.tx_ref,
+      "account_bank": req.body.account_bank,
+      "amount": req.body.amount,
+      "currency": req.body.currency,
+      "email": req.body.email,
+      "phone_number": req.body.phone_number,
+      "fullname": req.body.fullname
+    }
+
+    const response = await flw.Charge.ussd(payload)
+
+    return res.status(200).json({
+      response: response,
+      status: 200
+    })
+  } catch (error) {
+    res.status(500).json({
+      msg: 'there is an unknown error sorry !',
+      status: 500
+    })
+  }
+
+})
+
+
+////VIRTUAL CARD///////////////////////////////////////////////////////////////////////////////////
+
+router.post('/create_virtual_card', async (req, res) => {
+
+  try {
+
+    const payload = {
+      "currency": "NGN",
+      "amount": 5000,
+      "first_name":"Dwayne",
+      "last_name":"Johnson",
+      "date_of_birth":"1972/05/02",
+      "email":"dwaynejohnson@gmail.com",
+      "phone":"08082479297",
+      "title":"Mr",
+      "gender":"M" ,
+      "callback_url": "https://your-callback-url.com/"
+  }
+
+    const response = await flw.VirtualCard.create(payload)
+
+    return res.status(200).json({
+      response: response,
+      status: 200
+    })
+  } catch (error) {
+    res.status(500).json({
+      msg: 'there is an unknown error sorry !',
+      status: 500
+    })
+  }
+
+})
+
+router.get('/all_virtual_card', async (req, res) => {
+
+  try {
+
+    const payload = {
+      "id":"c6d7f40b-f772-47b7-8136-81256d2f87a2" //This is the unique id of the particular card you want to fetch its details. You can get this id from the call to create a virtual card or list virtual cards as data.id
+  }
+  const response = await flw.VirtualCard.fetch(payload)
+
+    return res.status(200).json({
+      response: response,
+      status: 200
+    })
+  } catch (error) {
+    res.status(500).json({
+      msg: 'there is an unknown error sorry !',
+      status: 500
+    })
+  }
+
+})
+
+
+////Bills ///////////////////////////////////////////////////////////////////////////////////
+router.post('/bill_payment', async (req, res) => {
+
+  try {
+
+    const payload={
+      "country": req.body.country,
+      "customer": req.body.customer,
+      "amount": req.body.amount,
+      "recurrence": req.body.recurrence,
+      "type": req.body.type,
+      "reference": req.body.reference
+   }
+  
+  const response = await flw.Bills.create_bill(payload)
+
+    return res.status(200).json({
+      response: response,
+      status: 200
+    })
+  } catch (error) {
+    res.status(500).json({
+      msg: 'there is an unknown error sorry !',
+      status: 500
+    })
+  }
+
+})
+
+router.get('/bill_category', async (req, res) => {
+
+  try {
+    const response = await flw.Bills.fetch_bills_Cat()
+
+    return res.status(200).json({
+      response: response,
+      status: 200
+    })
+  } catch (error) {
+    res.status(500).json({
+      msg: 'there is an unknown error sorry !',
+      status: 500
+    })
+  }
+
+})
 
 
 module.exports = router
