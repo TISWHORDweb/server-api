@@ -17,9 +17,10 @@ const mongoose=require('mongoose')
 // const dotenv = require("dotenv")
 // dotenv.config()
 
+app.use(cors({origin: "*"}))
+
 app.use(bodyParser.json())
 
-app.use(cors({origin: "*"}))
 
 app.use("/mongoro_waitlist", mongoroWaitlistRoute)
 app.use("/reef_waitlist", reefWaitlistRoute)
@@ -35,9 +36,10 @@ app.use("/mongoro/super_admin/category", mongoroSuperAdminCategory)
 
 
 
+
 mongoose.set("strictQuery", true);
-mongoose //.connect("mongodb+srv://mongoro:mongoro@mongoro.dbwd7pc.mongodb.net/?retryWrites=true&w=majority")
-    .connect(process.env.MONGO_URL)
+mongoose .connect("mongodb+srv://mongoro:mongoro@mongoro.dbwd7pc.mongodb.net/?retryWrites=true&w=majority")
+    // .connect(process.env.MONGO_URL)
     .then(() => {
         console.log("MongoDB Connected!!!")
     })

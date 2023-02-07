@@ -3,17 +3,43 @@ const router = express.Router()
 const TicketModel = require("../../../models/mongoro/tickets/api")
 const verify = require("../../../verifyToken")
 
-router.get("/all", verify, async (req, res) => {
-    try {
-        const tickets = await TicketModel.find();
-        res.status(200).json(tickets.reverse());
-    } catch (err) {
-        res.status(500).json({
-            msg: 'there is an unknown error sorry !',
-            status: 500
-        })
-    }
+router.get('/all', verify, paginatedResults(TicketModel), (req, res) => {
+    res.json(res.paginatedResults)
 })
+
+function paginatedResults(model) {
+    return async (req, res, next) => {
+        const page = parseInt(req.query.page)
+        const limit = parseInt(req.query.limit)
+
+        const startIndex = (page - 1) * limit
+        const endIndex = page * limit
+
+        const results = {}
+
+        if (endIndex < await model.countDocuments().exec()) {
+            results.next = {
+                page: page + 1,
+                limit: limit
+            }
+        }
+
+        if (startIndex > 0) {
+            results.previous = {
+                page: page - 1,
+                limit: limit
+            }
+        }
+        try {
+            results.results = await model.find().limit(limit).skip(startIndex).exec()
+            let count = await TicketModel.count()
+            res.paginatedResults = {results, TotalResult: count, Totalpages: Math.ceil(count / limit)}
+            next()
+        } catch (e) {
+            res.status(500).json({ message: e.message })
+        }
+    }
+}
 
 //CREATE
 router.post('/create', verify,async (req, res) => {

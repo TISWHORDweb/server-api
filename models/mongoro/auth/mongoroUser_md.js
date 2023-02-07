@@ -65,11 +65,26 @@ const mongoroUserSchema=new mongoose.Schema({
     image:{
         type:String
     },
+    wallet:{
+        balance:{
+            type:String,
+            default: "0.00"
+        },
+        status:{
+            type:String,
+            default: "REGULAR (NGN)"
+        },
+        block:{
+            type:String,
+            default: false
+        },
+        updated_at:{type:Number, default:()=>Date.now()}
+    },
     time_created:{type:Number, default:()=>Date.now()}		
 })
 
 
 const MongoroUserModel=mongoose.model("mongoro_register", mongoroUserSchema)
 
-module.exports=MongoroUserModel
 
+module.exports=MongoroUserModel

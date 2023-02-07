@@ -129,17 +129,43 @@ router.post('/create', async (req, res) => {
 })
 
 //GET ALL
-router.get("/waitlists", verify, async (req, res) => {
-    try {
-        const waitlist = await MongoroWaitlistModel.find();
-        res.status(200).json(waitlist.reverse());
-    } catch (err) {
-        res.status(500).json({
-            msg: 'there is an unknown error sorry !',
-            status: 500
-        })
-    }
+router.get('/all', verify, paginatedResults(MongoroWaitlistModel), (req, res) => {
+    res.json(res.paginatedResults)
 })
+
+function paginatedResults(model) {
+    return async (req, res, next) => {
+        const page = parseInt(req.query.page)
+        const limit = parseInt(req.query.limit)
+
+        const startIndex = (page - 1) * limit
+        const endIndex = page * limit
+
+        const results = {}
+
+        if (endIndex < await model.countDocuments().exec()) {
+            results.next = {
+                page: page + 1,
+                limit: limit
+            }
+        }
+
+        if (startIndex > 0) {
+            results.previous = {
+                page: page - 1,
+                limit: limit
+            }
+        }
+        try {
+            results.results = await model.find().limit(limit).skip(startIndex).exec()
+            let count = await MongoroWaitlistModel.count()
+            res.paginatedResults = {results, TotalResult: count, Totalpages: Math.ceil(count / limit)}
+            next()
+        } catch (e) {
+            res.status(500).json({ message: e.message })
+        }
+    }
+}
 
 
 // delete
