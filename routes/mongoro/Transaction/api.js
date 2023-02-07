@@ -51,14 +51,14 @@ function paginatedResults(model) {
 }
 
 //CREATE
-router.post('/transaction', verify,async (req, res) => {
+router.post('/', verify,async (req, res) => {
 
   if (!req.body.transaction_ID || !req.body.userID ) return res.status(402).json({ msg: 'please check the fields ?' })
 
   let user = await MongoroUserModel.find({ _id: req.body.userID })
   const oldAmount = user[0].wallet.balance
   newAmount = +oldAmount + +req.body.amount
-  
+
   try {
       let transaction = await new TransferModel(req.body)
 
@@ -66,7 +66,6 @@ router.post('/transaction', verify,async (req, res) => {
 
         MongoroUserModel.updateOne({ _id: req.body.userID }, { $set: {wallet:{balance: newAmount,updated_at: Date.now()} } }).then(async () => {
       })
-
           return res.status(200).json({
               msg: 'Transaction successful !!!',
               transaction: transaction,
@@ -85,8 +84,8 @@ router.delete("/delete", verify, async (req, res) => {
   try {
       if (!req.body.id ) return res.status(402).json({ msg: 'provide the id ?' })
 
-      await TicketModel.deleteOne({ _id: req.body.id })
-      res.status(200).json("Tickets deleted....");
+      await TransferModel.deleteOne({ _id: req.body.id })
+      res.status(200).json("Transaction deleted....");
   } catch (error) {
       res.status(500).json({
           msg: 'there is an unknown error sorry !',
@@ -100,8 +99,8 @@ router.get("/:id", verify, async (req, res) => {
   try {
       if (!req.params.id ) return res.status(402).json({ msg: 'provide the id ?' })
 
-      let tickets = await TicketModel.find({ _id: req.params.id })
-      res.status(200).json(tickets);
+      let transaction = await TransferModel.find({ _id: req.params.id })
+      res.status(200).json(transaction);
   } catch (err) {
       res.status(500).json({
           msg: 'there is an unknown error sorry !',
@@ -110,33 +109,7 @@ router.get("/:id", verify, async (req, res) => {
   }
 })
 
-router.put('/edit', verify, async (req, res) => {
-  let body = JSON.parse(JSON.stringify(req.body));
-  let { id } = body;
 
-  try {
-      if (!req.body.id ) return res.status(402).json({ msg: 'provide the id ?' })
-
-      await TicketModel.updateOne({ _id: id }, body).then(async () => {
-          let tickets = await TicketModel.findOne({ _id: id })
-          return res.status(200).json({
-              msg: 'Ticket Edited Successfully !!!',
-              tickets: tickets,
-              status: 200
-          })
-      }).catch((err) => {
-          res.send(err)
-      })
-
-  } catch (error) {
-      res.status(500).json({
-          msg: 'there is an unknown error sorry !',
-          status: 500
-      })
-  }
-
-
-})
 
 
 
