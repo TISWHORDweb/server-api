@@ -1,35 +1,33 @@
 const mongoose = require('mongoose')
 
 const TransferSchema=new mongoose.Schema({
-    account_bank:{
+    transaction_ID:{
         type:String
     },
-    account_number:{
-        type:String
+    Date:{
+        type:Number, 
+        default:()=>Date.now()
     },
     amount:{
         type:String
     },
-    narration:{
+    userID:{
         type:String
     },
-    currency:{
+    service_type:{
         type:String
     },
-    reference:{
-        type:Number, 
-        default:()=>Date.now()
-    },
-    callback_url:{
+    status:{
         type:String
     },
-    debit_currency:{
-        type:String
+    archive:{
+        type:Boolean,
+        default: false,
     },
 })
 
 
-const TransferModel=mongoose.model("tickets", TransferSchema)
+const TransferModel=mongoose.model("transaction", TransferSchema)
 
 module.exports=TransferModel
 

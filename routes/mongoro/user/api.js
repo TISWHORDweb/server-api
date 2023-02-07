@@ -26,6 +26,11 @@ router.get('/all', paginatedResults(MongoroUserModel), (req, res) => {
     res.json(res.paginatedResults)
 })
 
+
+router.get('/all', paginatedResults(MongoroUserModel), (req, res) => {
+    res.json(res.paginatedResults)
+})
+
 function paginatedResults(model) {
     return async (req, res, next) => {
         const page = parseInt(req.query.page)
