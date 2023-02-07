@@ -27,7 +27,6 @@ router.post('/register', async (req, res) => {
         const validate = await MongoroUserModel.findOne({ email: req.body.email })
         if (validate) return res.status(404).json({ msg: 'There is another user with this email !',status: 404})
 
-
         let transporter = nodemailer.createTransport({
             service: "hotmail",
             auth: {

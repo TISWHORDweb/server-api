@@ -22,10 +22,6 @@ let storage = multer.diskStorage({
 //set Storage Configuration to multer
 let upload = multer({ storage })
 
-router.get('/all', paginatedResults(MongoroUserModel), (req, res) => {
-    res.json(res.paginatedResults)
-})
-
 
 router.get('/all', paginatedResults(MongoroUserModel), (req, res) => {
     res.json(res.paginatedResults)
@@ -39,25 +35,25 @@ function paginatedResults(model) {
         const startIndex = (page - 1) * limit
         const endIndex = page * limit
 
-        const results = {}
+        const action = {}
 
         if (endIndex < await model.countDocuments().exec()) {
-            results.next = {
+            action.next = {
                 page: page + 1,
                 limit: limit
             }
         }
 
         if (startIndex > 0) {
-            results.previous = {
+            action.previous = {
                 page: page - 1,
                 limit: limit
             }
         }
         try {
-            results.results = await model.find().limit(limit).skip(startIndex).exec()
+            const results = await model.find().limit(limit).skip(startIndex).exec()
             let count = await MongoroUserModel.count()
-            res.paginatedResults = {results, TotalResult: count, Totalpages: Math.ceil(count / limit)}
+            res.paginatedResults = {action, results ,TotalResult: count, Totalpages: Math.ceil(count / limit)}
             next()
         } catch (e) {
             res.status(500).json({ message: e.message })
