@@ -10,6 +10,7 @@ const verify = require("../../../verifyToken")
 const address = require('address');
 const Word = require('../../words')
 const request = require('request');
+const bcrypt = require('bcrypt')
 
 
 //CREATE
@@ -30,7 +31,7 @@ router.post('/register', async (req, res) => {
     req.body.wallet = { wallet_ID: ref }
 
     if (req.body.password) {
-        req.body.password = CryptoJS.AES.encrypt(req.body.password, "mongoro").toString()
+        req.body.password = await bcrypt.hash(req.body.password, 13)
     }
 
     try {
@@ -188,14 +189,13 @@ router.post("/verify", async (req, res) => {
 
 
 router.post("/login", async (req, res) => {
-    const { email, password } = req.body
+
     const user = await MongoroUserModel.findOne({ email: req.body.email })
-    const bytes = CryptoJS.AES.decrypt(user.password, process.env.SECRET_KEY);
-    const originalPassword = bytes.toString(CryptoJS.enc.Utf8);
+    const originalPassword = await bcrypt.compare(req.body.password, user.password);
 
     if (!user) {
         res.status(400).json({msg:"user not found",code: 400})
-    } else if (originalPassword !== password) {
+    } else if (!originalPassword) {
         res.status(400).json({msg:"wrong password",code:400})
     } else {
         const accessToken = jwt.sign(
