@@ -192,9 +192,9 @@ router.post("/login", async (req, res) => {
     const user = await MongoroUserModel.findOne({ email: req.body.email })
 
     if (!user) {
-        res.send("no user found")
+        res.status(400).json("user not found")
     } else if (user.password !== password) {
-        res.send("wrong password")
+        res.status(400).json("wrong password")
     } else {
         const accessToken = jwt.sign(
             { id: user._id, isverified: user.isverified },
