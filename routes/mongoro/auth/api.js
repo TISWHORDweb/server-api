@@ -24,7 +24,7 @@ router.post('/register', async (req, res) => {
     var strFirstThree = str.substring(0, 3);
     const word = generateRandomLetter()
 
-    const ref = "@"+strFirstThree+word+Math.floor(100 + Math.random() * 999)
+    const ref = "@" + strFirstThree + word + Math.floor(100 + Math.random() * 999)
 
     req.body.email_code = Math.floor(100 + Math.random() * 900)
     req.body.sms_code = Math.floor(100 + Math.random() * 900)
@@ -54,7 +54,7 @@ router.post('/register', async (req, res) => {
         var data = {
             "to": req.body.phone,
             "from": "Mongoro-PIN",
-            "sms": "Your code is "+req.body.sms_code,
+            "sms": "Your code is " + req.body.sms_code,
             "type": "plain",
             "api_key": "TLMPIOB7Oe4V8NRRc7KnukwGgTAY9PZLqwVw2DMhrr8o0CEXh4BMmBfN6C0cNf",
             "channel": "generic",
@@ -169,7 +169,7 @@ router.post("/verify", async (req, res) => {
     try {
         let sms = await MongoroUserModel.findOne({ sms_code: req.body.sms_code })
         let email = await MongoroUserModel.findOne({ email_code: req.body.email_code })
-        if (!sms ||!email) {
+        if (!sms || !email) {
             res.status(404).json({ msg: "Incorrect verification code press code resend and try again", status: 404 })
         } else {
             await MongoroUserModel.update({ isverified: false }, { $set: { isverified: true } })
@@ -189,17 +189,28 @@ router.post("/verify", async (req, res) => {
 
 
 router.post("/login", async (req, res) => {
-    const {email,password} = req.body
+    const { email, password } = req.body
     const user = await MongoroUserModel.findOne({ email: req.body.email })
 
     if (!user) {
         res.send("no user found")
-    } else if(user.password !== password) {
+    } else if (user.password !== password) {
         res.send("wrong password")
     } else {
-        res.send(user)
+        const accessToken = jwt.sign(
+            { id: user._id, isverified: user.isverified },
+            process.env.SECRET_KEY,
+            { expiresIn: "3h" }
+        );
+
+        const ip = address.ip();
+
+        await MongoroUserModel.updateOne({ _id: user._id }, { $set: { ip: ip } }).then(user => {
+            res.status(200).json({ msg: 'logged in successfuly !', user: user, token: accessToken, ip_address: ip, status: 200 });
+        })
+
     }
-    
+
 })
 
 
