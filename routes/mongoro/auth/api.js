@@ -10,7 +10,7 @@ const verify = require("../../../verifyToken")
 const address = require('address');
 const Word = require('../../words')
 const request = require('request');
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 
 
 //CREATE
