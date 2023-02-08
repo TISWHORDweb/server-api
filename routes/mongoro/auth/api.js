@@ -19,7 +19,6 @@ router.post('/register', async (req, res) => {
         return Word[Math.floor(Math.random() * Word.length)]
     }
 
-
     var str = req.body.name;
     var strFirstThree = str.substring(0, 3);
     const word = generateRandomLetter()
@@ -205,7 +204,7 @@ router.post("/login", async (req, res) => {
 
         const ip = address.ip();
 
-        await MongoroUserModel.updateOne({ _id: user._id }, { $set: { ip: ip } }).then(user => {
+        await MongoroUserModel.updateOne({ _id: user._id }, { $set: { ip: ip } }).then(() => {
             res.status(200).json({ msg: 'logged in successfuly !', user: user, token: accessToken, ip_address: ip, status: 200 });
         })
 
