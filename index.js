@@ -17,13 +17,13 @@ const mongoose=require('mongoose')
 // const dotenv = require("dotenv")
 // dotenv.config()
 
-// app.use(cors({"origin":"*"}))
+app.use(cors({"origin":"*"}))
 
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", '*');
-    res.header("mode","no-cors")
+// app.use(function(req, res, next) {
+//     res.header("Access-Control-Allow-Origin", '*');
+//     res.header("mode","no-cors")
  
-})
+// })
 
 app.use(bodyParser.json())
 

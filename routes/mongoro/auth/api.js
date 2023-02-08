@@ -30,9 +30,9 @@ router.post('/register', async (req, res) => {
     req.body.sms_code = Math.floor(100 + Math.random() * 900)
     req.body.wallet = { wallet_ID: ref }
 
-    if (req.body.password) {
-        req.body.password = CryptoJS.AES.encrypt(req.body.password, "mongoro").toString()
-    }
+    // if (req.body.password) {
+    //     req.body.password = CryptoJS.AES.encrypt(req.body.password, "mongoro").toString()
+    // }
 
     try {
         if (!req.body.email || !req.body.name || !req.body.password || !req.body.phone || !req.body.username) return res.status(402).json({ msg: 'please check the fields ?', status: 402 })
@@ -188,37 +188,52 @@ router.post("/verify", async (req, res) => {
 })
 
 
-//LOGIN
 router.post("/login", async (req, res) => {
+    const {email,password} = req.body
+    const user = await MongoroUserModel.findOne({ email: req.body.email })
 
-    const user = await MongoroUserModel.findOne({ email: req.body.email });
-    const bytes = CryptoJS.AES.decrypt(user.password, process.env.SECRET_KEY);
-    const originalPassword = bytes.toString(CryptoJS.enc.Utf8);
-
-    const validator = await MongoroUserModel.findOne({ username: req.body.username })
-    if (validator) return res.status(404).json({ msg: 'There is another user with this username !', status: 404 })
-
-
-    if (user === null) {
-        console.log("User does not exists");
-        res.status(400).json("wrong password or username !");
-    } else if (originalPassword != req.body.password) {
-        res.status(400).json({ msg: 'wrong password !', status: 400 });
+    if (!user) {
+        res.send("no user found")
+    } else if(user.password !== password) {
+        res.send("wrong password")
     } else {
-        const accessToken = jwt.sign(
-            { id: user._id, isverified: user.isverified },
-            process.env.SECRET_KEY,
-            { expiresIn: "3h" }
-        );
-
-        const ip = address.ip();
-
-        await MongoroUserModel.updateOne({ _id: user._id }, { $set: { ip: ip } })
-
-        res.status(200).json({ msg: 'logged in successfuly !', user: user, token: accessToken, ip_address: ip, status: 200 });
+        res.send(user)
     }
-
+    
 })
+
+
+//LOGIN
+// router.post("/login", async (req, res) => {
+
+//     const user = await MongoroUserModel.findOne({ email: req.body.email });
+//     const bytes = CryptoJS.AES.decrypt(user.password, process.env.SECRET_KEY);
+//     const originalPassword = bytes.toString(CryptoJS.enc.Utf8);
+
+//     const validator = await MongoroUserModel.findOne({ username: req.body.username })
+//     if (validator) return res.status(404).json({ msg: 'There is another user with this username !', status: 404 })
+
+
+//     if (user === null) {
+//         console.log("User does not exists");
+//         res.status(400).json("wrong password or username !");
+//     } else if (originalPassword != req.body.password) {
+//         res.status(400).json({ msg: 'wrong password !', status: 400 });
+//     } else {
+//         const accessToken = jwt.sign(
+//             { id: user._id, isverified: user.isverified },
+//             process.env.SECRET_KEY,
+//             { expiresIn: "3h" }
+//         );
+
+//         const ip = address.ip();
+
+//         await MongoroUserModel.updateOne({ _id: user._id }, { $set: { ip: ip } })
+
+//         res.status(200).json({ msg: 'logged in successfuly !', user: user, token: accessToken, ip_address: ip, status: 200 });
+//     }
+
+// })
 
 //setup
 router.put('/settings', verify, async (req, res) => {
