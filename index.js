@@ -17,7 +17,11 @@ const mongoose=require('mongoose')
 // const dotenv = require("dotenv")
 // dotenv.config()
 
-app.use(cors())
+app.use(cors({"origin":"*"}))
+
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", '*');
+})
 
 app.use(bodyParser.json())
 
