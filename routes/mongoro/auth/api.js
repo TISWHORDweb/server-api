@@ -4,28 +4,39 @@ const nodemailer = require('nodemailer');
 const MongoroUserModel = require("../../../models/mongoro/auth/mongoroUser_md")
 const CryptoJS = require("crypto-js")
 const jwt = require("jsonwebtoken")
-const requestIp = require('request-ip');
 const dotenv = require("dotenv")
 dotenv.config()
 const verify = require("../../../verifyToken")
 const address = require('address');
+const Word = require('../../words')
 
 
 
 //CREATE
 router.post('/register', async (req, res) => {
 
+    function generateRandomLetter() {
+        return Word[Math.floor(Math.random() * Word.length)]
+    }
+
+    var str = req.body.name;
+    var strFirstThree = str.substring(0, 3);
+    const word = generateRandomLetter()
+
+    const ref = "@"+strFirstThree+word+Math.floor(100 + Math.random() * 999)
+
     req.body.verification_code = Math.floor(100000 + Math.random() * 900000)
+    req.body.wallet = { wallet_ID: ref }
 
     if (req.body.password) {
         req.body.password = CryptoJS.AES.encrypt(req.body.password, "mongoro").toString()
     }
 
     try {
-        if (!req.body.email || !req.body.name || !req.body.password || !req.body.phone || !req.body.username) return res.status(402).json({ msg: 'please check the fields ?',status: 402 })
+        if (!req.body.email || !req.body.name || !req.body.password || !req.body.phone || !req.body.username) return res.status(402).json({ msg: 'please check the fields ?', status: 402 })
 
         const validate = await MongoroUserModel.findOne({ email: req.body.email })
-        if (validate) return res.status(404).json({ msg: 'There is another user with this email !',status: 404})
+        if (validate) return res.status(404).json({ msg: 'There is another user with this email !', status: 404 })
 
         let transporter = nodemailer.createTransport({
             service: "hotmail",
@@ -131,7 +142,7 @@ router.post("/verify", async (req, res) => {
     try {
         let code = await MongoroUserModel.findOne({ verification_code: req.body.verification_code })
         if (!code) {
-            res.status(404).json({ msg: "Incorrect verification code press code resend and try again",status: 404 })
+            res.status(404).json({ msg: "Incorrect verification code press code resend and try again", status: 404 })
         } else {
             await MongoroUserModel.update({ isverified: false }, { $set: { isverified: true } })
             return res.status(200).json({
@@ -169,7 +180,7 @@ router.post("/login", async (req, res) => {
             { expiresIn: "3h" }
         );
 
-        const ip = address.ip();   // '192.168.0.2'
+        const ip = address.ip();
 
         await MongoroUserModel.updateOne({ _id: user._id }, { $set: { ip: ip } })
 
@@ -177,7 +188,6 @@ router.post("/login", async (req, res) => {
     }
 
 })
-
 
 //setup
 router.put('/settings', verify, async (req, res) => {

@@ -1,6 +1,16 @@
 const mongoose = require('mongoose')
 
 
+function generateRandomLetter() {
+    const alphabet = "abcdefghijklmnopqrstuvwxyz"
+    return alphabet[Math.floor(Math.random() * alphabet.length)]
+}
+
+const letter = generateRandomLetter()
+const letterr = generateRandomLetter()
+const ref = "MO_" + Math.floor(100000 + Math.random() * 900000) + letter + letterr + Math.floor(1000 + Math.random() * 9000)
+
+
 const mongoroUserSchema=new mongoose.Schema({
     name:{
         type:String,
@@ -69,6 +79,9 @@ const mongoroUserSchema=new mongoose.Schema({
         balance:{
             type:String,
             default: "0.00"
+        },
+        wallet_ID:{
+            type:String
         },
         status:{
             type:String,
