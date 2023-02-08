@@ -17,7 +17,7 @@ const mongoose=require('mongoose')
 // const dotenv = require("dotenv")
 // dotenv.config()
 
-app.use(cors({origin: "*"}))
+app.use(cors())
 
 app.use(bodyParser.json())
 

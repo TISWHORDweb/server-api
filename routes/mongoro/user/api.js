@@ -274,5 +274,55 @@ router.put('/image', verify, upload.any(), async (req, res) => {
 
 })
 
+//unBlock
+router.put('/unblock', verify, async (req, res) => {
+    let body = JSON.parse(JSON.stringify(req.body));
+    let { id } = body;
+    try {
+        if (!req.body.id ) return res.status(402).json({ msg: 'provide the id ?',status: 402 })
+
+        await MongoroUserModel.updateOne({ _id: id }, { $set: {blocked: false } }).then(async () => {
+            return res.status(200).json({
+                msg: 'unBlocked Successful !!!',
+                status: 200
+            })
+        }).catch((err) => {
+            res.send(err)
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
+
+})
+
+//Block
+router.put('/block', verify, async (req, res) => {
+    let body = JSON.parse(JSON.stringify(req.body));
+    let { id } = body;
+    try {
+        if (!req.body.id ) return res.status(402).json({ msg: 'provide the id ?',status: 402 })
+
+        await MongoroUserModel.updateOne({ _id: id }, { $set: {blocked: true } }).then(async () => {
+            return res.status(200).json({
+                msg: 'Blocked Successful !!!',
+                status: 200
+            })
+        }).catch((err) => {
+            res.send(err)
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
+
+})
+
 module.exports = router
 

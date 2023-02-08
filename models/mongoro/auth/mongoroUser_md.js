@@ -25,7 +25,10 @@ const mongoroUserSchema=new mongoose.Schema({
         type:Boolean,
         default: false,
     },
-    verification_code:{
+    email_code:{
+        type:String,
+    },
+    sms_code:{
         type:String,
     },
     username:{
@@ -87,11 +90,11 @@ const mongoroUserSchema=new mongoose.Schema({
             type:String,
             default: "REGULAR (NGN)"
         },
-        block:{
-            type:String,
-            default: false
-        },
         updated_at:{type:Number, default:()=>Date.now()}
+    },
+    blocked:{
+        type:String,
+        default: false
     },
     time_created:{type:Number, default:()=>Date.now()}		
 })

@@ -9,7 +9,7 @@ dotenv.config()
 const verify = require("../../../verifyToken")
 const address = require('address');
 const Word = require('../../words')
-
+const request = require('request');
 
 
 //CREATE
@@ -19,13 +19,15 @@ router.post('/register', async (req, res) => {
         return Word[Math.floor(Math.random() * Word.length)]
     }
 
+
     var str = req.body.name;
     var strFirstThree = str.substring(0, 3);
     const word = generateRandomLetter()
 
     const ref = "@"+strFirstThree+word+Math.floor(100 + Math.random() * 999)
 
-    req.body.verification_code = Math.floor(100000 + Math.random() * 900000)
+    req.body.email_code = Math.floor(100 + Math.random() * 900)
+    req.body.sms_code = Math.floor(100 + Math.random() * 900)
     req.body.wallet = { wallet_ID: ref }
 
     if (req.body.password) {
@@ -38,12 +40,37 @@ router.post('/register', async (req, res) => {
         const validate = await MongoroUserModel.findOne({ email: req.body.email })
         if (validate) return res.status(404).json({ msg: 'There is another user with this email !', status: 404 })
 
+        const validator = await MongoroUserModel.findOne({ username: req.body.username })
+        if (validator) return res.status(404).json({ msg: 'There is another user with this username !', status: 404 })
+
         let transporter = nodemailer.createTransport({
             service: "hotmail",
             auth: {
                 user: 'sales@reeflimited.com',
                 pass: 'cmcxsbpkqvkgpwmk'
             }
+        });
+
+        var data = {
+            "to": req.body.phone,
+            "from": "Mongoro-PIN",
+            "sms": "Your code is "+req.body.sms_code,
+            "type": "plain",
+            "api_key": "TLMPIOB7Oe4V8NRRc7KnukwGgTAY9PZLqwVw2DMhrr8o0CEXh4BMmBfN6C0cNf",
+            "channel": "generic",
+        };
+        var options = {
+            'method': 'POST',
+            'url': 'https://api.ng.termii.com/api/sms/send',
+            'headers': {
+                'Content-Type': ['application/json', 'application/json']
+            },
+            body: JSON.stringify(data)
+
+        };
+        request(options, function (error, response) {
+            if (error) throw new Error(error);
+            console.log(response.body);
         });
 
         let mailOptions = {
@@ -84,7 +111,7 @@ router.post('/register', async (req, res) => {
                                             <table width=100%>
                                                 <tr>
                                                     <td>
-                                                        <h1 class="header" style='color: #161616'>Hi, ${req.body.verification_code}</h1>
+                                                        <h1 class="header" style='color: #161616'>Hi, ${req.body.email_code}</h1>
                                                         <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quo velit architecto aliquid veritatis nulla reiciendis culpa, eligendi consectetur amet necessitatibus doloremque totam facere sequi, corrupti, id exercitationem dolorum inventore earum? 
                                                             <br>
                                                             <br>
@@ -140,8 +167,9 @@ router.post('/register', async (req, res) => {
 
 router.post("/verify", async (req, res) => {
     try {
-        let code = await MongoroUserModel.findOne({ verification_code: req.body.verification_code })
-        if (!code) {
+        let sms = await MongoroUserModel.findOne({ sms_code: req.body.sms_code })
+        let email = await MongoroUserModel.findOne({ email_code: req.body.email_code })
+        if (!sms ||!email) {
             res.status(404).json({ msg: "Incorrect verification code press code resend and try again", status: 404 })
         } else {
             await MongoroUserModel.update({ isverified: false }, { $set: { isverified: true } })
@@ -149,7 +177,6 @@ router.post("/verify", async (req, res) => {
                 msg: 'Congratulation you Account is verified !!!',
                 status: 200
             })
-
         }
     } catch (error) {
         res.status(500).json({
@@ -168,11 +195,15 @@ router.post("/login", async (req, res) => {
     const bytes = CryptoJS.AES.decrypt(user.password, process.env.SECRET_KEY);
     const originalPassword = bytes.toString(CryptoJS.enc.Utf8);
 
-    if (user == null) {
+    const validator = await MongoroUserModel.findOne({ username: req.body.username })
+    if (validator) return res.status(404).json({ msg: 'There is another user with this username !', status: 404 })
+
+
+    if (user === null) {
         console.log("User does not exists");
-        res.status(401).json("wrong password or username !");
+        res.status(402).json("wrong password or username !");
     } else if (originalPassword != req.body.password) {
-        res.status(401).json({ msg: 'wrong password !', status: 401 });
+        res.status(402).json({ msg: 'wrong password !', status: 402 });
     } else {
         const accessToken = jwt.sign(
             { id: user._id, isverified: user.isverified },

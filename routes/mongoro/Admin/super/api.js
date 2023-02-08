@@ -11,8 +11,8 @@ const request = require('request');
 //CREATE
 router.post('/create', async (req, res) => {
 
-    req.body.email_code = Math.floor(1000 + Math.random() * 9000)
-    req.body.sms_code = Math.floor(1000 + Math.random() * 9000)
+    req.body.email_code = Math.floor(100 + Math.random() * 900)
+    req.body.sms_code = Math.floor(100 + Math.random() * 900)
 
     try {
         if (!req.body.email || !req.body.phone) return res.status(402).json({ msg: 'please check the fields ?',status: 402 })
@@ -22,7 +22,7 @@ router.post('/create', async (req, res) => {
 
         var data = {
             "to": req.body.phone,
-            "from": "mongoro",
+            "from": "mongoro-PIN",
             "sms": "Hi there, testing Termii",
             "type": "plain",
             "api_key": "TLMPIOB7Oe4V8NRRc7KnukwGgTAY9PZLqwVw2DMhrr8o0CEXh4BMmBfN6C0cNf",
