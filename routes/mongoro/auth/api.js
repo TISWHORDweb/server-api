@@ -29,9 +29,9 @@ router.post('/register', async (req, res) => {
     req.body.sms_code = Math.floor(100 + Math.random() * 900)
     req.body.wallet = { wallet_ID: ref }
 
-    // if (req.body.password) {
-    //     req.body.password = CryptoJS.AES.encrypt(req.body.password, "mongoro").toString()
-    // }
+    if (req.body.password) {
+        req.body.password = CryptoJS.AES.encrypt(req.body.password, "mongoro").toString()
+    }
 
     try {
         if (!req.body.email || !req.body.name || !req.body.password || !req.body.phone || !req.body.username) return res.status(402).json({ msg: 'please check the fields ?', status: 402 })
@@ -190,11 +190,13 @@ router.post("/verify", async (req, res) => {
 router.post("/login", async (req, res) => {
     const { email, password } = req.body
     const user = await MongoroUserModel.findOne({ email: req.body.email })
+    const bytes = CryptoJS.AES.decrypt(user.password, process.env.SECRET_KEY);
+    const originalPassword = bytes.toString(CryptoJS.enc.Utf8);
 
     if (!user) {
-        res.status(400).json("user not found")
-    } else if (user.password !== password) {
-        res.status(400).json("wrong password")
+        res.status(400).json({msg:"user not found",code: 400})
+    } else if (originalPassword !== password) {
+        res.status(400).json({msg:"wrong password",code:400})
     } else {
         const accessToken = jwt.sign(
             { id: user._id, isverified: user.isverified },
