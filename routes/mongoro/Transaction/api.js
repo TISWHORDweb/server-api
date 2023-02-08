@@ -18,94 +18,102 @@ router.get('/all', verify, paginatedResults(TransferModel), (req, res) => {
 
 function paginatedResults(model) {
   return async (req, res, next) => {
-      const page = parseInt(req.query.page)
-      const limit = parseInt(req.query.limit)
+    const page = parseInt(req.query.page)
+    const limit = parseInt(req.query.limit)
 
-      const startIndex = (page - 1) * limit
-      const endIndex = page * limit
+    const startIndex = (page - 1) * limit
+    const endIndex = page * limit
 
-      const action = {}
+    const action = {}
 
-      if (endIndex < await model.countDocuments().exec()) {
-          action.next = {
-              page: page + 1,
-              limit: limit
-          }
+    if (endIndex < await model.countDocuments().exec()) {
+      action.next = {
+        page: page + 1,
+        limit: limit
       }
+    }
 
-      if (startIndex > 0) {
-          action.previous = {
-              page: page - 1,
-              limit: limit
-          }
+    if (startIndex > 0) {
+      action.previous = {
+        page: page - 1,
+        limit: limit
       }
-      try {
-          const results = await model.find().limit(limit).skip(startIndex).exec()
-          let count = await TransferModel.count()
-          res.paginatedResults = {action, results ,TotalResult: count, Totalpages: Math.ceil(count / limit)}
-          next()
-      } catch (e) {
-          res.status(500).json({ message: e.message })
-      }
+    }
+    try {
+      const results = await model.find().limit(limit).skip(startIndex).exec()
+      let count = await TransferModel.count()
+      res.paginatedResults = { action, results, TotalResult: count, Totalpages: Math.ceil(count / limit) }
+      next()
+    } catch (e) {
+      res.status(500).json({ message: e.message })
+    }
   }
 }
 
 
 //CREATE
-router.post('/', verify,async (req, res) => {
+router.post('/', verify, async (req, res) => {
 
-  if (!req.body.transaction_ID || !req.body.userID ) return res.status(402).json({ msg: 'please check the fields ?' })
+  if (!req.body.transaction_ID || !req.body.userID) return res.status(402).json({ msg: 'please check the fields ?' })
 
-  let user = await MongoroUserModel.find({ _id: req.body.userID })
-  const oldAmount = user[0].wallet.balance
+  let user = await MongoroUserModel.findOne({ _id: req.body.userID })
+  const oldAmount = user.wallet.balance
   newAmount = +oldAmount + +req.body.amount
 
-  try {
+  const value = user.blocked
+
+  if (value === true) {
+    res.status(402).json({ msg: 'you are blocked' })
+  } else {
+    try {
       let transaction = await new TransferModel(req.body)
-
-        await transaction.save().then(transaction => {
-
-        MongoroUserModel.updateOne({ _id: req.body.userID }, { $set: {wallet:{balance: newAmount,updated_at: Date.now()} } }).then(async () => {
+  
+      await transaction.save().then(transaction => {
+  
+        MongoroUserModel.updateOne({ _id: req.body.userID }, { $set: { wallet: { balance: newAmount, updated_at: Date.now() } } }).then(async () => {
+        })
+        return res.status(200).json({
+          msg: 'Transaction successful !!!',
+          transaction: transaction,
+          status: 200
+        })
       })
-          return res.status(200).json({
-              msg: 'Transaction successful !!!',
-              transaction: transaction,
-              status: 200
-          })
-      })
-  } catch (error) {
+    } catch (error) {
       res.status(500).json({
-          msg: 'there is an unknown error sorry !',
-          status: 500
+        msg: 'there is an unknown error sorry !',
+        status: 500
       })
+    }
   }
+
+
 })
 
 router.delete("/delete", verify, async (req, res) => {
   try {
-      if (!req.body.id ) return res.status(402).json({ msg: 'provide the id ?' })
+    if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?' })
 
-      await TransferModel.deleteOne({ _id: req.body.id })
-      res.status(200).json("Transaction deleted....");
+    await TransferModel.deleteOne({ _id: req.body.id })
+    res.status(200).json("Transaction deleted....");
   } catch (error) {
-      res.status(500).json({
-          msg: 'there is an unknown error sorry !',
-          status: 500
-      })
+    res.status(500).json({
+      msg: 'there is an unknown error sorry !',
+      status: 500
+    })
   }
 
 });
 router.get("/:id", verify, async (req, res) => {
   try {
-      if (!req.params.id ) return res.status(402).json({ msg: 'provide the id ?' })
+    if (!req.params.id) return res.status(402).json({ msg: 'provide the id ?' })
 
-      let transaction = await TransferModel.find({ _id: req.params.id })
-      res.status(200).json(transaction);
+    let transaction = await TransferModel.find({ _id: req.params.id })
+    res.status(200).json(transaction);
   } catch (err) {
-      res.status(500).json({
-          msg: 'there is an unknown error sorry !',
-          status: 500
-      })
+    res.status(500).json({
+      msg: 'there is an unknown error sorry !',
+      status: 500
+    })
   }
 })
 

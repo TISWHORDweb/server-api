@@ -93,7 +93,7 @@ const mongoroUserSchema=new mongoose.Schema({
         updated_at:{type:Number, default:()=>Date.now()}
     },
     blocked:{
-        type:String,
+        type:Boolean,
         default: false
     },
     time_created:{type:Number, default:()=>Date.now()}		
