@@ -11,6 +11,7 @@ const mongoroMpos = require('./routes/mongoro/mpos/pos')
 const mongoroSuperAdmin = require('./routes/mongoro/Admin/super/api')
 const mongoroTransaction = require('./routes/mongoro/Transaction/api')
 const mongoroTickets = require('./routes/mongoro/Tickets/api')
+const mongoroUserMessage = require('./routes/mongoro/user/chat')
 const mongoroSuperAdminCategory = require('./routes/mongoro/Admin/super/category/category')
 const mongoose=require('mongoose')
 
@@ -29,6 +30,7 @@ app.use(cors({"origin":"*"}))
 app.use(bodyParser.json())
 
 
+
 app.use("/mongoro_waitlist", mongoroWaitlistRoute)
 app.use("/reef_waitlist", reefWaitlistRoute)
 app.use("/mongoro/auth", mongoroAuth)
@@ -38,6 +40,7 @@ app.use("/mongoro/pos", mongoroMpos)
 app.use("/mongoro/transaction", mongoroTransaction)
 app.use("/mongoro/admin/super", mongoroSuperAdmin)
 app.use("/mongoro/tickets", mongoroTickets)
+app.use("/mongoro/usermessage", mongoroUserMessage)
 app.use("/mongoro/super_admin/category", mongoroSuperAdminCategory)
 
 

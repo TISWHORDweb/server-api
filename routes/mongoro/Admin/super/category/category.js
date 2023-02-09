@@ -33,7 +33,6 @@ router.post('/create', async (req, res) => {
     }
 })
 
-
 router.get("/all", async (req, res) => {
     try {
         const category = await CategoryModel.find();

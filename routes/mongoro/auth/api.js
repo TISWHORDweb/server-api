@@ -192,7 +192,6 @@ router.post("/login", async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
 
     const user = await MongoroUserModel.findOne({ email: req.body.email })
-    // const originalPassword = await bcrypt.compare(req.body.password, user.password);
 
     if (!user) {
         res.status(400).json({msg:"user not found",code: 400})
@@ -215,25 +214,6 @@ router.post("/login", async (req, res) => {
             })
         }
     }
-    
-    
-    
-//     else if (!originalPassword) {
-//         res.status(400).json({msg:"wrong password",code:400})
-//     } else {
-//         const accessToken = jwt.sign(
-//             { id: user._id, isverified: user.isverified },
-//             process.env.SECRET_KEY,
-//             { expiresIn: "3h" }
-//         );
-
-//         const ip = address.ip();
-
-//         await MongoroUserModel.updateOne({ _id: user._id }, { $set: { ip: ip } }).then(() => {
-//             res.status(200).json({ msg: 'logged in successfuly !', user: user, token: accessToken, ip_address: ip, status: 200 });
-//         })
-
-//     }
 
 })
 
