@@ -9,7 +9,7 @@ const UserChatSchema=new mongoose.Schema({
         default: false,
     },
     userId: {
-        type: Boolean,
+        type: String,
         default: false,
     },
     send_at:{type:Number, default:()=>Date.now()},	

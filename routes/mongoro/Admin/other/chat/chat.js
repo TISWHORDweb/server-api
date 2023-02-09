@@ -1,22 +1,15 @@
 const express = require('express')
-const webpush = require('web-push');
 const router = express.Router()
-
-const publicVapidKey = process.env.PUBLIC_VAPID_KEY;
-const privateVapidKey = process.env.PRIVATE_VAPID_KEY;
+const AdminChatModel = require('../../../../../models/mongoro/admin/other/chat/otherChat')
 
 
-router.post('/notify', async (req, res) => {
-
+router.get("/user/:id",  async (req, res) => {
     try {
-        webpush.setVapidDetails('mailto:ebatimehin@gmail.com', publicVapidKey, privateVapidKey);
-       const subscription = req.body
+        if (!req.params.id ) return res.status(402).json({ msg: 'provide the id ?' })
 
-       const payload = JSON.stringify({ title: "New Message"})
-
-       await webpush.sendNotification(subscription, payload)
-
-    } catch (error) {
+        let tickets = await UserChatModel.find({ _id: req.params.id })
+        res.status(200).json(tickets);
+    } catch (err) {
         res.status(500).json({
             msg: 'there is an unknown error sorry !',
             status: 500

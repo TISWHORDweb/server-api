@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const CategorySchema=new mongoose.Schema({
+const AdminChatSchema=new mongoose.Schema({
     message:{
         type:String
     },
@@ -8,12 +8,10 @@ const CategorySchema=new mongoose.Schema({
         type: Boolean,
         default: false,
     },
-    
     send_at:{type:Number, default:()=>Date.now()},	
 })
 
+const AdminChatModel=mongoose.model("AdminChat", AdminChatSchema)
 
-const CategoryModel=mongoose.model("category", CategorySchema)
-
-module.exports=CategoryModel
+module.exports=AdminChatModel
 
