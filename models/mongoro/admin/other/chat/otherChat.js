@@ -8,6 +8,9 @@ const AdminChatSchema=new mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    to_userId:{
+        type: String
+    },
     send_at:{type:Number, default:()=>Date.now()},	
 })
 

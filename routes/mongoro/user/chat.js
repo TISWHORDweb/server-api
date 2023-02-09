@@ -2,6 +2,8 @@ const express = require('express')
 const router = express.Router()
 const verify = require("../../../verifyToken")
 const UserChatModel = require('../../../models/mongoro/auth/user/chat')
+const AdminChatModel = require('../../../models/mongoro/admin/other/chat/otherChat')
+
 
 router.post('/send', verify, async (req, res) => {
 
@@ -30,8 +32,8 @@ router.get("/:id", verify, async (req, res) => {
     try {
         if (!req.params.id ) return res.status(402).json({ msg: 'provide the id ?' })
 
-        let tickets = await UserChatModel.find({ userId: req.params.id })
-        res.status(200).json(tickets);
+        let chat = await UserChatModel.find({ userId: req.params.id })
+        res.status(200).json(chat);
     } catch (err) {
         res.status(500).json({
             msg: 'there is an unknown error sorry !',
