@@ -192,46 +192,34 @@ router.post("/login", async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
 
     const user = await MongoroUserModel.findOne({ email: req.body.email })
-    const originalPassword = await bcrypt.compare(req.body.password, user.password);
+    // const originalPassword = await bcrypt.compare(req.body.password, user.password);
 
     if (!user) {
         res.status(400).json({msg:"user not found",code: 400})
-    } else if (!originalPassword) {
-        res.status(400).json({msg:"wrong password",code:400})
-    } else {
-        const accessToken = jwt.sign(
-            { id: user._id, isverified: user.isverified },
-            process.env.SECRET_KEY,
-            { expiresIn: "3h" }
-        );
+    } else{
+        const originalPassword = await bcrypt.compare(req.body.password, user.password);
 
-        const ip = address.ip();
-
-        await MongoroUserModel.updateOne({ _id: user._id }, { $set: { ip: ip } }).then(() => {
-            res.status(200).json({ msg: 'logged in successfuly !', user: user, token: accessToken, ip_address: ip, status: 200 });
-        })
-
+        if(!originalPassword){
+            res.status(400).json({msg:"wrong password",code:400})
+        }else{
+            const accessToken = jwt.sign(
+                { id: user._id, isverified: user.isverified },
+                process.env.SECRET_KEY,
+                { expiresIn: "3h" }
+            );
+    
+            const ip = address.ip();
+    
+            await MongoroUserModel.updateOne({ _id: user._id }, { $set: { ip: ip } }).then(() => {
+                res.status(200).json({ msg: 'logged in successfuly !', user: user, token: accessToken, ip_address: ip, status: 200 });
+            })
+        }
     }
-
-})
-
-
-//LOGIN
-// router.post("/login", async (req, res) => {
-
-//     const user = await MongoroUserModel.findOne({ email: req.body.email });
-//     const bytes = CryptoJS.AES.decrypt(user.password, process.env.SECRET_KEY);
-//     const originalPassword = bytes.toString(CryptoJS.enc.Utf8);
-
-//     const validator = await MongoroUserModel.findOne({ username: req.body.username })
-//     if (validator) return res.status(404).json({ msg: 'There is another user with this username !', status: 404 })
-
-
-//     if (user === null) {
-//         console.log("User does not exists");
-//         res.status(400).json("wrong password or username !");
-//     } else if (originalPassword != req.body.password) {
-//         res.status(400).json({ msg: 'wrong password !', status: 400 });
+    
+    
+    
+//     else if (!originalPassword) {
+//         res.status(400).json({msg:"wrong password",code:400})
 //     } else {
 //         const accessToken = jwt.sign(
 //             { id: user._id, isverified: user.isverified },
@@ -241,12 +229,40 @@ router.post("/login", async (req, res) => {
 
 //         const ip = address.ip();
 
-//         await MongoroUserModel.updateOne({ _id: user._id }, { $set: { ip: ip } })
+//         await MongoroUserModel.updateOne({ _id: user._id }, { $set: { ip: ip } }).then(() => {
+//             res.status(200).json({ msg: 'logged in successfuly !', user: user, token: accessToken, ip_address: ip, status: 200 });
+//         })
 
-//         res.status(200).json({ msg: 'logged in successfuly !', user: user, token: accessToken, ip_address: ip, status: 200 });
 //     }
 
-// })
+})
+
+
+//LOGIN
+router.post("/checkdetail", async (req, res) => {
+
+    const user = await MongoroUserModel.findOne({ email: req.body.email });
+
+if(!user){
+    return res.status(404).json({ msg: 'invalid email', status: 404 })
+}else{
+    const originalPassword = await bcrypt.compare(req.body.password, user.password);
+
+    if(!originalPassword){
+        return res.status(400).json({ msg: 'wrong password!'})
+    }else{
+        return res.status(200).json({ msg: 'logged in successfuly!',})
+    }
+
+}
+
+// else if(!originalPassword){
+//     return res.status(404).json({ msg: 'invalid password!', status: 404 })
+// }
+    // if (!user) return res.status(404).json({ msg: 'invalid email', status: 404 })
+    // if (user && user.password !== req.body.password) return res.status(404).json({ msg: 'invalid password!', status: 404 })
+
+})
 
 //setup
 router.put('/settings', verify, async (req, res) => {
