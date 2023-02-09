@@ -189,6 +189,7 @@ router.post("/verify", async (req, res) => {
 
 
 router.post("/login", async (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
 
     const user = await MongoroUserModel.findOne({ email: req.body.email })
     const originalPassword = await bcrypt.compare(req.body.password, user.password);
