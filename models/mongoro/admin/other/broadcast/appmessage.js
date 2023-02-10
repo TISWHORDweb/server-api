@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const BroadcastSchema=new mongoose.Schema({
+const AppmessageSchema=new mongoose.Schema({
     message:{
         type:String
     },
@@ -20,8 +20,8 @@ const BroadcastSchema=new mongoose.Schema({
     send_at:{type:Number, default:()=>Date.now()},	
 })
 
-const BroadcastModel=mongoose.model("Broadcast", BroadcastSchema)
+const AppmessageModel=mongoose.model("Appmessage", AppmessageSchema)
 
-module.exports=BroadcastModel
+module.exports=AppmessageModel
 
 

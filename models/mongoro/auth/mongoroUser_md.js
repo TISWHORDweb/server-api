@@ -88,6 +88,32 @@ const mongoroUserSchema=new mongoose.Schema({
         },
         updated_at:{type:Number, default:()=>Date.now()}
     },
+    notification:{
+        message:{
+            type:String
+        },
+        subject:{
+            type: String
+        },
+        seen:{
+            type:Boolean,
+            default: false
+        },
+        send_at:{type:Number, default:()=>Date.now()},	
+    },
+    widget:{
+        message:{
+            type:String
+        },
+        subject:{
+            type: String
+        },
+        seen:{
+            type:Boolean,
+            default: false
+        },
+        send_at:{type:Number, default:()=>Date.now()},	
+    },
     blocked:{
         type:Boolean,
         default: false
