@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const NotificationModel = require("../../../../../models/mongoro/admin/other/notification/notification")
+const BroadcastModel = require("../../../../../models/mongoro/admin/other/broadcast/broadcast")
 const dotenv = require("dotenv")
 dotenv.config()
 
@@ -11,7 +11,7 @@ router.post('/', async (req, res) => {
     try {
         if (!req.body.recipent || !req.body.message || !req.body.type ) return res.status(402).json({ msg: 'provide the id ?',status: 402 })
 
-        let notification = await new NotificationModel(req.body)
+        let notification = await new BroadcastModel(req.body)
 
         await notification.save().then(notification => {
             return res.status(200).json({
@@ -31,7 +31,7 @@ router.post('/', async (req, res) => {
 
 router.get("/all", async (req, res) => {
     try {
-        const notification = await NotificationModel.find();
+        const notification = await BroadcastModel.find();
         res.status(200).json(notification.reverse());
     } catch (err) {
         res.status(500).json({
@@ -75,7 +75,7 @@ router.delete("/delete", async (req, res) => {
     try {
         if (!req.body.id ) return res.status(402).json({ msg: 'provide the id ?' })
 
-        await NotificationModel.deleteOne({ _id: req.body.id })
+        await BroadcastModel.deleteOne({ _id: req.body.id })
         res.status(200).json({msg: "Notification deleted....",status: 200});
     } catch (error) {
         res.status(500).json({

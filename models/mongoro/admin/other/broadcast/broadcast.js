@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const NotificationSchema=new mongoose.Schema({
+const BroadcastSchema=new mongoose.Schema({
     message:{
         type:String
     },
@@ -16,7 +16,8 @@ const NotificationSchema=new mongoose.Schema({
     send_at:{type:Number, default:()=>Date.now()},	
 })
 
-const NotificationModel=mongoose.model("Notification", NotificationSchema)
+const BroadcastModel=mongoose.model("Broadcast", BroadcastSchema)
 
-module.exports=NotificationModel
+module.exports=BroadcastModel
+
 
