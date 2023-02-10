@@ -14,9 +14,6 @@ const mongoroUserSchema=new mongoose.Schema({
     email:{
         type:String,
     },
-    image:{
-        type:String,
-    },
     phone:{
         type:String,    
     },

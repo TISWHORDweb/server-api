@@ -236,14 +236,13 @@ router.put('/edit_pin', verify, async (req, res) => {
 
 })
 
-router.put('/image', verify, upload.any(), async (req, res) => {
+router.put('/image', upload.any(), async (req, res) => {
     // let body = JSON.parse(JSON.stringify(req.body));
     // let { id } = body;
 
     try {
         if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?' })
         let user = await new MongoroUserModel(req.body)
-
 
         req.files.map(e => {
             switch (e.fieldname) {
@@ -252,8 +251,6 @@ router.put('/image', verify, upload.any(), async (req, res) => {
                     break;
             }
         })
-
-        const image = user.image
 
         await MongoroUserModel.updateOne({ _id: req.body.id }, { image: user.image }).then(async () => {
             let user = await MongoroUserModel.findOne({ _id: req.body.id })
