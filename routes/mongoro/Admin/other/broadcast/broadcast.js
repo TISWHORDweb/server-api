@@ -49,13 +49,12 @@ router.put('/edit', async (req, res) => {
     try {
         if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?',status: 402 })
 
-        await CategoryModel.updateOne({ _id: id }, body).then(async () => {
+        await BroadcastModel.updateOne({ _id: id }, body).then(async () => {
            
-            let category = await CategoryModel.findOne({ _id: id })
-            await CategoryModel.updateOne({ updated_at: category.updated_at }, { $set: { updated_at: Date.now() } })
+            let broadcast = await BroadcastModel.findOne({ _id: id })
             return res.status(200).json({
-                msg: 'Category Updated Successfully !!!',
-                category: category,
+                msg: 'Broadcast Updated Successfully !!!',
+                broadcast: broadcast,
                 status: 200
             })
         }).catch((err) => {
