@@ -16,15 +16,39 @@ router.post('/notification/email', async (req, res) => {
 
         await notification.save().then(notification => {
             MongoroUserModel.updateOne({ email: req.body.recipent }, { $set: { notification: { message: req.body.message, subject: req.body.subject, send_at: Date.now() } } }).then(async () => {
-                return res.status(200).json({
-                    msg: 'Notification sent successful !!!',
-                    notification: notification,
-                    status: 200
-                })
             })
-
+            return res.status(200).json({
+                msg: 'Notification sent successful !!!',
+                notification: notification,
+                status: 200
+            })
         })
 
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
+})
+
+
+router.post('/notification', async (req, res) => {
+
+    try {
+        if (!req.body.recipent || !req.body.message || !req.body.type) return res.status(402).json({ msg: 'provide the id ?', status: 402 })
+
+        let notification = await new BroadcastModel(req.body)
+
+        await notification.save().then(notification => {
+            MongoroUserModel.updateMany({ blocked: false }, { $set: { notification: { message: req.body.message, subject: req.body.subject, send_at: Date.now() } } }).then(async () => {
+            })
+            return res.status(200).json({
+                msg: 'Notification sent successful !!!',
+                notification: notification,
+                status: 200
+            })
+        })
     } catch (error) {
         res.status(500).json({
             msg: 'there is an unknown error sorry !',
