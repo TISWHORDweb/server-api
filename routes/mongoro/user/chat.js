@@ -41,6 +41,33 @@ router.get("/:id", verify, async (req, res) => {
         })
     }
 })
+router.put('/edit', async (req, res) => {
+    let body = JSON.parse(JSON.stringify(req.body));
+    let { id } = body;
 
+    try {
+        if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?',status: 402 })
+
+        await UserChatModel.updateOne({ _id: id }, body).then(async () => {
+           
+            let chat = await UserChatModel.findOne({ _id: id })
+
+            return res.status(200).json({
+                msg: 'Admin chat Updated Successfully !!!',
+                chat: chat,
+                status: 200
+            })
+        }).catch((err) => {
+            res.send(err)
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
+
+})
 
 module.exports =router
