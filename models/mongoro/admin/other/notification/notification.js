@@ -5,13 +5,9 @@ const NotificationSchema=new mongoose.Schema({
         type:String
     },
     type: {
-        type: Boolean,
-        default: false,
-    },
-    recipent:{
         type: String
     },
-    subject:{
+    recipent:{
         type: String
     },
     subject:{
@@ -20,7 +16,7 @@ const NotificationSchema=new mongoose.Schema({
     send_at:{type:Number, default:()=>Date.now()},	
 })
 
-const NotificationModel=mongoose.model("AdminChat", NotificationSchema)
+const NotificationModel=mongoose.model("Notification", NotificationSchema)
 
 module.exports=NotificationModel
 

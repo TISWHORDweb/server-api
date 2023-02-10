@@ -6,20 +6,17 @@ dotenv.config()
 
 
 //CREATE
-router.post('/create', async (req, res) => {
+router.post('/', async (req, res) => {
 
     try {
-        if (!req.body.name ) return res.status(402).json({ msg: 'please check the fields ?' })
+        if (!req.body.recipent || !req.body.message || !req.body.type ) return res.status(402).json({ msg: 'provide the id ?',status: 402 })
 
-        const validate = await CategoryModel.findOne({ name: req.body.name })
-        if (validate) return res.status(404).json({ msg: 'There is another category with that name !' })
+        let notification = await new NotificationModel(req.body)
 
-        let category = await new CategoryModel(req.body)
-
-        await category.save().then(category => {
+        await notification.save().then(notification => {
             return res.status(200).json({
                 msg: 'Category created successfully !!!',
-                category: category,
+                notification: notification,
                 status: 200
             })
         })
@@ -34,8 +31,8 @@ router.post('/create', async (req, res) => {
 
 router.get("/all", async (req, res) => {
     try {
-        const category = await CategoryModel.find();
-        res.status(200).json(category.reverse());
+        const notification = await NotificationModel.find();
+        res.status(200).json(notification.reverse());
     } catch (err) {
         res.status(500).json({
             msg: 'there is an unknown error sorry !',
