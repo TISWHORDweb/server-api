@@ -13,6 +13,10 @@ const BroadcastSchema=new mongoose.Schema({
     subject:{
         type: String
     },
+    seen:{
+        type:Boolean,
+        default: false
+    },
     send_at:{type:Number, default:()=>Date.now()},	
 })
 

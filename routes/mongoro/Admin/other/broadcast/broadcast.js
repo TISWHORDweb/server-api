@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const BroadcastModel = require("../../../../../models/mongoro/admin/other/broadcast/broadcast")
 const dotenv = require("dotenv")
+const MongoroUserModel = require("../../../../../models/mongoro/auth/mongoroUser_md")
 dotenv.config()
 
 
@@ -103,6 +104,35 @@ router.delete("/delete", async (req, res) => {
 //     }
 
 // })
+
+/////////NOTIFICATION//////////////////////////////////////
+
+router.get('/notification/:email', async (req, res) => {
+    try{
+        if (!req.params.email ) return res.status(402).json({ msg: 'provide the email ?',status: 402 })
+
+        let user = await BroadcastModel.findOne({ recipent: req.params.email })
+
+        if (!user) {
+            res.status(400).json({msg:"user not found",code: 400})
+        }else{
+            await BroadcastModel.find().limit(1).sort({$natural:-1}).then((data => {
+                return res.status(200).json({
+                    msg: 'Last notification get Successfully !!!',
+                    data: data,
+                    status: 200
+                })
+            })) 
+        }
+
+    }catch(error){
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
+
+})
 
 
 
