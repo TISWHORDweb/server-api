@@ -1,10 +1,20 @@
 const mongoose = require('mongoose')
 
 const mongoroUserSchema=new mongoose.Schema({
-    name:{
+    first_name:{
         type:String,
     },
+    last_name:{
+        type:String,
+    },
+    setup_complete:{
+        type:Boolean,
+        default: false,
+    },
     email:{
+        type:String,
+    },
+    image:{
         type:String,
     },
     phone:{
@@ -18,9 +28,6 @@ const mongoroUserSchema=new mongoose.Schema({
         type:String,
     },
     sms_code:{
-        type:String,
-    },
-    username:{
         type:String,
     },
     isverified:{
