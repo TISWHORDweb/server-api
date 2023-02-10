@@ -57,6 +57,55 @@ router.post('/notification', async (req, res) => {
     }
 })
 
+router.post('/notification/state', async (req, res) => {
+
+    try {
+        if (!req.body.recipent || !req.body.message || !req.body.type) return res.status(402).json({ msg: 'provide the id ?', status: 402 })
+
+        let notification = await new BroadcastModel(req.body)
+
+        await notification.save().then(notification => {
+            MongoroUserModel.updateMany({ state: req.body.state }, { $set: { notification: { message: req.body.message, subject: req.body.subject, send_at: Date.now() } } }).then(async () => {
+            })
+            return res.status(200).json({
+                msg: 'Notification sent successful !!!',
+                notification: notification,
+                status: 200
+            })
+        })
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
+})
+
+router.post('/notification/occupation', async (req, res) => {
+
+    try {
+        if (!req.body.recipent || !req.body.message || !req.body.type) return res.status(402).json({ msg: 'provide the id ?', status: 402 })
+
+        let notification = await new BroadcastModel(req.body)
+
+        await notification.save().then(notification => {
+            MongoroUserModel.updateMany({ occupation: req.body.occupation }, { $set: { notification: { message: req.body.message, subject: req.body.subject, send_at: Date.now() } } }).then(async () => {
+            })
+            return res.status(200).json({
+                msg: 'Notification sent successful !!!',
+                notification: notification,
+                status: 200
+            })
+        })
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
+})
+
+
 router.get("/all", async (req, res) => {
     try {
         const notification = await BroadcastModel.find();
