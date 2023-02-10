@@ -20,13 +20,15 @@ router.post('/register', async (req, res) => {
         return Word[Math.floor(Math.random() * Word.length)]
     }
 
+    var middle_name = req.body.middle_name.toLowerCase()
+    var surname = req.body.surname.toLowerCase()
     var first_name = req.body.first_name.toLowerCase()
-    var last_name = req.body.last_name.toLowerCase()
-    var strfirst_name = first_name.substring(0, 2);
-    var strlast_name = last_name.substring(0, 1);
+    var strmiddle_name = middle_name.substring(0, 1);
+    var strsurname = surname.substring(0, 1);
+    var strfirst_name = first_name.substring(0, 1);
     const word = generateRandomLetter().toLowerCase()
 
-    const ref = "@" + strlast_name + strfirst_name + word + Math.floor(100 + Math.random() * 900)
+    const ref = "@" + strsurname + strmiddle_name + strfirst_name + word + Math.floor(100 + Math.random() * 900)
 
     req.body.wallet = { wallet_ID: ref }
 
@@ -35,7 +37,7 @@ router.post('/register', async (req, res) => {
     }
 
     try {
-        if (!req.body.email || !req.body.first_name || !req.body.last_name || !req.body.password || !req.body.phone ) return res.status(402).json({ msg: 'please check the fields ?', status: 402 })
+        if (!req.body.email || !req.body.surname || !req.body.first_name || !req.body.middle_name || !req.body.password || !req.body.phone ) return res.status(402).json({ msg: 'please check the fields ?', status: 402 })
 
         const validate = await MongoroUserModel.findOne({ email: req.body.email })
         if (validate) return res.status(404).json({ msg: 'There is another user with this email !', status: 404 })
@@ -208,7 +210,7 @@ if(!user){
 })
 
 //setup
-router.put('/settings', verify, async (req, res) => {
+router.put('/settings', async (req, res) => {
     let body = JSON.parse(JSON.stringify(req.body));
     console.log(body)
     let { id } = body;
