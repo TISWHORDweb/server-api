@@ -75,8 +75,8 @@ router.delete("/delete", async (req, res) => {
     try {
         if (!req.body.id ) return res.status(402).json({ msg: 'provide the id ?' })
 
-        await CategoryModel.deleteOne({ _id: req.body.id })
-        res.status(200).json({msg: "Category deleted....",status: 200});
+        await NotificationModel.deleteOne({ _id: req.body.id })
+        res.status(200).json({msg: "Notification deleted....",status: 200});
     } catch (error) {
         res.status(500).json({
             msg: 'there is an unknown error sorry !',
@@ -87,40 +87,24 @@ router.delete("/delete", async (req, res) => {
 });
 
 //INVITE    
-router.post("/invite", async (req, res) => {
+// router.post("/invite", async (req, res) => {
 
-    const user = await MongoroUserModel.findOne({ email: req.body.email });
+//     const user = await MongoroUserModel.findOne({ email: req.body.email });
 
-    const validate = await CategoryModel.findOne({ name: req.body.category })
-    if (!validate) return res.status(404).json({ msg: 'There is no such category !' })
+//     const validate = await CategoryModel.findOne({ name: req.body.category })
+//     if (!validate) return res.status(404).json({ msg: 'There is no such category !' })
 
-    if (user == null) {
-        console.log("User does not exists");
-        res.status(401).json({msg: "wrong Email !",status: 401});
-    } else {
-        await MongoroUserModel.updateOne({ _id: user._id }, { $set: { category: req.body.category } })
+//     if (user == null) {
+//         console.log("User does not exists");
+//         res.status(401).json({msg: "wrong Email !",status: 401});
+//     } else {
+//         await MongoroUserModel.updateOne({ _id: user._id }, { $set: { category: req.body.category } })
 
-        res.status(200).json({ msg: 'User Invited successfuly !',status: 200 });
-    }
+//         res.status(200).json({ msg: 'User Invited successfuly !',status: 200 });
+//     }
 
-})
+// })
 
-router.post("/disable", async (req, res) => {
-
-    const user = await MongoroUserModel.findOne({ _id: req.body.id });
-
-    if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?', status: 402 })
-
-    if (user == null) {
-        console.log("User does not exists");
-        res.status(401).json({msg: "wrong Email !",status: 401});
-    } else {
-        await MongoroUserModel.updateOne({ _id: user._id }, { $set: { category: "none" } })
-
-        res.status(200).json({ msg: 'User Disabled successfuly !',status: 500 });
-    }
-
-})
 
 
 module.exports = router
