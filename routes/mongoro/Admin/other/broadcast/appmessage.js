@@ -105,6 +105,105 @@ router.post('/notification/occupation', async (req, res) => {
     }
 })
 
+//WIDGETS
+router.post('/widget/email', async (req, res) => {
+
+    try {
+        if (!req.body.recipent || !req.body.message || !req.body.type) return res.status(402).json({ msg: 'provide the id ?', status: 402 })
+
+        let widget = await new BroadcastModel(req.body)
+
+        await widget.save().then(widget => {
+            MongoroUserModel.updateOne({ email: req.body.recipent }, { $set: { widget: { message: req.body.message, subject: req.body.subject, send_at: Date.now() } } }).then(async () => {
+            })
+            return res.status(200).json({
+                msg: 'widget sent successful !!!',
+                widget: widget,
+                status: 200
+            })
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
+})
+
+
+router.post('/widget', async (req, res) => {
+
+    try {
+        if (!req.body.recipent || !req.body.message || !req.body.type) return res.status(402).json({ msg: 'provide the id ?', status: 402 })
+
+        let widget = await new BroadcastModel(req.body)
+
+        await widget.save().then(widget => {
+            MongoroUserModel.updateMany({ blocked: false }, { $set: { widget: { message: req.body.message, subject: req.body.subject, send_at: Date.now() } } }).then(async () => {
+            })
+            return res.status(200).json({
+                msg: 'widget sent successful !!!',
+                widget: widget,
+                status: 200
+            })
+        })
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
+})
+
+router.post('/widget/state', async (req, res) => {
+
+    try {
+        if (!req.body.recipent || !req.body.message || !req.body.type) return res.status(402).json({ msg: 'provide the id ?', status: 402 })
+
+        let widget = await new BroadcastModel(req.body)
+
+        await widget.save().then(widget => {
+            MongoroUserModel.updateMany({ state: req.body.state }, { $set: { widget: { message: req.body.message, subject: req.body.subject, send_at: Date.now() } } }).then(async () => {
+            })
+            return res.status(200).json({
+                msg: 'Notification sent successful !!!',
+                widget: widget,
+                status: 200
+            })
+        })
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
+})
+
+router.post('/widget/occupation', async (req, res) => {
+
+    try {
+        if (!req.body.recipent || !req.body.message || !req.body.type) return res.status(402).json({ msg: 'provide the id ?', status: 402 })
+
+        let widget = await new BroadcastModel(req.body)
+
+        await widget.save().then(widget => {
+            MongoroUserModel.updateMany({ occupation: req.body.occupation }, { $set: { widget: { message: req.body.message, subject: req.body.subject, send_at: Date.now() } } }).then(async () => {
+            })
+            return res.status(200).json({
+                msg: 'widget sent successful !!!',
+                widget: widget,
+                status: 200
+            })
+        })
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
+})
+
 
 router.get("/all", async (req, res) => {
     try {
