@@ -282,25 +282,43 @@ router.delete("/delete", async (req, res) => {
 
 // })
 
-/////////NOTIFICATION//////////////////////////////////////
+/////////APPMESSAGE//////////////////////////////////////
 
-router.get('/notification', async (req, res) => {
+
+router.post('/appmessage', async (req, res) => {
+
     try {
-        if (!req.params.email) return res.status(402).json({ msg: 'provide the email ?', status: 402 })
+        if (!req.body.recipent || !req.body.message || !req.body.type) return res.status(402).json({ msg: 'provide the id ?', status: 402 })
+
+        let appmessage = await new BroadcastModel(req.body)
+
+        await appmessage.save().then(appmessage => {
+            return res.status(200).json({
+                msg: 'Notification sent successful !!!',
+                appmessage: appmessage,
+                status: 200
+            })
+        })
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
+})
+
+router.get('/appmessage/:email', async (req, res) => {
+
+    try {
+        if (!req.params.email) return res.status(402).json({ msg: 'provide the id ?', status: 402 })
 
         let user = await BroadcastModel.findOne({ recipent: req.params.email })
 
-        if (!user) {
-            res.status(400).json({ msg: "user not found", code: 400 })
-        } else {
-            await BroadcastModel.find().limit(1).sort({ $natural: -1 }).then((data => {
-                return res.status(200).json({
-                    msg: 'Last notification get Successfully !!!',
-                    data: data,
-                    status: 200
-                })
-            }))
-        }
+        return res.status(200).json({
+            msg: 'notification Successful !!!',
+            user: user,
+            status: 200
+        })
 
     } catch (error) {
         res.status(500).json({
@@ -311,16 +329,43 @@ router.get('/notification', async (req, res) => {
 
 })
 
-router.get('/notification', async (req, res) => {
+router.get('/appmessage/:state', async (req, res) => {
 
     try {
-        await BroadcastModel.find().limit(1).sort({ $natural: -1 }).then((data => {
+        if (!req.params.state) return res.status(402).json({ msg: 'provide the id ?', status: 402 })
+
+        let user = await BroadcastModel.findOne({ recipent: req.params.state })
+        if (user) {
             return res.status(200).json({
-                msg: 'Last notification get Successfully !!!',
-                data: data,
+                msg: 'notification Successful !!!',
+                user: user,
                 status: 200
             })
-        }))
+           
+        } else {
+            res.status(400).json({ msg: "recipent not found" })
+        }
+
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
+
+})
+router.get('/appmessage/:occupation', async (req, res) => {
+
+    try {
+        if (!req.params.occupation) return res.status(402).json({ msg: 'provide the id ?', status: 402 })
+
+        let user = await BroadcastModel.findOne({ recipent: req.params.occupation })
+
+        return res.status(200).json({
+            msg: 'notification Successful !!!',
+            user: user,
+            status: 200
+        })
 
     } catch (error) {
         res.status(500).json({
