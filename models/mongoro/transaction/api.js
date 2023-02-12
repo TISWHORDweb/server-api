@@ -11,7 +11,7 @@ const TransferSchema=new mongoose.Schema({
     amount:{
         type:String
     },
-    userID:{
+    wallet_ID:{
         type:String
     },
     service_type:{
@@ -30,4 +30,3 @@ const TransferSchema=new mongoose.Schema({
 const TransferModel=mongoose.model("transaction", TransferSchema)
 
 module.exports=TransferModel
-

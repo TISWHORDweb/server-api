@@ -74,20 +74,18 @@ const mongoroUserSchema=new mongoose.Schema({
     image:{
         type:String
     },
-    wallet:{
-        balance:{
-            type:String,
-            default: "0.00"
-        },
-        wallet_ID:{
-            type:String
-        },
-        status:{
-            type:String,
-            default: "REGULAR (NGN)"
-        },
-        updated_at:{type:Number, default:()=>Date.now()}
+    wallet_balance:{
+        type:String,
+        default: "0.00"
     },
+    wallet_ID:{
+        type:String
+    },
+    wallet_status:{
+        type:String,
+        default: "REGULAR (NGN)"
+    },
+    wallet_updated_at:{type:Number, default:()=>Date.now()},
     notification:{
         message:{
             type:String

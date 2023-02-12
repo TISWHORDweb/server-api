@@ -30,7 +30,7 @@ router.post('/register', async (req, res) => {
 
     const ref = "@" + strsurname + strmiddle_name + strfirst_name + word + Math.floor(100 + Math.random() * 900)
 
-    req.body.wallet = { wallet_ID: ref }
+    req.body.wallet_ID = ref
 
     if (req.body.password) {
         req.body.password = await bcrypt.hash(req.body.password, 13)

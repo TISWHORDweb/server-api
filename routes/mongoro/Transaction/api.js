@@ -54,10 +54,10 @@ function paginatedResults(model) {
 //CREATE
 router.post('/', verify, async (req, res) => {
 
-  if (!req.body.transaction_ID || !req.body.userID) return res.status(402).json({ msg: 'please check the fields ?' })
+  if (!req.body.transaction_ID || !req.body.wallet_ID) return res.status(402).json({ msg: 'please check the fields ?' })
 
-  let user = await MongoroUserModel.findOne({ _id: req.body.userID })
-  const oldAmount = user.wallet.balance
+  let user = await MongoroUserModel.findOne({ wallet_ID: req.body.wallet_ID})
+  const oldAmount = user.wallet_balance
   newAmount = +oldAmount + +req.body.amount
 
   const value = user.blocked
@@ -70,7 +70,7 @@ router.post('/', verify, async (req, res) => {
   
       await transaction.save().then(transaction => {
   
-        MongoroUserModel.updateOne({ _id: req.body.userID }, { $set: { wallet: { balance: newAmount, updated_at: Date.now() } } }).then(async () => {
+        MongoroUserModel.updateOne({ wallet_ID: req.body.wallet_ID}, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(async () => {
         })
         return res.status(200).json({
           msg: 'Transaction successful !!!',
@@ -140,5 +140,3 @@ module.exports = router
 //       }
 //   }
 // });
-
-module.exports = router
