@@ -8,6 +8,7 @@ const mongoroAuth = require('./routes/mongoro/auth/api')
 const mongoroAuthKyc = require('./routes/mongoro/auth/kyc')
 const mongoroUser = require('./routes/mongoro/user/api')
 const mongoroMpos = require('./routes/mongoro/mpos/pos')
+const mongoroAccount = require('./routes/mongoro/user/account')
 const mongoroWithdraw = require('./routes/mongoro/Transaction/withdraw')
 const mongoroSuperAdmin = require('./routes/mongoro/Admin/super/api')
 const mongoroTransaction = require('./routes/mongoro/Transaction/api')
@@ -50,6 +51,7 @@ app.use("/mongoro/adminmessage", mongoroAdminMessage)
 app.use("/mongoro/super_admin/category", mongoroSuperAdminCategory)
 app.use("/mongoro/broadcast", mongoroAppmessage)
 app.use("/mongoro/u_verify", mongoroU_verify)
+app.use("/mongoro/account", mongoroAccount)
 
 
 
