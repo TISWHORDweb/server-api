@@ -45,6 +45,7 @@ router.post('/register', async (req, res) => {
         let user = await new MongoroUserModel(req.body)
 
         await user.save().then(user => {
+             MongoroUserModel.updateOne({ isverified: false }, { $set: { isverified: true } })
             return res.status(200).json({
                 msg: 'Congratulation you just Created your Mongoro Account !!!',
                 user: user,
@@ -183,22 +184,22 @@ router.post("/login", async (req, res) => {
 
 
 //LOGIN
-router.post("/checkdetail", async (req, res) => {
+// router.post("/checkdetail", async (req, res) => {
 
-    const user = await MongoroUserModel.findOne({ email: req.body.email });
+//     const user = await MongoroUserModel.findOne({ email: req.body.email });
 
-if(!user){
-    return res.status(404).json({ msg: 'invalid email', status: 404 })
-}else{
-    const originalPassword = await bcrypt.compare(req.body.password, user.password);
+// if(!user){
+//     return res.status(404).json({ msg: 'invalid email', status: 404 })
+// }else{
+//     const originalPassword = await bcrypt.compare(req.body.password, user.password);
 
-    if(!originalPassword){
-        return res.status(400).json({ msg: 'wrong password!'})
-    }else{
-        return res.status(200).json({ msg: 'logged in successfuly!',})
-    }
+//     if(!originalPassword){
+//         return res.status(400).json({ msg: 'wrong password!'})
+//     }else{
+//         return res.status(200).json({ msg: 'logged in successfuly!',})
+//     }
 
-}
+// }
 
 // else if(!originalPassword){
 //     return res.status(404).json({ msg: 'invalid password!', status: 404 })
@@ -206,7 +207,7 @@ if(!user){
     // if (!user) return res.status(404).json({ msg: 'invalid email', status: 404 })
     // if (user && user.password !== req.body.password) return res.status(404).json({ msg: 'invalid password!', status: 404 })
 
-})
+
 
 //setup
 router.put('/settings', async (req, res) => {

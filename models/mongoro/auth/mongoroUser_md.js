@@ -24,19 +24,12 @@ const mongoroUserSchema=new mongoose.Schema({
         type:Boolean,
         default: false,
     },
-    email_code:{
-        type:String,
-    },
-    sms_code:{
-        type:String,
-    },
     isverified:{
         type:Boolean,
         default: false,
     },
     role:{
-        type:Boolean,
-        default: false,
+        type:String,
     },
     password:{
         type:String,
