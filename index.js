@@ -14,6 +14,7 @@ const mongoroTransaction = require('./routes/mongoro/Transaction/api')
 const mongoroTickets = require('./routes/mongoro/Tickets/api')
 const mongoroAdminMessage = require('./routes/mongoro/Admin/other/chat/chat')
 const mongoroUserMessage = require('./routes/mongoro/user/chat')
+const mongoroU_verify = require('./routes/mongoro/user/u_verify')
 const mongoroSuperAdminCategory = require('./routes/mongoro/Admin/super/category/category')
 const mongoroAppmessage = require('./routes/mongoro/Admin/other/broadcast/appmessage')
 const mongoose=require('mongoose')
@@ -48,6 +49,7 @@ app.use("/mongoro/usermessage", mongoroUserMessage)
 app.use("/mongoro/adminmessage", mongoroAdminMessage)
 app.use("/mongoro/super_admin/category", mongoroSuperAdminCategory)
 app.use("/mongoro/broadcast", mongoroAppmessage)
+app.use("/mongoro/u_verify", mongoroU_verify)
 
 
 

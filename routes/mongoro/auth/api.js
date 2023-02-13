@@ -219,6 +219,7 @@ router.put('/settings', async (req, res) => {
         if (!req.body.address || !req.body.country || !req.body.state || !req.body.city || !req.body.gender || !req.body.occupation) return res.status(400).json({ msg: 'please check the fields ?' })
 
         await MongoroUserModel.updateOne({ _id: id }, body).then(async () => {
+           
             let user = await MongoroUserModel.findOne({ _id: id })
             return res.status(200).json({
                 msg: 'Account Setup Successfully !!!',
