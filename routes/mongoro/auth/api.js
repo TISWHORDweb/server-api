@@ -37,11 +37,10 @@ router.post('/register', async (req, res) => {
     }
 
     try {
-        if (!req.body.email || !req.body.surname || !req.body.first_name || !req.body.middle_name || !req.body.password || !req.body.phone ) return res.status(402).json({ msg: 'please check the fields ?', status: 402 })
+        if (!req.body.email || !req.body.surname || !req.body.first_name || !req.body.password || !req.body.phone ) return res.status(402).json({ msg: 'please check the fields ?', status: 402 })
 
         const validate = await MongoroUserModel.findOne({ email: req.body.email })
         if (validate) return res.status(404).json({ msg: 'There is another user with this email !', status: 404 })
-
 
         let user = await new MongoroUserModel(req.body)
 

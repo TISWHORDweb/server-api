@@ -5,7 +5,7 @@ const mongoroUserSchema=new mongoose.Schema({
         type:String,
     },
     surname:{
-        type:String,
+        type:String, 
     },
     first_name:{
         type:String,
