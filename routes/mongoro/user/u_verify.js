@@ -10,9 +10,9 @@ router.post('/save', verify, async (req, res) => {
     try {
         if (!req.body.userId || !req.body.b_id) return res.status(402).json({ msg: 'provide the id ?' })
 
-        if (req.body.b_id) {
-            req.body.b_id = await bcrypt.hash(req.body.b_id, 13)
-        }
+        // if (req.body.b_id) {
+        //     req.body.b_id = await bcrypt.hash(req.body.b_id, 13)
+        // }
 
         let details = await new BvnDefaultModel(req.body)
 
@@ -45,24 +45,12 @@ router.get("/all", async (req, res) => {
 })
 
 
-router.get("/check", async (req, res) => {
+router.get("/:id", async (req, res) => {
     try {
-        // if (!req.body.b_id || !req.body.check ) return res.status(402).json({ msg: 'provide the id ?' })
+        if (!req.params.id ) return res.status(402).json({ msg: 'provide the id ?' })
 
-        let user = await BvnDefaultModel.findone({ check: req.body.check })
-        console.log(user.b_id)
-        // let second = user.find({b_id: req.body.b_id})
-        const b = await bcrypt.compare(req.params.b_id, user[0].b_id);
-        console.log(b)
-        // if(!b){
-        //     res.status(400).json({msg:"wrong bvn",code:400})
-        // }
-        // }else{
-        //     let details = await BvnDefaultModel.findOne({ b_id: b })
-
-        //     console.log(details)
-        //     res.status(200).json(details);
-        // }
+        let user = await BvnDefaultModel.find({ b_id: req.params.id })
+        res.status(200).json(user);
 
     } catch (err) {
         res.status(500).json({

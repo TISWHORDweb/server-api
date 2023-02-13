@@ -103,6 +103,7 @@ router.delete("/delete", verify, async (req, res) => {
   }
 
 });
+
 router.get("/:id", verify, async (req, res) => {
   try {
     if (!req.params.id) return res.status(402).json({ msg: 'provide the id ?' })
