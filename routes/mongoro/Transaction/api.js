@@ -8,7 +8,7 @@ const MongoroUserModel = require("../../../models/mongoro/auth/mongoroUser_md")
 var request = require('request');
 
 
-// const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_KEY);
+const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_KEY);
 
 
 //Treansaction
@@ -89,11 +89,11 @@ router.get("/banktransfers", async (req, res) => {
 
 })
 
-router.get("/onebanktransfers", async (req, res) => {
+router.get("/banktransfers/:id", async (req, res) => {
 
   var options = {
     'method': 'GET',
-    'url': 'https://api.flutterwave.com/v3/transfers/394321',
+    'url': `https://api.flutterwave.com/v3/transfers/${req.params.id}`,
     'headers': {
       'Authorization': 'Bearer FLWSECK_TEST-141328841fb7943a7b8d1788f0377d3c-X'
     }
@@ -106,6 +106,13 @@ router.get("/onebanktransfers", async (req, res) => {
 
 })
 
+router.get("/verify/:id", async (req, res) => {
+
+  const payload = {"id": req.params.id};
+  const response = await flw.Transaction.verify(payload)
+  res.status(200).json(response)
+
+})
 
 
 router.get('/all', verify, paginatedResults(TransferModel), (req, res) => {
