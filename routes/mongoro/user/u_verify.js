@@ -13,6 +13,7 @@ router.post('/save', async (req, res) => {
     function generateRandomLetter() {
         return alph[Math.floor(Math.random() * alph.length)]
     }
+    
     const word = generateRandomLetter()
     const words = generateRandomLetter()
 
@@ -34,8 +35,11 @@ router.post('/save', async (req, res) => {
         }
     }
 
-
     try {
+
+        const validate = await BvnDefaultModel.findOne({ check: "MON"+check+"GORO" })
+        if (validate) return res.status(404).json({ msg: 'There is another user with this BVN !', status: 404 })
+
         await axios.post(url, {
             "id": bvn,
             "isSubjectConsent": true
