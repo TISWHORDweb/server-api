@@ -92,6 +92,12 @@ const mongoroUserSchema=new mongoose.Schema({
         },
         send_at:{type:Number, default:()=>Date.now()},	
     },
+    verification:{
+        bvn:{
+            type:Boolean,
+            default: false
+        },
+    },
     widget:{
         message:{
             type:String

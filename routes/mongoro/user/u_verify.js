@@ -39,7 +39,8 @@ router.post('/', verify, async (req, res) => {
 
         const validate = await BvnDefaultModel.find({ check: "MON"+check+"GORO" })
         if (validate){
-            res.status(200).json(validate);
+            console.log({val: validate});
+            res.send(validate)
         } else {
 
         await axios.post(url, {
@@ -86,7 +87,7 @@ router.post('/', verify, async (req, res) => {
                 .then(function (response) {
                     console.log(JSON.stringify(response.data));
                     const acc = response.data
-                    MongoroUserModel.updateOne({ email: email }, { $set: { account: acc } }).then(async () => {
+                    MongoroUserModel.updateOne({ email: email }, { $set: { account: acc , verification:{bvn: true}} }).then(async () => {
 
                         let details = await MongoroUserModel.findOne({ email: email })
 
@@ -116,7 +117,7 @@ router.post('/', verify, async (req, res) => {
             console.log(details)
 
         })
-    }
+        }
         // const body =  JSON.stringify({
         //     "email": email,
         //     "is_permanent": true,
