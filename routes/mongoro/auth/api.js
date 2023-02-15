@@ -20,15 +20,13 @@ router.post('/register', async (req, res) => {
         return Word[Math.floor(Math.random() * Word.length)]
     }
 
-    var middle_name = req.body.middle_name.toLowerCase()
     var surname = req.body.surname.toLowerCase()
     var first_name = req.body.first_name.toLowerCase()
-    var strmiddle_name = middle_name.substring(0, 1);
     var strsurname = surname.substring(0, 1);
-    var strfirst_name = first_name.substring(0, 1);
+    var strfirst_name = first_name.substring(0, 2);
     const word = generateRandomLetter().toLowerCase()
 
-    const ref = "@" + strsurname + strmiddle_name + strfirst_name + word + Math.floor(100 + Math.random() * 900)
+    const ref = "@" + strsurname + strfirst_name + word + Math.floor(100 + Math.random() * 900)
 
     req.body.wallet_ID = ref
 
@@ -52,7 +50,6 @@ router.post('/register', async (req, res) => {
                 status: 200
             })
         })
-
 
     } catch (error) {
         res.status(500).json({

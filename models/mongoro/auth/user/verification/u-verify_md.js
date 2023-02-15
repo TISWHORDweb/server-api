@@ -1,18 +1,14 @@
 const mongoose = require('mongoose')
 
 const BvnDetailsSchema=new mongoose.Schema({
-    uverify_resp:{
-        type:{}
-    },
-    userId: {
-        type: String,
-    },
     b_id: {
         type: String,
     },
-    check:{
-        type:Boolean,
-        default: false,
+    check: {
+        type: String,
+    },
+    data: {
+        type: {},
     },
     send_at:{type:Number, default:()=>Date.now()},	
 })
@@ -21,4 +17,3 @@ const BvnDetailsSchema=new mongoose.Schema({
 const BvnDefaultModel=mongoose.model("Uverify_resp", BvnDetailsSchema)
 
 module.exports=BvnDefaultModel
-

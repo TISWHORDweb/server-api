@@ -109,6 +109,9 @@ const mongoroUserSchema=new mongoose.Schema({
         type:Boolean,
         default: false
     },
+    account:{
+        type:{}
+    },
     time_created:{type:Number, default:()=>Date.now()}		
 })
 
