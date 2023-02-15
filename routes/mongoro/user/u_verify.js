@@ -138,6 +138,25 @@ router.post('/', verify, async (req, res) => {
     }
 })
 
+router.get("/banks", async (req, res) => {
+    const url = "https://api.sandbox.youverify.co/v2/api/identity/ng/bank-account-number/bank-list"
+
+    const header = {
+        headers: {
+            token: "PX5PKOeq.kxH0ThxPCDj2HidqDZMV0x0iw9TMXp7Z6z42"
+        }
+    }
+    try {
+        await axios.get(url,header).then(resp=>{
+            res.status(200).json(resp.data)
+        })
+    } catch (err) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
+})
 
 router.get("/all", verify, async (req, res) => {
     try {
