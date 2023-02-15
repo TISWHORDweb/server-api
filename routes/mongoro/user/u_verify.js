@@ -37,12 +37,11 @@ router.post('/', verify, async (req, res) => {
 
     try {
 
-        const validate = await BvnDefaultModel.find({ check: "MON"+check+"GORO" })
+        const validate = await BvnDefaultModel.findOne({ check: "MON"+check+"GORO" })
         if (validate){
-            console.log({val: validate});
             res.send(validate)
         } else {
-
+        
         await axios.post(url, {
             "id": bvn,
             "isSubjectConsent": true
@@ -158,11 +157,38 @@ router.get("/banks", async (req, res) => {
     }
 })
 
+
+
 router.get("/all", verify, async (req, res) => {
     try {
         const details = await BvnDefaultModel.find();
         res.status(200).json(details.reverse());
     } catch (err) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
+})
+
+router.post('/details', async (req, res) => {
+
+    try {
+        if (!req.body.account_name || !req.body.account_bank ) return res.status(402).json({ msg: 'provide the fields ?', status: 402 })
+
+        let widget = await new BroadcastModel(req.body)
+
+        await widget.save().then(widget => {
+            MongoroUserModel.updateOne({ email: req.body.recipent }, { $set: { widget: { message: req.body.message, subject: req.body.subject, send_at: Date.now() } } }).then(async () => {
+            })
+            return res.status(200).json({
+                msg: 'widget sent successful !!!',
+                widget: widget,
+                status: 200
+            })
+        })
+
+    } catch (error) {
         res.status(500).json({
             msg: 'there is an unknown error sorry !',
             status: 500
