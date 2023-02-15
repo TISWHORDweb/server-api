@@ -174,9 +174,14 @@ router.get("/all", verify, async (req, res) => {
 router.post('/details', async (req, res) => {
 
     try {
-        if (!req.body.account_name || !req.body.account_bank ) return res.status(402).json({ msg: 'provide the fields ?', status: 402 })
+        if (!req.body.account_number || !req.body.account_bank ) return res.status(402).json({ msg: 'provide the fields ?', status: 402 })
 
-        let widget = await new BroadcastModel(req.body)
+        const validate = await BvnDefaultModel.findOne({ account:{data:{account_number:req.body.account_number}}})
+        if (validate){
+            res.send(validate)
+        } else {
+            res.send("not found")
+        }
 
         await widget.save().then(widget => {
             MongoroUserModel.updateOne({ email: req.body.recipent }, { $set: { widget: { message: req.body.message, subject: req.body.subject, send_at: Date.now() } } }).then(async () => {
