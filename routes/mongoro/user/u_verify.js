@@ -34,7 +34,7 @@ router.post('/', async (req, res) => {
             token: "PX5PKOeq.kxH0ThxPCDj2HidqDZMV0x0iw9TMXp7Z6z42"
         }
     }
-
+    
     try {
 
         const validate = await BvnDefaultModel.findOne({ check: "MON" + check + "GORO" })
@@ -198,7 +198,6 @@ router.post('/details', async (req, res) => {
         } else {
             res.send("not found")
         }
-
 
     } catch (error) {
         res.status(500).json({
