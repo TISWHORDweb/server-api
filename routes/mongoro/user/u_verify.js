@@ -192,7 +192,7 @@ router.post('/details', async (req, res) => {
     try {
         if (!req.body.account_number || !req.body.account_bank) return res.status(402).json({ msg: 'provide the fields ?', status: 402 })
 
-        const validate = await BvnDefaultModel.findOne({ account: { data: { account_number: req.body.account_number } } })
+        const validate = await MongoroUserModel.findOne({ "account.data.account_number": req.body.account_number })
         if (validate) {
             res.send(validate)
         } else {
