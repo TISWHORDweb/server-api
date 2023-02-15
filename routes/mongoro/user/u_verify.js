@@ -7,13 +7,13 @@ const MongoroUserModel = require('../../../models/mongoro/auth/mongoroUser_md')
 const BvnDefaultModel = require('../../../models/mongoro/auth/user/verification/u-verify_md')
 
 
-router.post('/save', async (req, res) => {
+router.post('/', verify, async (req, res) => {
 
     const alph = 'abcdefghijklmnopqrstuvwxyz'
     function generateRandomLetter() {
         return alph[Math.floor(Math.random() * alph.length)]
     }
-    
+
     const word = generateRandomLetter()
     const words = generateRandomLetter()
 
@@ -37,8 +37,10 @@ router.post('/save', async (req, res) => {
 
     try {
 
-        const validate = await BvnDefaultModel.findOne({ check: "MON"+check+"GORO" })
-        if (validate) return res.status(404).json({ msg: 'There is another user with this BVN !', status: 404 })
+        const validate = await BvnDefaultModel.find({ check: "MON"+check+"GORO" })
+        if (validate){
+            res.status(200).json(validate);
+        } else {
 
         await axios.post(url, {
             "id": bvn,
@@ -114,7 +116,7 @@ router.post('/save', async (req, res) => {
             console.log(details)
 
         })
-
+    }
         // const body =  JSON.stringify({
         //     "email": email,
         //     "is_permanent": true,
@@ -136,7 +138,7 @@ router.post('/save', async (req, res) => {
 })
 
 
-router.get("/all", async (req, res) => {
+router.get("/all", verify, async (req, res) => {
     try {
         const details = await BvnDefaultModel.find();
         res.status(200).json(details.reverse());
@@ -148,8 +150,22 @@ router.get("/all", async (req, res) => {
     }
 })
 
+router.delete("/delete", verify, async (req, res) => {
+    try {
+        if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?' })
 
-router.get("/:id", async (req, res) => {
+        await BvnDefaultModel.deleteOne({ _id: req.body.id })
+        res.status(200).json("Bvn deleted....");
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
+
+});
+
+router.get("/:id", verify, async (req, res) => {
     try {
         if (!req.params.id) return res.status(402).json({ msg: 'provide the id ?' })
 
