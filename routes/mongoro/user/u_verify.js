@@ -7,7 +7,7 @@ const MongoroUserModel = require('../../../models/mongoro/auth/mongoroUser_md')
 const BvnDefaultModel = require('../../../models/mongoro/auth/user/verification/u-verify_md')
 
 
-router.post('/', verify, async (req, res) => {
+router.post('/', async (req, res) => {
 
     const alph = 'abcdefghijklmnopqrstuvwxyz'
     function generateRandomLetter() {
@@ -37,11 +37,28 @@ router.post('/', verify, async (req, res) => {
 
     try {
 
-        const validate = await BvnDefaultModel.findOne({ check: "MON"+check+"GORO" })
-        if (validate){
-            res.send(validate)
-        } else {
+        const validate = await BvnDefaultModel.findOne({ check: "MON" + check + "GORO" })
         
+        function statement (){
+            const checking = validate.data.datas.data
+
+            if (checking.firstName !== firstName) {
+                res.send("first name does not math")
+            } else if (checking.lastName !== lastName) {
+                res.send("lastName does not math")
+            } else if (checking.middleName !== middleName) {
+                res.send("middleName does not math")
+            } 
+        }
+
+        if (validate) {
+            statement()
+            let user = await MongoroUserModel.find({ email: email })
+            res.send(user)
+            console.log(validate)
+        } else{
+            console.log("account")
+
         await axios.post(url, {
             "id": bvn,
             "isSubjectConsent": true
@@ -58,65 +75,64 @@ router.post('/', verify, async (req, res) => {
             } else if (data.middleName !== middleName) {
                 res.status(402).json({ msg: 'middle name does not match ?' })
             } else {
-                res.status(200).json({ msg: 'all match ' })
-            }
-
-            var body = JSON.stringify({
-                "email": "developers@flutterwavego.com",
-                "is_permanent": true,
-                "bvn": "12345678901",
-                "tx_ref": "VA12",
-                "phonenumber": "08109328188",
-                "firstname": "Angela",
-                "lastname": "Ashley",
-                "narration": "Angela Ashley-Osuzoka"
-            });
-
-            var config = {
-                method: 'post',
-                url: 'https://api.flutterwave.com/v3/virtual-account-numbers',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer FLWSECK_TEST-141328841fb7943a7b8d1788f0377d3c-X'
-                },
-                data: body
-            };
-
-            axios(config)
-                .then(function (response) {
-                    console.log(JSON.stringify(response.data));
-                    const acc = response.data
-                    MongoroUserModel.updateOne({ email: email }, { $set: { account: acc , verification:{bvn: true}} }).then(async () => {
-
-                        let details = await MongoroUserModel.findOne({ email: email })
-
-                        console.log(details)
-                    }).catch((err) => {
-                        res.send(err)
-                    })
-
-                })
-                .catch(function (error) {
-                    console.log(error);
+                console.log({msg: "All details match "})
+                var body = JSON.stringify({
+                    "email": "developers@flutterwavego.com",
+                    "is_permanent": true,
+                    "bvn": "12345678901",
+                    "tx_ref": "VA12",
+                    "phonenumber": "08109328188",
+                    "firstname": "Angela",
+                    "lastname": "Ashley",
+                    "narration": "Angela Ashley-Osuzoka"
                 });
-
-            if (req.body.b_id) {
-                req.body.b_id = bcrypt.hash(req.body.b_id, 13)
+    
+                var config = {
+                    method: 'post',
+                    url: 'https://api.flutterwave.com/v3/virtual-account-numbers',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer FLWSECK_TEST-141328841fb7943a7b8d1788f0377d3c-X'
+                    },
+                    data: body
+                };
+    
+                axios(config)
+                    .then(function (response) {
+                        console.log(JSON.stringify(response.data));
+                        const acc = response.data
+                        MongoroUserModel.updateOne({ email: email }, { $set: { account: acc , verification:{bvn: true}} }).then(async () => {
+    
+                            let details = await MongoroUserModel.findOne({ email: email })
+    
+                            console.log(details)
+                            res.send({account: acc})
+                        })
+    
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+    
+                if (req.body.b_id) {
+                    req.body.b_id = bcrypt.hash(req.body.b_id, 13)
+                }
+    
+                const bodys = {
+                    "b_id": bvn,
+                    "check": "MON"+check+"GORO",
+                    "data": { datas }
+                }
+    
+                let details = new BvnDefaultModel(bodys)
+    
+                details.save()
+                console.log(details)
             }
-
-            const bodys = {
-                "b_id": bvn,
-                "check": "MON"+check+"GORO",
-                "data": { datas }
-            }
-
-            let details = new BvnDefaultModel(bodys)
-
-            details.save()
-            console.log(details)
 
         })
         }
+
         // const body =  JSON.stringify({
         //     "email": email,
         //     "is_permanent": true,
@@ -146,7 +162,7 @@ router.get("/banks", async (req, res) => {
         }
     }
     try {
-        await axios.get(url,header).then(resp=>{
+        await axios.get(url, header).then(resp => {
             res.status(200).json(resp.data)
         })
     } catch (err) {
@@ -159,7 +175,7 @@ router.get("/banks", async (req, res) => {
 
 
 
-router.get("/all", verify, async (req, res) => {
+router.get("/all",  async (req, res) => {
     try {
         const details = await BvnDefaultModel.find();
         res.status(200).json(details.reverse());
@@ -174,24 +190,15 @@ router.get("/all", verify, async (req, res) => {
 router.post('/details', async (req, res) => {
 
     try {
-        if (!req.body.account_number || !req.body.account_bank ) return res.status(402).json({ msg: 'provide the fields ?', status: 402 })
+        if (!req.body.account_number || !req.body.account_bank) return res.status(402).json({ msg: 'provide the fields ?', status: 402 })
 
-        const validate = await BvnDefaultModel.findOne({ account:{data:{account_number:req.body.account_number}}})
-        if (validate){
+        const validate = await BvnDefaultModel.findOne({ account: { data: { account_number: req.body.account_number } } })
+        if (validate) {
             res.send(validate)
         } else {
             res.send("not found")
         }
 
-        await widget.save().then(widget => {
-            MongoroUserModel.updateOne({ email: req.body.recipent }, { $set: { widget: { message: req.body.message, subject: req.body.subject, send_at: Date.now() } } }).then(async () => {
-            })
-            return res.status(200).json({
-                msg: 'widget sent successful !!!',
-                widget: widget,
-                status: 200
-            })
-        })
 
     } catch (error) {
         res.status(500).json({
@@ -201,7 +208,7 @@ router.post('/details', async (req, res) => {
     }
 })
 
-router.delete("/delete", verify, async (req, res) => {
+router.delete("/delete", async (req, res) => {
     try {
         if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?' })
 
