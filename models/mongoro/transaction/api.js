@@ -20,10 +20,23 @@ const TransferSchema=new mongoose.Schema({
     status:{
         type:String
     },
+    full_name:{
+        type:String
+    },
+    account_number:{
+        type:String
+    },
+    bank_name:{
+        type:String
+    },
+    userId:{
+        type:String
+    },
     archive:{
         type:Boolean,
         default: false,
     },
+
 })
 
 

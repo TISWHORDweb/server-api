@@ -24,6 +24,8 @@ router.post("/", async (req, res) => {
   const word = generateRandomLetter()
   const words = generateRandomLetter()
 
+  const tid = "00"+ Math.floor(1000000 + Math.random() * 9000000)
+
   const num = "001" + Math.floor(10000 + Math.random() * 90000) + word + words
 
   const body = {
@@ -46,14 +48,74 @@ router.post("/", async (req, res) => {
     },
     data: body
   };
+  const user = await MongoroUserModel.find({_id: req.body.userId});
 
-  await axios(config).then(function (response) {
-    res.status(200).json(response.data)
-  })
-    .catch(function (error) {
-      console.log(error);
-    });
 
+  const oldAmount = user[0].wallet_balance
+  console.log(oldAmount)
+
+  if (oldAmount < req.body.amount) {
+    res.status(401).json({msg: "Insufficient funds",status: 401});
+  }else if (oldAmount < 100){
+    res.status(401).json({msg: "you dont have enough money",status: 401});
+  }else if (req.body.amount < 100){
+    res.status(401).json({msg: "you cant send any have money lower than 100",status: 401});
+  } else {
+
+    const newAmount = oldAmount - req.body.amount
+
+    console.log(newAmount)
+
+    await axios(config).then(function (response) {
+      const data = response.data;
+
+      if(data){
+
+      const details = {
+        "transaction_ID": tid,
+        "service_type": req.body.service_type,
+        "amount": req.body.amount,
+        "status": data.status,
+        "full_name": data.data.full_name,
+        "account_number": data.data.account_number,
+        "bank_name": data.data.bank_name,
+        "userId": req.body.userId,
+      }
+
+      let transaction = new TransferModel(details)
+
+      transaction.save().then(transaction => {
+        if(transaction){
+          MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(() => {
+            console.log("updated")
+          });
+        }
+      
+        return res.status(200).json({
+          msg: 'Transaction successful !!!',
+          transaction: transaction,
+          status: 200
+        })
+      })
+    }
+
+    }).catch(function (error) {
+        console.log(error);
+      });
+  }
+
+})
+
+router.get("/tt", async (req, res) => {
+  try {
+      const category = await MongoroUserModel.find({_id: req.body.userId});
+      res.status(200).json(category.reverse());
+  } catch (err) {
+      res.status(500).json({
+          msg: 'there is an unknown error sorry !',
+          status: 500
+      })
+  }
 })
 
 router.post("/retry", async (req, res) => {
@@ -82,7 +144,7 @@ router.get("/banktransfers", async (req, res) => {
       'Authorization': 'Bearer FLWSECK_TEST-141328841fb7943a7b8d1788f0377d3c-X'
     }
   };
-  request(options, function (error, response) { 
+  request(options, function (error, response) {
     if (error) throw new Error(error);
     const data = JSON.parse(response.body)
     res.status(200).json(data)
@@ -99,7 +161,7 @@ router.get("/banktransfers/:id", async (req, res) => {
       'Authorization': 'Bearer FLWSECK_TEST-141328841fb7943a7b8d1788f0377d3c-X'
     }
   };
-  request(options, function (error, response) { 
+  request(options, function (error, response) {
     if (error) throw new Error(error);
     const data = JSON.parse(response.body)
     res.status(200).json(data);
@@ -109,7 +171,7 @@ router.get("/banktransfers/:id", async (req, res) => {
 
 router.get("/verify/:id", async (req, res) => {
 
-  const payload = {"id": req.params.id};
+  const payload = { "id": req.params.id };
   const response = await flw.Transaction.verify(payload)
   res.status(200).json(response)
 
@@ -158,7 +220,20 @@ function paginatedResults(model) {
 //CREATE
 router.post('/wallet', verify, async (req, res) => {
 
-  if (!req.body.transaction_ID || !req.body.wallet_ID) return res.status(402).json({ msg: 'please check the fields ?' })
+  if (!req.body.wallet_ID) return res.status(402).json({ msg: 'please check the fields ?' })
+
+  const alph = 'abcdefghijklmnopqrstuvwxyz'
+  function generateRandomLetter() {
+    return alph[Math.floor(Math.random() * alph.length)]
+  }
+
+  const word = generateRandomLetter()
+  const words = generateRandomLetter()
+
+
+  const num = word + words + Math.floor(10000 + Math.random() * 90000)
+
+  req.body.transaction_ID = num
 
   let user = await MongoroUserModel.findOne({ wallet_ID: req.body.wallet_ID })
   const oldAmount = user.wallet_balance

@@ -12,6 +12,7 @@ const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_K
 
 router.post('/', async (req, res) => {
 
+    const email = req.body.email
     const lastName = req.body.lastName
     const firstName = req.body.firstName
     const middleName = req.body.middleName
@@ -31,7 +32,7 @@ router.post('/', async (req, res) => {
         const validate = await BvnDefaultModel.findOne({ check: "MON" + check + "GORO" })
 
         function statement() {
-            const checking = validate.data.datas.data
+            const checking = validate.data.data
 
             if (checking.firstName !== firstName) {
                 res.send("first name does not math")
@@ -55,7 +56,6 @@ router.post('/', async (req, res) => {
                 "isSubjectConsent": true
             }, header).then(resp => {
                 const data = resp.data.data
-                const datas = resp.data
                 if (!data) {
                     res.status(402).json({ msg: 'BVN not found ?' })
                 }
@@ -69,23 +69,20 @@ router.post('/', async (req, res) => {
                     console.log({ msg: "All details match " })
 
                     if (req.body.b_id) {
-                        req.body.b_id =  bcrypt.hash(req.body.b_id, 13)
-                    }                
+                        req.body.b_id = bcrypt.hash(req.body.b_id, 13)
+                    }
 
                     const bodys = {
                         // "b_id": req.body.b_id,
                         "check": "MON" + check + "GORO",
-                        "data": { datas }
+                        "data": resp.data
                     }
 
-                    let details = new BvnDefaultModel(bodys).then(async ()=>{
-                        
-                        MongoroUserModel.updateOne({ email: email }, { $set: { verification: { bvn: true } } })
-                    
-                    })
-
+                    let details = new BvnDefaultModel(bodys)
                     details.save()
                     res.send(details)
+                    MongoroUserModel.updateOne({ email: email }, { $set: { verification: { bvn: true } } })
+
                 }
 
             })
