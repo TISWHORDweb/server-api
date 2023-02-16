@@ -190,31 +190,26 @@ router.get("/all", async (req, res) => {
     }
 })
 
-// router.post('/details', async (req, res) => {
+router.post('/details', async (req, res) => {
 
-//     try {
+    try {
 
-//         const details = {
-//             account_number: req.body.account_number,
-//             account_bank: req.body.account_bank
-//         };
-//         flw.Misc.verify_Account(details)
-//             .then(response => {
-//                 res.status(200).json(response.body);
-//             }) catch (error) {
-//                 res.status(500).json({
-//                     msg: 'there is an unknown error sorry!',
-//                     status: 500
-//                 })
-//             }
+        const details = {
+            account_number: req.body.account_number,
+            account_bank: req.body.account_bank
+        };
+        flw.Misc.verify_Account(details)
+            .then(response => {
+                res.status(200).json(response);
+            })
 
-//     } catch (error) {
-//         res.status(500).json({
-//             msg: 'there is an unknown error sorry !',
-//             status: 500
-//         })
-//     }
-// })
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
+})
 
 router.delete("/delete", async (req, res) => {
     try {
