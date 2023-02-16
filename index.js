@@ -35,7 +35,6 @@ app.use(cors({"origin":"*"}))
 app.use(bodyParser.json())
 
 
-
 app.use("/mongoro_waitlist", mongoroWaitlistRoute)
 app.use("/reef_waitlist", reefWaitlistRoute)
 app.use("/mongoro/auth", mongoroAuth)
@@ -50,7 +49,7 @@ app.use("/mongoro/usermessage", mongoroUserMessage)
 app.use("/mongoro/adminmessage", mongoroAdminMessage)
 app.use("/mongoro/super_admin/category", mongoroSuperAdminCategory)
 app.use("/mongoro/broadcast", mongoroAppmessage)
-app.use("/mongoro/u_verify", mongoroU_verify)
+app.use("/mongoro/verify", mongoroU_verify)
 app.use("/mongoro/account", mongoroAccount)
 
 
