@@ -198,6 +198,7 @@ router.post('/details', async (req, res) => {
             account_number: req.body.account_number,
             account_bank: req.body.account_bank
         };
+        
         flw.Misc.verify_Account(details)
             .then(response => {
                 res.status(200).json(response);
