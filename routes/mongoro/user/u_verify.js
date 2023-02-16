@@ -12,23 +12,11 @@ const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_K
 
 router.post('/', async (req, res) => {
 
-    const alph = 'abcdefghijklmnopqrstuvwxyz'
-    function generateRandomLetter() {
-        return alph[Math.floor(Math.random() * alph.length)]
-    }
-
-    const word = generateRandomLetter()
-    const words = generateRandomLetter()
-
-    const num = Math.floor(100 + Math.random() * 900)
-    const bvn = req.body.b_id
     const lastName = req.body.lastName
     const firstName = req.body.firstName
     const middleName = req.body.middleName
-    const email = req.body.email
-    const phone = req.body.phone
 
-    const check = bvn.substr(bvn.length - 4)
+    const check = req.body.b_id.substr(req.body.b_id.length - 4)
 
     const url = "https://api.sandbox.youverify.co/v2/api/identity/ng/bvn"
 
@@ -56,14 +44,14 @@ router.post('/', async (req, res) => {
 
         if (validate) {
             statement()
-            let user = await MongoroUserModel.find({ email: email })
-            res.send(user)
-            console.log(validate)
+            // let user = await MongoroUserModel.find({ email: email })
+            // res.send(user)
+            res.send(validate)
         } else {
             console.log("account")
 
             await axios.post(url, {
-                "id": bvn,
+                "id": req.body.b_id,
                 "isSubjectConsent": true
             }, header).then(resp => {
                 const data = resp.data.data
@@ -79,73 +67,29 @@ router.post('/', async (req, res) => {
                     res.status(402).json({ msg: 'middle name does not match ?' })
                 } else {
                     console.log({ msg: "All details match " })
-                    var body = JSON.stringify({
-                        "email": "developers@flutterwavego.com",
-                        "is_permanent": true,
-                        "bvn": "12345678901",
-                        "tx_ref": "VA12",
-                        "phonenumber": "08109328188",
-                        "firstname": "Angela",
-                        "lastname": "Ashley",
-                        "narration": "Angela Ashley-Osuzoka"
-                    });
-
-                    var config = {
-                        method: 'post',
-                        url: 'https://api.flutterwave.com/v3/virtual-account-numbers',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Bearer FLWSECK_TEST-141328841fb7943a7b8d1788f0377d3c-X'
-                        },
-                        data: body
-                    };
-
-                    axios(config)
-                        .then(function (response) {
-                            console.log(JSON.stringify(response.data));
-                            const acc = response.data
-                            MongoroUserModel.updateOne({ email: email }, { $set: { account: acc, verification: { bvn: true } } }).then(async () => {
-
-                                let details = await MongoroUserModel.findOne({ email: email })
-
-                                console.log(details)
-                                res.send({ account: acc })
-                            })
-
-                        })
-                        .catch(function (error) {
-                            console.log(error);
-                        });
 
                     if (req.body.b_id) {
-                        req.body.b_id = bcrypt.hash(req.body.b_id, 13)
-                    }
+                        req.body.b_id =  bcrypt.hash(req.body.b_id, 13)
+                    }                
 
                     const bodys = {
-                        "b_id": bvn,
+                        // "b_id": req.body.b_id,
                         "check": "MON" + check + "GORO",
                         "data": { datas }
                     }
 
-                    let details = new BvnDefaultModel(bodys)
+                    let details = new BvnDefaultModel(bodys).then(async ()=>{
+                        
+                        MongoroUserModel.updateOne({ email: email }, { $set: { verification: { bvn: true } } })
+                    
+                    })
 
                     details.save()
-                    console.log(details)
+                    res.send(details)
                 }
 
             })
         }
-
-        // const body =  JSON.stringify({
-        //     "email": email,
-        //     "is_permanent": true,
-        //     "bvn": bvn,
-        //     "tx_ref": word + words + num,
-        //     "phonenumber": phone,
-        //     "firstname": firstName,
-        //     "lastname": lastName
-        // })
-
 
     } catch (error) {
         console.log(error)
@@ -198,7 +142,7 @@ router.post('/details', async (req, res) => {
             account_number: req.body.account_number,
             account_bank: req.body.account_bank
         };
-        
+
         flw.Misc.verify_Account(details)
             .then(response => {
                 res.status(200).json(response);
