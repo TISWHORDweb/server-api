@@ -14,6 +14,7 @@ const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_K
 //Treansaction
 
 router.post("/", async (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
 
   const alph = 'abcdefghijklmnopqrstuvwxyz'
   function generateRandomLetter() {
