@@ -35,11 +35,11 @@ router.post('/', async (req, res) => {
             const checking = validate.data.data
 
             if (checking.firstName !== firstName) {
-                res.send("first name does not math")
+                res.send("Credentials does not match")
             } else if (checking.lastName !== lastName) {
-                res.send("lastName does not math")
+                res.send("Credentials does not match")
             } else if (checking.middleName !== middleName) {
-                res.send("middleName does not math")
+                res.send("Credentials does not match")
             }
         }
 
@@ -57,14 +57,14 @@ router.post('/', async (req, res) => {
             }, header).then(resp => {
                 const data = resp.data.data
                 if (!data) {
-                    res.status(402).json({ msg: 'BVN not found ?' })
+                    res.status(402).json({ msg: 'Invalid BVN' })
                 }
                 if (data.lastName !== lastName) {
-                    res.status(402).json({ msg: 'last name does not match ?' })
+                    res.status(402).json({ msg: 'Credentials does not match ?' })
                 } else if (data.firstName !== firstName) {
-                    res.status(402).json({ msg: 'first name does not match ?' })
+                    res.status(402).json({ msg: 'Credentials does not match ?' })
                 } else if (data.middleName !== middleName) {
-                    res.status(402).json({ msg: 'middle name does not match ?' })
+                    res.status(402).json({ msg: 'Credentials does not match ?' })
                 } else {
                     console.log({ msg: "All details match " })
 

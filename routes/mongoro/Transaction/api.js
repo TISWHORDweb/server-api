@@ -313,6 +313,7 @@ router.get("/:id", verify, async (req, res) => {
   }
 })
 
+
 router.get("/user/:id", async (req, res) => {
   try {
     if (!req.params.id) return res.status(402).json({ msg: 'provide the id ?' })
@@ -326,8 +327,6 @@ router.get("/user/:id", async (req, res) => {
     })
   }
 })
-
-
 
 
 
