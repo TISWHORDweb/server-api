@@ -16,40 +16,47 @@ const bcrypt = require('bcryptjs')
 //CREATE
 router.post('/register', async (req, res) => {
 
-    function generateRandomLetter() {
-        return Word[Math.floor(Math.random() * Word.length)]
-    }
+    // function generateRandomLetter() {
+    //     return Word[Math.floor(Math.random() * Word.length)]
+    // }
 
-    var surname = req.body.surname.toLowerCase()
-    var first_name = req.body.first_name.toLowerCase()
-    var strsurname = surname.substring(0, 1);
-    var strfirst_name = first_name.substring(0, 2);
-    const word = generateRandomLetter().toLowerCase()
+    // var middle_name = req.body.middle_name.toLowerCase()
+    // var surname = req.body.surname.toLowerCase()
+    // var first_name = req.body.first_name.toLowerCase()
+    // var strmiddle_name = middle_name.substring(0, 1);
+    // var strsurname = surname.substring(0, 1);
+    // var strfirst_name = first_name.substring(0, 1);
+    // const word = generateRandomLetter().toLowerCase()
 
-    const ref = "@" + strsurname + strfirst_name + word + Math.floor(100 + Math.random() * 900)
+    const ref = "@" + req.body.usertag
 
-    req.body.wallet_ID = ref
+    req.body.wallet_ID =ref 
+    console.log(req.body.wallet_ID)
 
     if (req.body.password) {
         req.body.password = await bcrypt.hash(req.body.password, 13)
     }
 
     try {
-        if (!req.body.email || !req.body.surname || !req.body.first_name || !req.body.password || !req.body.phone ) return res.status(402).json({ msg: 'please check the fields ?', status: 402 })
+        if (!req.body.email || !req.body.usertag || !req.body.surname || !req.body.first_name || !req.body.middle_name || !req.body.password || !req.body.phone ) return res.status(402).json({ msg: 'please check the fields ?', status: 402 })
 
-        const validate = await MongoroUserModel.findOne({ email: req.body.email })
-        if (validate) return res.status(404).json({ msg: 'There is another user with this email !', status: 404 })
+        const validate = await MongoroUserModel.findOne({ wallet_ID: req.body.wallet_ID })
+        if (validate) return res.status(404).json({ msg: 'There is another user with this User Tag !', status: 404 })
+
+        const validates = await MongoroUserModel.findOne({ email: req.body.email })
+        if (validates) return res.status(404).json({ msg: 'There is another user with this email !', status: 404 })
+
 
         let user = await new MongoroUserModel(req.body)
 
         await user.save().then(user => {
-             MongoroUserModel.updateOne({ isverified: false }, { $set: { isverified: true } })
             return res.status(200).json({
                 msg: 'Congratulation you just Created your Mongoro Account !!!',
                 user: user,
                 status: 200
             })
         })
+
 
     } catch (error) {
         res.status(500).json({
@@ -181,22 +188,22 @@ router.post("/login", async (req, res) => {
 
 
 //LOGIN
-// router.post("/checkdetail", async (req, res) => {
+router.post("/checkdetail", async (req, res) => {
 
-//     const user = await MongoroUserModel.findOne({ email: req.body.email });
+    const user = await MongoroUserModel.findOne({ email: req.body.email });
 
-// if(!user){
-//     return res.status(404).json({ msg: 'invalid email', status: 404 })
-// }else{
-//     const originalPassword = await bcrypt.compare(req.body.password, user.password);
+if(!user){
+    return res.status(404).json({ msg: 'invalid email', status: 404 })
+}else{
+    const originalPassword = await bcrypt.compare(req.body.password, user.password);
 
-//     if(!originalPassword){
-//         return res.status(400).json({ msg: 'wrong password!'})
-//     }else{
-//         return res.status(200).json({ msg: 'logged in successfuly!',})
-//     }
+    if(!originalPassword){
+        return res.status(400).json({ msg: 'wrong password!'})
+    }else{
+        return res.status(200).json({ msg: 'logged in successfuly!',})
+    }
 
-// }
+}
 
 // else if(!originalPassword){
 //     return res.status(404).json({ msg: 'invalid password!', status: 404 })
@@ -204,7 +211,7 @@ router.post("/login", async (req, res) => {
     // if (!user) return res.status(404).json({ msg: 'invalid email', status: 404 })
     // if (user && user.password !== req.body.password) return res.status(404).json({ msg: 'invalid password!', status: 404 })
 
-
+})
 
 //setup
 router.put('/settings', async (req, res) => {
@@ -214,10 +221,9 @@ router.put('/settings', async (req, res) => {
     console.log(id)
 
     try {
-        if (!req.body.address || !req.body.country || !req.body.state || !req.body.city || !req.body.gender || !req.body.occupation) return res.status(400).json({ msg: 'please check the fields ?' })
+        if (!req.body.address || !req.body.purpose || !req.body.country || !req.body.state || !req.body.city || !req.body.gender || !req.body.occupation) return res.status(402).json({ msg: 'please check the fields ?' })
 
         await MongoroUserModel.updateOne({ _id: id }, body).then(async () => {
-           
             let user = await MongoroUserModel.findOne({ _id: id })
             return res.status(200).json({
                 msg: 'Account Setup Successfully !!!',

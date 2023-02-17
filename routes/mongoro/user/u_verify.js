@@ -9,7 +9,6 @@ const BvnDefaultModel = require('../../../models/mongoro/auth/user/verification/
 const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_KEY);
 
 
-
 router.post('/', async (req, res) => {
 
     const email = req.body.email
