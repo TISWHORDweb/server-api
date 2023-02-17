@@ -262,6 +262,7 @@ router.put('/image', upload.any(), async (req, res) => {
         }).catch((err) => {
             res.send(err)
         })
+        
     } catch (error) {
         res.status(500).json({
             msg: 'there is an unknown error sorry !',
