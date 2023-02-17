@@ -205,11 +205,12 @@ function paginatedResults(model) {
   }
 }
 
-
 //CREATE
 router.post('/wallet', verify, async (req, res) => {
 
-  if (!req.body.wallet_ID) return res.status(402).json({ msg: 'please check the fields ?' })
+  req.body.status = "Pending"
+
+  if (!req.body.wallet_ID || !req.body.userId) return res.status(402).json({ msg: 'please check the fields ?' })
 
 
   const alph = 'abcdefghijklmnopqrstuvwxyz'
@@ -234,6 +235,10 @@ router.post('/wallet', verify, async (req, res) => {
   const oldAmount = user.wallet_balance
   newAmount = +oldAmount + +req.body.amount
 
+  console.log(oldAmount)
+  console.log(newAmount)
+  console.log(req.body.amount)
+
   const value = user.blocked 
 
   if (value === true) {
@@ -250,10 +255,13 @@ router.post('/wallet', verify, async (req, res) => {
       let transaction = await new TransferModel(req.body)
 
       await transaction.save().then(transaction => {
-
+        const id = transaction._id
+        console.log(id)
         if (transaction) {
           MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: senderNewAmount, wallet_updated_at: Date.now() } }).then(() => {
             console.log("updated")
+            TransferModel.updateOne({ _id: id}, { $set: { status: "Completed" } }).then(async () => {
+            })
           });
         }
 

@@ -45,6 +45,18 @@ router.get("/all", async (req, res) => {
     }
 })
 
+router.get("/of/:id", async (req, res) => {
+    try {
+        const user = await MongoroUserModel.find({ category: req.params.id });
+
+        res.status(200).json(user);
+    } catch (err) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
+})
 
 router.put('/edit', async (req, res) => {
     let body = JSON.parse(JSON.stringify(req.body));
