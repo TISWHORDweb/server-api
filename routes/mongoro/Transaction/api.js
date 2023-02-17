@@ -313,6 +313,20 @@ router.get("/:id", verify, async (req, res) => {
   }
 })
 
+router.get("/user/:id", async (req, res) => {
+  try {
+    if (!req.params.id) return res.status(402).json({ msg: 'provide the id ?' })
+
+    let transaction = await TransferModel.find({ userId: req.params.id })
+    res.status(200).json(transaction);
+  } catch (err) {
+    res.status(500).json({
+      msg: 'there is an unknown error sorry !',
+      status: 500
+    })
+  }
+})
+
 
 
 

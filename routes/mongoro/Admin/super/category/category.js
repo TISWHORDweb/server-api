@@ -112,7 +112,7 @@ router.post("/invite", async (req, res) => {
 
     if (user == null) {
         console.log("User does not exists");
-        res.status(401).json({msg: "wrong Email !",status: 401});
+        res.status(401).json({msg: "sorry..... User does not exists!",status: 401});
     } else {
         await MongoroUserModel.updateOne({ _id: user._id }, { $set: { category: req.body.category } })
 
