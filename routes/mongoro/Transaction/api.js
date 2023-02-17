@@ -239,7 +239,7 @@ router.post('/wallet', verify, async (req, res) => {
   console.log(newAmount)
   console.log(req.body.amount)
 
-  const value = user.blocked 
+  const value = user.blocked
 
   if (value === true) {
     res.status(402).json({ msg: 'you are blocked' })
@@ -260,7 +260,7 @@ router.post('/wallet', verify, async (req, res) => {
         if (transaction) {
           MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: senderNewAmount, wallet_updated_at: Date.now() } }).then(() => {
             console.log("updated")
-            TransferModel.updateOne({ _id: id}, { $set: { status: "Completed" } }).then(async () => {
+            TransferModel.updateOne({ _id: id }, { $set: { status: "Completed" } }).then(async () => {
             })
           });
         }
@@ -439,6 +439,105 @@ router.post("/withdraw", async (req, res) => {
 
     }).catch(function (error) {
       console.log(error);
+    });
+  }
+
+})
+
+
+////BILLS PAYMENT
+router.post("/bills", async (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+
+  const alph = 'abcdefghijklmnopqrstuvwxyz'
+  function generateRandomLetter() {
+    return alph[Math.floor(Math.random() * alph.length)]
+  }
+
+  const word = generateRandomLetter()
+  const words = generateRandomLetter()
+
+  const tid = "00" + Math.floor(1000000 + Math.random() * 9000000)
+
+  // const num = "001" + Math.floor(10000 + Math.random() * 90000) + word + words
+
+  var config = {
+    'method': 'POST',
+    'url': 'https://api.flutterwave.com/v3/bills',
+    'headers': {
+      'Authorization': 'Bearer FLWSECK_TEST-141328841fb7943a7b8d1788f0377d3c-X'
+    },
+    data: {
+      country: req.body.country,
+      customer: req.body.customer,
+      amount: req.body.amount,
+      recurrence: 'ONCE',
+      type: req.body.type,
+      reference: '9300049404444',
+      biller_name: 'DSTV, MTN VTU, TIGO VTU, VODAFONE VTU, VODAFONE POSTPAID PAYMENT'
+    }
+
+  };
+
+  const user = await MongoroUserModel.find({ _id: req.body.userId });
+
+  const oldAmount = user[0].wallet_balance
+  console.log(oldAmount)
+
+  if (oldAmount < req.body.amount) {
+    res.status(401).json({ msg: "Insufficient funds", status: 401 });
+  } else if (oldAmount < 100) {
+    res.status(401).json({ msg: "you dont have enough money", status: 401 });
+  } else if (req.body.amount < 100) {
+    res.status(401).json({ msg: "you cant send any have money lower than 100", status: 401 });
+  } else {
+
+    const newAmount = oldAmount - req.body.amount
+
+    console.log(newAmount)
+
+    await axios(config).then(function (response) {
+      const data = response.data;
+
+      console.lpog(data)
+
+      if (data) {
+
+        const details = {
+          "transaction_ID": tid,
+          "service_type": req.body.service_type,
+          "amount": req.body.amount,
+          "status": data.status,
+          "country": req.body.country,
+          "customer": req.body.customer,
+          "biller_name": req.body.biller_name,
+          "type": req.body.type,
+          "userId": req.body.userId,
+        }
+
+        let transaction = new TransferModel(details)
+
+        transaction.save().then(transaction => {
+          if (transaction) {
+            MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(() => {
+              console.log("updated")
+            });
+          }
+
+          return res.status(200).json({
+            msg: 'Transaction successful !!!',
+            transaction: transaction,
+            status: 200
+          })
+        })
+      }
+
+    }).catch(function (error) {
+      console.log(error);
+      res.status(500).json({
+        msg: 'there is an unknown error sorry !',
+        status: 500
+      })
     });
   }
 

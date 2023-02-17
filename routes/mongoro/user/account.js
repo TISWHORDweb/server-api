@@ -3,6 +3,7 @@ const router = express.Router()
 const verify = require("../../../verifyToken")
 const bcrypt = require('bcryptjs')
 const axios = require('axios')
+const TransferModel = require("../../../models/mongoro/transaction/api")
 const MongoroUserModel = require('../../../models/mongoro/auth/mongoroUser_md')
 
 router.post('/create', async (req, res) => {
@@ -17,7 +18,6 @@ router.post('/create', async (req, res) => {
     // const num = Math.floor(100 + Math.random() * 900)
 
     const email = req.body.email
-    // const phone = req.body.phone
 
     let details = await MongoroUserModel.findOne({ email: email })
     const verify = details.verification.bvn
@@ -25,25 +25,14 @@ router.post('/create', async (req, res) => {
     try {
         if (verify === true) {
 
-            // const body =  JSON.stringify({
-            //     "email": email,
-            //     "is_permanent": true,
-            //     "bvn": bvn,
-            //     "tx_ref": word + words + num,
-            //     "phonenumber": phone,
-            //     "firstname": firstName,
-            //     "lastname": lastName
-            // })
-
             var body = JSON.stringify({
-                "email": "developers@flutterwavego.com",
+                "email": email,
                 "is_permanent": true,
-                "bvn": "12345678901",
-                "tx_ref": "VA12",
-                "phonenumber": "08109328188",
-                "firstname": "Angela",
-                "lastname": "Ashley",
-                "narration": "Angela Ashley-Osuzoka"
+                "bvn": req.body.bvn,
+                "phonenumber": req.body.phonenumber,
+                "firstname": req.body.firstname,
+                "lastname": req.body.lastname,
+                "narration": req.body.narration
             });
 
             var config = {
@@ -56,7 +45,7 @@ router.post('/create', async (req, res) => {
                 data: body
             };
 
-            axios(config)
+            await axios(config)
                 .then(function (response) {
                     console.log(JSON.stringify(response.data));
                     const acc = response.data
@@ -68,7 +57,6 @@ router.post('/create', async (req, res) => {
                             status: 200
                         })
                     })
-
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -79,17 +67,6 @@ router.post('/create', async (req, res) => {
                 status: 402
             })
         }
-        // if (!req.body.userId) return res.status(402).json({ msg: 'provide the id ?' })
-
-        // let details = await new AccountModel(req.body)
-
-        // await details.save().then(details => {
-        //     return res.status(200).json({
-        //         msg: 'Details saved!!!',
-        //         details: details,
-        //         status: 200
-        //     })
-        // })
 
     } catch (error) {
         res.status(500).json({
@@ -99,5 +76,14 @@ router.post('/create', async (req, res) => {
     }
 })
 
+// /////ACCOUNT STATEMENT
+// router.get("/statement", async (req, res) => {
+
+
+//     TransferModel.find({where: {Date:{between: ['2010-01-05 10:00', '2012-05-10 10:00']}}}).then(result => {
+//         res.send(result);
+//     })
+  
+//   });
 
 module.exports = router

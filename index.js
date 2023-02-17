@@ -17,6 +17,7 @@ const mongoroUserMessage = require('./routes/mongoro/user/chat')
 const mongoroU_verify = require('./routes/mongoro/user/u_verify')
 const mongoroSuperAdminCategory = require('./routes/mongoro/Admin/super/category/category')
 const mongoroAppmessage = require('./routes/mongoro/Admin/other/broadcast/appmessage')
+const mongoroStatement = require('./routes/mongoro/Transaction/statement')
 const mongoose=require('mongoose')
 
 // const dotenv = require("dotenv")

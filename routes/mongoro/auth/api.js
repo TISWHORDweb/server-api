@@ -16,18 +16,6 @@ const bcrypt = require('bcryptjs')
 //CREATE
 router.post('/register', async (req, res) => {
 
-    // function generateRandomLetter() {
-    //     return Word[Math.floor(Math.random() * Word.length)]
-    // }
-
-    // var middle_name = req.body.middle_name.toLowerCase()
-    // var surname = req.body.surname.toLowerCase()
-    // var first_name = req.body.first_name.toLowerCase()
-    // var strmiddle_name = middle_name.substring(0, 1);
-    // var strsurname = surname.substring(0, 1);
-    // var strfirst_name = first_name.substring(0, 1);
-    // const word = generateRandomLetter().toLowerCase()
-
     const ref = "@" + req.body.usertag
 
     req.body.wallet_ID =ref 

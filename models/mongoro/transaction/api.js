@@ -32,12 +32,29 @@ const TransferSchema=new mongoose.Schema({
     userId:{
         type:String
     },
+    biller_name:{
+        type:String
+    },
+    country:{
+        type:String
+    },
+    type:{
+        type:String
+    },
+    customer:{
+        type:String
+    },
+    narration:{
+        type:String
+    },
     archive:{
         type:Boolean,
         default: false,
     },
 
 })
+
+
 
 
 const TransferModel=mongoose.model("transaction", TransferSchema)
