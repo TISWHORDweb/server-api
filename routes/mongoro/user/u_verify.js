@@ -18,6 +18,7 @@ router.post('/', async (req, res) => {
     const middleName = req.body.middleName
 
     const check = req.body.b_id.substr(req.body.b_id.length - 4)
+    console.log(check)
 
     const url = "https://api.sandbox.youverify.co/v2/api/identity/ng/bvn"
 
@@ -35,11 +36,20 @@ router.post('/', async (req, res) => {
             const checking = validate.data.data
 
             if (checking.firstName !== firstName) {
-                res.send("Credentials does not match")
+                res.status(400).json({
+                    msg: 'Credentials does not match !',
+                    status: 400
+                })
             } else if (checking.lastName !== lastName) {
-                res.send("Credentials does not match")
+                res.status(400).json({
+                    msg: 'Credentials does not match !',
+                    status: 400
+                })
             } else if (checking.middleName !== middleName) {
-                res.send("Credentials does not match")
+                res.status(400).json({
+                    msg: 'Credentials does not match !',
+                    status: 400
+                })
             }
         }
 
@@ -57,14 +67,14 @@ router.post('/', async (req, res) => {
             }, header).then(resp => {
                 const data = resp.data.data
                 if (!data) {
-                    res.status(402).json({ msg: 'Invalid BVN' })
+                    res.status(400).json({ msg: 'Invalid BVN' })
                 }
                 if (data.lastName !== lastName) {
-                    res.status(402).json({ msg: 'Credentials does not match ?' })
+                    res.status(400).json({ msg: 'Credentials does not match ?' })
                 } else if (data.firstName !== firstName) {
-                    res.status(402).json({ msg: 'Credentials does not match ?' })
+                    res.status(400).json({ msg: 'Credentials does not match ?' })
                 } else if (data.middleName !== middleName) {
-                    res.status(402).json({ msg: 'Credentials does not match ?' })
+                    res.status(400).json({ msg: 'Credentials does not match ?' })
                 } else {
                     console.log({ msg: "All details match " })
 
@@ -91,7 +101,7 @@ router.post('/', async (req, res) => {
     } catch (error) {
         console.log(error)
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'There is an unknown error sorry.... Please contact our support !',
             status: 500
         })
     }
