@@ -24,7 +24,7 @@ router.post("/", async (req, res) => {
   const word = generateRandomLetter()
   const words = generateRandomLetter()
 
-  const tid = "00"+ Math.floor(1000000 + Math.random() * 9000000)
+  const tid = "00" + Math.floor(1000000 + Math.random() * 9000000)
 
   const num = "001" + Math.floor(10000 + Math.random() * 90000) + word + words
 
@@ -48,18 +48,18 @@ router.post("/", async (req, res) => {
     },
     data: body
   };
-  const user = await MongoroUserModel.find({_id: req.body.userId});
+  const user = await MongoroUserModel.find({ _id: req.body.userId });
 
 
   const oldAmount = user[0].wallet_balance
   console.log(oldAmount)
 
   if (oldAmount < req.body.amount) {
-    res.status(401).json({msg: "Insufficient funds",status: 401});
-  }else if (oldAmount < 100){
-    res.status(401).json({msg: "you dont have enough money",status: 401});
-  }else if (req.body.amount < 100){
-    res.status(401).json({msg: "you cant send any have money lower than 100",status: 401});
+    res.status(401).json({ msg: "Insufficient funds", status: 401 });
+  } else if (oldAmount < 100) {
+    res.status(401).json({ msg: "you dont have enough money", status: 401 });
+  } else if (req.body.amount < 100) {
+    res.status(401).json({ msg: "you cant send any have money lower than 100", status: 401 });
   } else {
 
     const newAmount = oldAmount - req.body.amount
@@ -69,54 +69,43 @@ router.post("/", async (req, res) => {
     await axios(config).then(function (response) {
       const data = response.data;
 
-      if(data){
+      if (data) {
 
-      const details = {
-        "transaction_ID": tid,
-        "service_type": req.body.service_type,
-        "amount": req.body.amount,
-        "status": data.status,
-        "full_name": data.data.full_name,
-        "account_number": data.data.account_number,
-        "bank_name": data.data.bank_name,
-        "userId": req.body.userId,
+        const details = {
+          "transaction_ID": tid,
+          "service_type": req.body.service_type,
+          "amount": req.body.amount,
+          "status": data.status,
+          "full_name": data.data.full_name,
+          "account_number": data.data.account_number,
+          "bank_name": data.data.bank_name,
+          "userId": req.body.userId,
+        }
+
+        let transaction = new TransferModel(details)
+
+        transaction.save().then(transaction => {
+          if (transaction) {
+            MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(() => {
+              console.log("updated")
+            });
+          }
+
+          return res.status(200).json({
+            msg: 'Transaction successful !!!',
+            transaction: transaction,
+            status: 200
+          })
+        })
       }
 
-      let transaction = new TransferModel(details)
-
-      transaction.save().then(transaction => {
-        if(transaction){
-          MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(() => {
-            console.log("updated")
-          });
-        }
-      
-        return res.status(200).json({
-          msg: 'Transaction successful !!!',
-          transaction: transaction,
-          status: 200
-        })
-      })
-    }
-
     }).catch(function (error) {
-        console.log(error);
-      });
+      console.log(error);
+    });
   }
 
 })
 
-router.get("/tt", async (req, res) => {
-  try {
-      const category = await MongoroUserModel.find({_id: req.body.userId});
-      res.status(200).json(category.reverse());
-  } catch (err) {
-      res.status(500).json({
-          msg: 'there is an unknown error sorry !',
-          status: 500
-      })
-  }
-})
 
 router.post("/retry", async (req, res) => {
 
@@ -222,6 +211,7 @@ router.post('/wallet', verify, async (req, res) => {
 
   if (!req.body.wallet_ID) return res.status(402).json({ msg: 'please check the fields ?' })
 
+
   const alph = 'abcdefghijklmnopqrstuvwxyz'
   function generateRandomLetter() {
     return alph[Math.floor(Math.random() * alph.length)]
@@ -230,27 +220,46 @@ router.post('/wallet', verify, async (req, res) => {
   const word = generateRandomLetter()
   const words = generateRandomLetter()
 
-
   const num = word + words + Math.floor(10000 + Math.random() * 90000)
-
   req.body.transaction_ID = num
+
+  const sender = await MongoroUserModel.find({ _id: req.body.userId });
+  const senderAmount = sender[0].wallet_balance
+  const senderNewAmount = senderAmount - req.body.amount
+  console.log(senderNewAmount)
+  console.log(senderAmount)
+  console.log(senderAmount > req.body.amount)
 
   let user = await MongoroUserModel.findOne({ wallet_ID: req.body.wallet_ID })
   const oldAmount = user.wallet_balance
   newAmount = +oldAmount + +req.body.amount
 
-  const value = user.blocked
+  const value = user.blocked 
 
   if (value === true) {
     res.status(402).json({ msg: 'you are blocked' })
+  } else if (senderAmount < req.body.amount) {
+    res.status(401).json({ msg: "Insufficient funds", status: 401 });
+  } else if (senderAmount < 100) {
+    res.status(401).json({ msg: "you dont have enough money", status: 401 });
+  } else if (req.body.amount < 100) {
+    res.status(401).json({ msg: "you cant send any have money lower than 100", status: 401 });
   } else {
+
     try {
       let transaction = await new TransferModel(req.body)
 
       await transaction.save().then(transaction => {
 
+        if (transaction) {
+          MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: senderNewAmount, wallet_updated_at: Date.now() } }).then(() => {
+            console.log("updated")
+          });
+        }
+
         MongoroUserModel.updateOne({ wallet_ID: req.body.wallet_ID }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(async () => {
         })
+
         return res.status(200).json({
           msg: 'Transaction successful !!!',
           transaction: transaction,
@@ -264,7 +273,6 @@ router.post('/wallet', verify, async (req, res) => {
       })
     }
   }
-
 
 })
 
