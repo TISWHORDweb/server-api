@@ -16,6 +16,13 @@ const bcrypt = require('bcryptjs')
 //CREATE
 router.post('/register', async (req, res) => {
 
+
+
+    req.body.first_name.toLowerCase()
+    req.body.surname.toLowerCase()
+    req.body.middle_name.toLowerCase()
+    req.body.usertag.toLowerCase()
+
     const ref = "@" + req.body.usertag
 
     req.body.wallet_ID = ref
@@ -52,7 +59,6 @@ router.post('/register', async (req, res) => {
             status: 500
         })
     }
-
 
 })
 
@@ -161,7 +167,7 @@ router.post("/login", async (req, res) => {
             const accessToken = jwt.sign(
                 { id: user._id, isverified: user.isverified },
                 process.env.SECRET_KEY,
-                { expiresIn: "3h" }
+                { expiresIn: "5h" }
             );
 
             const ip = address.ip();
