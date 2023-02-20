@@ -154,9 +154,7 @@ router.post('/forgot_password', async (req, res) => {
 //PIN
 router.put('/create_pin', verify, async (req, res) => {
 
-    if (req.body.pin) {
-        req.body.pin = CryptoJS.AES.encrypt(req.body.pin, "mongoro").toString()
-    }
+   req.body.pin = CryptoJS.AES.encrypt(req.body.pin, "mongoro").toString()
 
     let body = JSON.parse(JSON.stringify(req.body));
     let { id } = body;
