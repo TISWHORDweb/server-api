@@ -152,7 +152,7 @@ router.post('/forgot_password', async (req, res) => {
 })
 
 //PIN
-router.post('/create_pin', verify, async (req, res) => {
+router.put('/create_pin', verify, async (req, res) => {
 
     if (req.body.pin) {
         req.body.pin = CryptoJS.AES.encrypt(req.body.pin, "mongoro").toString()
