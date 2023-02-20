@@ -159,7 +159,7 @@ router.put('/create_pin', verify, async (req, res) => {
     let body = JSON.parse(JSON.stringify(req.body));
     let { id } = body;
 
-    console.lo(body)
+    console.log(body)
 
     try {
         if (!req.body.pin) return res.status(402).json({ msg: 'provide the Pin ?' })
