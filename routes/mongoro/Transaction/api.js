@@ -542,3 +542,22 @@ router.post("/bills", async (req, res) => {
   }
 
 })
+
+
+////ACCOUNT STATEMENT
+router.get("/statementsofuser", async (req, res) => {
+  // try {
+  //   const query = { "amount.0": { "$gte": 5000, "$lte": 200 } }
+  // const statement = await TransferModel.find();
+
+  // res.status(200).json(statement);
+
+
+  // } catch (err) {
+  //     res.status(500).json({
+  //         msg: 'there is an unknown error sorrys !',
+  //         status: 500
+  //     })
+  // }
+  console.log("fake")
+})

@@ -31,7 +31,7 @@ router.post('/', async (req, res) => {
 
         const validate = await BvnDefaultModel.findOne({ check: "MON" + check + "GORO" })
 
-        function statement() {
+        function ent() {
             const checking = validate.data.data
 
             if (checking.firstName !== firstName) {
@@ -53,7 +53,7 @@ router.post('/', async (req, res) => {
         }
 
         if (validate) {
-            statement()
+            ent()
             // let user = await MongoroUserModel.find({ email: email })
             // res.send(user)
             res.send(validate)

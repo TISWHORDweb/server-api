@@ -17,7 +17,7 @@ const mongoroUserMessage = require('./routes/mongoro/user/chat')
 const mongoroU_verify = require('./routes/mongoro/user/u_verify')
 const mongoroSuperAdminCategory = require('./routes/mongoro/Admin/super/category/category')
 const mongoroAppmessage = require('./routes/mongoro/Admin/other/broadcast/appmessage')
-// const mongoroStatement = require('./routes/mongoro/Transaction/statement')
+const mongoroStatement = require('./routes/mongoro/Transaction/statement')
 const mongoroBenefiaciary = require('./routes/mongoro/Transaction/beneficiary')
 const mongoose=require('mongoose')
 
@@ -51,6 +51,7 @@ app.use("/mongoro/super_admin/category", mongoroSuperAdminCategory)
 app.use("/mongoro/broadcast", mongoroAppmessage)
 app.use("/mongoro/verify", mongoroU_verify)
 app.use("/mongoro/account", mongoroAccount)
+app.use("/mongoro/statement", mongoroStatement)
 app.use("/mongoro/beneficiary", mongoroBenefiaciary)
 
 
