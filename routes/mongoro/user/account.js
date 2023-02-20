@@ -90,10 +90,10 @@ module.exports = router
 
 router.get("/statementsofuser", async (req, res) => {
     try {
-      const query = { "amount.0": { "$gte": 5000, "$lte": 200 } }
-    const statement = await TransferModel.find();
+    //   const query = { "amount.0": { "$gte": 5000, "$lte": 200 } }
+    // const statement = await TransferModel.find();
   
-    res.status(200).json(statement);
+    // res.status(200).json(statement);
   
   
     } catch (err) {
