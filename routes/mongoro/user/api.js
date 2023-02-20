@@ -53,7 +53,7 @@ function paginatedResults(model) {
         try {
             const results = await model.find().limit(limit).skip(startIndex).exec()
             let count = await MongoroUserModel.count()
-            res.paginatedResults = {action, results ,TotalResult: count, Totalpages: Math.ceil(count / limit)}
+            res.paginatedResults = { action, results, TotalResult: count, Totalpages: Math.ceil(count / limit) }
             next()
         } catch (e) {
             res.status(500).json({ message: e.message })
@@ -152,35 +152,31 @@ router.post('/forgot_password', async (req, res) => {
 })
 
 //PIN
-router.put('/create_pin', verify, async (req, res) => {
+router.post('/create_pin', verify, async (req, res) => {
 
-   req.body.pin = CryptoJS.AES.encrypt(req.body.pin, "mongoro").toString()
+    console.log(req.body)
 
-    let body = JSON.parse(JSON.stringify(req.body));
-    let { id } = body;
+    let user = await MongoroUserModel.findOne({ _id: req.body.id })
 
-    console.log(body)
+    if (!req.body.pin) return res.status(402).json({ msg: 'provide the Pin ?' })
 
-    try {
-        if (!req.body.pin) return res.status(402).json({ msg: 'provide the Pin ?' })
 
-        await MongoroUserModel.updateOne({ _id: id }, body).then(async () => {
-            let user = await MongoroUserModel.findOne({ _id: id })
+    if (user) {
+
+        req.body.pin = CryptoJS.AES.encrypt(req.body.pin, "mongoro").toString()
+
+        await MongoroUserModel.updateOne({ _id: req.body.id }, {pin:req.body.pin}).then(async () => {
+            let user = await MongoroUserModel.findOne({ _id: req.body.id })
             return res.status(200).json({
                 msg: 'Pin created Successfully !!!',
                 user: user,
                 status: 200
             })
-        }).catch((err) => {
-            res.send(err)
         })
-
-    } catch (error) {
-        res.status(500).json({
-            msg: 'there is an unknown error sorry !',
-            status: 500
-        })
+    } else {
+        res.status(400).json({ msg: "No User is registered with this id!", status: 401 });
     }
+
 
 
 })
@@ -286,9 +282,9 @@ router.put('/unblock', verify, async (req, res) => {
     let body = JSON.parse(JSON.stringify(req.body));
     let { id } = body;
     try {
-        if (!req.body.id ) return res.status(402).json({ msg: 'provide the id ?',status: 402 })
+        if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?', status: 402 })
 
-        await MongoroUserModel.updateOne({ _id: id }, { $set: {blocked: false } }).then(async () => {
+        await MongoroUserModel.updateOne({ _id: id }, { $set: { blocked: false } }).then(async () => {
             return res.status(200).json({
                 msg: 'unBlocked Successful !!!',
                 status: 200
@@ -311,9 +307,9 @@ router.put('/block', verify, async (req, res) => {
     let body = JSON.parse(JSON.stringify(req.body));
     let { id } = body;
     try {
-        if (!req.body.id ) return res.status(402).json({ msg: 'provide the id ?',status: 402 })
+        if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?', status: 402 })
 
-        await MongoroUserModel.updateOne({ _id: id }, { $set: {blocked: true } }).then(async () => {
+        await MongoroUserModel.updateOne({ _id: id }, { $set: { blocked: true } }).then(async () => {
             return res.status(200).json({
                 msg: 'Blocked Successful !!!',
                 status: 200
