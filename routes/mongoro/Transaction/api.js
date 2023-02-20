@@ -24,7 +24,7 @@ router.post("/", async (req, res) => {
   const word = generateRandomLetter()
   const words = generateRandomLetter()
 
-  const tid = "00" + Math.floor(1000000 + Math.random() * 9000000)
+  const tid = "00" + Math.floor(10000000000 + Math.random() * 90000000000)
 
   const num = "001" + Math.floor(10000 + Math.random() * 90000) + word + words
 
@@ -96,11 +96,13 @@ router.post("/", async (req, res) => {
             transaction: transaction,
             status: 200
           })
+        }).catch((error) =>{
+          res.status(500).json({ msg: "Transaction failed", error, reference: tid, status: 500})
         })
       }
 
     }).catch(function (error) {
-      console.log(error);
+      res.status(500).json({ msg: "Internal server error", error, reference: tid, status: 500})
     });
   }
 
@@ -275,10 +277,7 @@ router.post('/wallet', verify, async (req, res) => {
         })
       })
     } catch (error) {
-      res.status(500).json({
-        msg: 'there is an unknown error sorry !',
-        status: 500
-      })
+      res.status(500).json({ msg: "Transaction failed", error, reference: tid, status: 500})
     }
   }
 
@@ -529,6 +528,8 @@ router.post("/bills", async (req, res) => {
             transaction: transaction,
             status: 200
           })
+        }).catch((error) =>{
+          res.status(500).json({ msg: "Transaction failed", error, reference: tid, status: 500})
         })
       }
 
@@ -536,7 +537,7 @@ router.post("/bills", async (req, res) => {
       console.log(error);
       res.status(500).json({
         msg: 'there is an unknown error sorry !',
-        status: 500
+        error, reference: tid, status: 500
       })
     });
   }

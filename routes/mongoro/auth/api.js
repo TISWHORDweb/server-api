@@ -18,7 +18,7 @@ router.post('/register', async (req, res) => {
 
     const ref = "@" + req.body.usertag
 
-    req.body.wallet_ID =ref 
+    req.body.wallet_ID = ref
     console.log(req.body.wallet_ID)
 
     if (req.body.password) {
@@ -26,7 +26,7 @@ router.post('/register', async (req, res) => {
     }
 
     try {
-        if (!req.body.email || !req.body.usertag || !req.body.surname || !req.body.first_name || !req.body.middle_name || !req.body.password || !req.body.phone ) return res.status(402).json({ msg: 'please check the fields ?', status: 402 })
+        if (!req.body.email || !req.body.usertag || !req.body.surname || !req.body.first_name || !req.body.middle_name || !req.body.password || !req.body.phone) return res.status(402).json({ msg: 'please check the fields ?', status: 402 })
 
         const validate = await MongoroUserModel.findOne({ wallet_ID: req.body.wallet_ID })
         if (validate) return res.status(404).json({ msg: 'There is another user with this User Tag !', status: 404 })
@@ -83,8 +83,8 @@ router.post("/verify", async (req, res) => {
         email_code = Math.floor(100 + Math.random() * 900)
         sms_code = Math.floor(100 + Math.random() * 900)
 
-        let code = {email_code , sms_code}
-        
+        let code = { email_code, sms_code }
+
         let transporter = nodemailer.createTransport({
             service: "hotmail",
             auth: {
@@ -151,21 +151,21 @@ router.post("/login", async (req, res) => {
     const user = await MongoroUserModel.findOne({ email: req.body.email })
 
     if (!user) {
-        res.status(400).json({msg:"user not found",code: 400})
-    } else{
+        res.status(400).json({ msg: "user not found", code: 400 })
+    } else {
         const originalPassword = await bcrypt.compare(req.body.password, user.password);
 
-        if(!originalPassword){
-            res.status(400).json({msg:"wrong password",code:400})
-        }else{
+        if (!originalPassword) {
+            res.status(400).json({ msg: "wrong password", code: 400 })
+        } else {
             const accessToken = jwt.sign(
                 { id: user._id, isverified: user.isverified },
                 process.env.SECRET_KEY,
                 { expiresIn: "3h" }
             );
-    
+
             const ip = address.ip();
-    
+
             await MongoroUserModel.updateOne({ _id: user._id }, { $set: { ip: ip } }).then(() => {
                 res.status(200).json({ msg: 'logged in successfuly !', user: user, token: accessToken, ip_address: ip, status: 200 });
             })
@@ -175,29 +175,45 @@ router.post("/login", async (req, res) => {
 })
 
 
-//LOGIN
-router.post("/checkdetail", async (req, res) => {
+//FORGOTPASSWORD 
+router.post("/emailverify", async (req, res) => {
 
     const user = await MongoroUserModel.findOne({ email: req.body.email });
 
-if(!user){
-    return res.status(404).json({ msg: 'invalid email', status: 404 })
-}else{
-    const originalPassword = await bcrypt.compare(req.body.password, user.password);
+    if (!user) {
+        return res.status(404).json({ msg: 'No User is registered with this email', status: 400 })
+    } else {
 
-    if(!originalPassword){
-        return res.status(400).json({ msg: 'wrong password!'})
-    }else{
-        return res.status(200).json({ msg: 'logged in successfuly!',})
+        let transporter = nodemailer.createTransport({
+            service: "hotmail",
+            auth: {
+                user: 'sales@reeflimited.com',
+                pass: 'cmcxsbpkqvkgpwmk'
+            }
+        });
+
+        let mailOptions = {
+            from: 'sales@reeflimited.com',
+            to: req.body.email,
+            subject: 'Verification code',
+            html: `<button>Reset Password</button>`
+        };
+
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log('Email sent: ' + info.response);
+            }
+        });
+
+        res.status(200).json({
+            msg: 'OTP sent successfully!',
+            id: user._id,
+            status: 200
+        })
+
     }
-
-}
-
-// else if(!originalPassword){
-//     return res.status(404).json({ msg: 'invalid password!', status: 404 })
-// }
-    // if (!user) return res.status(404).json({ msg: 'invalid email', status: 404 })
-    // if (user && user.password !== req.body.password) return res.status(404).json({ msg: 'invalid password!', status: 404 })
 
 })
 

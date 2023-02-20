@@ -2,11 +2,11 @@ const express = require('express')
 const router = express.Router()
 const MongoroUserModel = require("../../../models/mongoro/auth/mongoroUser_md")
 const verify = require("../../../verifyToken")
-const CryptoJS = require("crypto-js")
-
+const bcrypt = require('bcryptjs')
 let multer = require('multer')
 let fs = require('fs')
 let path = require('path');
+const CryptoJS = require("crypto-js")
 
 //Configure Storage
 let storage = multer.diskStorage({
@@ -119,19 +119,17 @@ router.put('/edit', verify, async (req, res) => {
 
 })
 
-router.put('/edit_password', verify, async (req, res) => {
+router.post('/forgot_password', async (req, res) => {
 
     const user = await MongoroUserModel.findOne({ _id: req.body.id });
-    const bytes = CryptoJS.AES.decrypt(user.password, process.env.SECRET_KEY);
-    const originalPassword = bytes.toString(CryptoJS.enc.Utf8);
 
     try {
         if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?', status: 402 })
 
-        if (originalPassword != req.body.password) {
-            res.status(401).json({ msg: "wrong password !", status: 401 });
+        if (!user) {
+            res.status(400).json({ msg: "No User is registered with this id!", status: 401 });
         } else {
-            const newPassword = CryptoJS.AES.encrypt(req.body.new_password, "mongoro").toString()
+            const newPassword = await bcrypt.hash(req.body.password, 13)
             await MongoroUserModel.updateOne({ _id: req.body.id }, { password: newPassword }).then(async () => {
                 const Newuser = await MongoroUserModel.findOne({ _id: req.body.id });
                 return res.status(200).json({
@@ -151,11 +149,10 @@ router.put('/edit_password', verify, async (req, res) => {
         })
     }
 
-
 })
 
 //PIN
-router.put('/create_pin', verify, async (req, res) => {
+router.post('/create_pin', verify, async (req, res) => {
 
     if (req.body.pin) {
         req.body.pin = CryptoJS.AES.encrypt(req.body.pin, "mongoro").toString()
@@ -188,21 +185,7 @@ router.put('/create_pin', verify, async (req, res) => {
 
 })
 
-router.get("/user_pin", verify, async (req, res) => {
-    try {
-        if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?', status: 402 })
-
-        let user = await MongoroUserModel.find({ _id: req.body.id })
-        res.status(200).json(user);
-    } catch (err) {
-        res.status(500).json({
-            msg: 'there is an unknown error sorry !',
-            status: 500
-        })
-    }
-})
-
-router.put('/edit_pin', verify, async (req, res) => {
+router.post("/verify_pin", verify, async (req, res) => {
 
     const user = await MongoroUserModel.findOne({ _id: req.body.id });
     const bytes = CryptoJS.AES.decrypt(user.pin, process.env.SECRET_KEY);
@@ -211,8 +194,34 @@ router.put('/edit_pin', verify, async (req, res) => {
     try {
         if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?', status: 402 })
 
-        if (originalPin != req.body.pin) {
-            res.status(401).json({ msg: "wrong password !", status: 401 });
+        if (originalPin !== req.body.pin) {
+            res.status(401).json({ msg: "wrong pin !", status: 401 });
+        } else {
+            return res.status(200).json({
+                msg: 'Account Setup Successfully !!!',
+                status: 200
+            })
+        }
+    } catch (err) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
+})
+
+router.post('/edit_pin', verify, async (req, res) => {
+
+    const user = await MongoroUserModel.findOne({ _id: req.body.id });
+    const bytes = CryptoJS.AES.decrypt(user.pin, process.env.SECRET_KEY);
+    const originalPin = bytes.toString(CryptoJS.enc.Utf8);
+
+    console.log(originalPin)
+    try {
+        if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?', status: 402 })
+
+        if (originalPin !== req.body.pin) {
+            res.status(401).json({ msg: "wrong pin !", status: 401 });
         } else {
             const newPin = CryptoJS.AES.encrypt(req.body.new_pin, "mongoro").toString()
             await MongoroUserModel.updateOne({ _id: req.body.id }, { pin: newPin }).then(async () => {
@@ -262,7 +271,7 @@ router.put('/image', upload.any(), async (req, res) => {
         }).catch((err) => {
             res.send(err)
         })
-        
+
     } catch (error) {
         res.status(500).json({
             msg: 'there is an unknown error sorry !',
