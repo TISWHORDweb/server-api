@@ -546,6 +546,10 @@ router.post("/bills", async (req, res) => {
 
 ////ACCOUNT STATEMENT
 router.get("/statementsofuser", async (req, res) => {
+   
+  await TransferModel.find({"amount":{"gte":500,"$lte": 100}}).then((response)=>{
+    res.send(response);
+  })
   // try {
   //   const query = { "amount.0": { "$gte": 5000, "$lte": 200 } }
   // const statement = await TransferModel.find();

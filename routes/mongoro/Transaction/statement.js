@@ -6,36 +6,23 @@ const TransferModel = require('../../../models/mongoro/transaction/api')
 
 
 
-router.get("/get", async (req, res) => {
-    // try {
+router.get("/get/:id", async (req, res) => {
+    try {
+        const user = await TransferModel.find({userId: req.params.id})
+        res.send(user);
 
-    // let user = await TransferModel.find()
-    // res.status(200).json(user);
+        if(user){
+            const statement = await user.find({$and:[{"Date":{$gte:1676590789236}},{"Date":{$lte:1676590908291}}]})
+            res.send(statement);
+        }
 
-    // const query = { "amount": { "$gte": 1000, "$lte": 200 } }
-    const statement = await TransferModel.find({
-        $and: [
-            {
-                amount: {
-                    $gt: 1000
-                }
-            },
-            {
-                amount: {
-                    $lt: 100
-                }
-            }
-        ]
-    })
-
-    res.send(statement)
-
-    // } catch (err) {
-    //     res.status(500).json({
-    //         msg: 'there is an unknown error sorry !',
-    //         status: 500
-    //     })
-    // }
+    } catch (err) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
 })
+
 
 module.exports = router
