@@ -231,7 +231,7 @@ router.put('/settings', async (req, res) => {
     console.log(id)
 
     try {
-        if (!req.body.address || !req.body.purpose || !req.body.country || !req.body.state || !req.body.city || !req.body.gender || !req.body.occupation) return res.status(402).json({ msg: 'please check the fields ?' })
+        if (!req.body.address || !req.body.country || !req.body.state || !req.body.city || !req.body.gender || !req.body.occupation) return res.status(402).json({ msg: 'please check the fields ?' })
 
         await MongoroUserModel.updateOne({ _id: id }, body).then(async () => {
             let user = await MongoroUserModel.findOne({ _id: id })
