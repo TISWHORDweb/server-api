@@ -47,14 +47,18 @@ const TransferSchema=new mongoose.Schema({
     narration:{
         type:String
     },
+    narration:{
+        type:String
+    },
+    reference:{
+        type:String
+    },
     archive:{
         type:Boolean,
         default: false,
     },
 
 })
-
-
 
 
 const TransferModel=mongoose.model("transaction", TransferSchema)

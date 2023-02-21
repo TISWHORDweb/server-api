@@ -16,8 +16,6 @@ const bcrypt = require('bcryptjs')
 //CREATE
 router.post('/register', async (req, res) => {
 
-
-
     req.body.first_name.toLowerCase()
     req.body.surname.toLowerCase()
     req.body.middle_name.toLowerCase()
