@@ -269,13 +269,14 @@ router.post('/wallet', verify, async (req, res) => {
 
         MongoroUserModel.updateOne({ wallet_ID: req.body.wallet_ID }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(async () => {
         })
-        
+
         return res.status(200).json({
           msg: 'Transaction successful !!!',
           transaction: transaction,
           status: 200
         })
       })
+      
     } catch (error) {
       res.status(500).json({ msg: "Transaction failed", error, reference: tid, status: 500})
     }
