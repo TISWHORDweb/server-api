@@ -225,15 +225,18 @@ router.post("/emailverify", async (req, res) => {
 
 //setup
 router.put('/settings', async (req, res) => {
-    let body = JSON.parse(JSON.stringify(req.body));
-    console.log(body)
-    let { id } = body;
-    console.log(id)
+    const id = req.body.id;
+
 
     try {
         if (!req.body.address || !req.body.country || !req.body.state || !req.body.city || !req.body.gender || !req.body.occupation) return res.status(402).json({ msg: 'please check the fields ?' })
         
-        await MongoroUserModel.updateOne({_id: id},{$set:{body, setup_complete:true}}).then(async () => {
+        await MongoroUserModel.updateOne({_id: id},{$set:{ address: req.body.address,
+            state: req.body.state,
+            country: req.body.country,
+            city: req.body.city,
+            gender: req.body.gender,
+            occupation: req.body.occupation, setup_complete:true}}).then(async () => {
             return res.status(200).json({
                 msg: 'Account Setup Successfully !!!',
                 status: 200
