@@ -242,8 +242,6 @@ router.post('/edit_pin', verify, async (req, res) => {
 })
 
 router.put('/image', upload.any(), async (req, res) => {
-    // let body = JSON.parse(JSON.stringify(req.body));
-    // let { id } = body;
 
     try {
         if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?' })
