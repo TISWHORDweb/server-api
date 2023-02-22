@@ -10,9 +10,7 @@ var request = require('request');
 
 const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_KEY);
 
-
 //Treansaction
-
 router.post("/", async (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
 
@@ -39,12 +37,13 @@ router.post("/", async (req, res) => {
     "debit_currency": req.body.debit_currency
   }
 
+
   var config = {
     method: 'post',
     url: 'https://api.flutterwave.com/v3/transfers',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer FLWSECK_TEST-141328841fb7943a7b8d1788f0377d3c-X'
+      'Authorization': `Bearer ${process.env.FLW_SECRET_KEY}`
     },
     data: body
   };
@@ -101,9 +100,8 @@ router.post("/", async (req, res) => {
         })
       }
 
-    }).catch(function (error) {
-      res.status(500).json({ msg: "Internal server error", error, reference: tid, status: 500})
-    });
+    })
+    
   }
 
 })
@@ -212,19 +210,12 @@ router.post('/wallet', verify, async (req, res) => {
 
   req.body.status = "Pending"
 
+  const tid = "00" + Math.floor(10000000000 + Math.random() * 90000000000)
+
   if (!req.body.wallet_ID || !req.body.userId) return res.status(402).json({ msg: 'please check the fields ?' })
 
 
-  const alph = 'abcdefghijklmnopqrstuvwxyz'
-  function generateRandomLetter() {
-    return alph[Math.floor(Math.random() * alph.length)]
-  }
-
-  const word = generateRandomLetter()
-  const words = generateRandomLetter()
-
-  const num = word + words + Math.floor(10000 + Math.random() * 90000)
-  req.body.transaction_ID = num
+  req.body.transaction_ID = tid
 
   const sender = await MongoroUserModel.find({ _id: req.body.userId });
   const senderAmount = sender[0].wallet_balance
@@ -276,9 +267,11 @@ router.post('/wallet', verify, async (req, res) => {
           status: 200
         })
       })
-      
     } catch (error) {
-      res.status(500).json({ msg: "Transaction failed", error, reference: tid, status: 500})
+      res.status(500).json({
+        msg: 'there is an unknown error sorry !',
+        status: 500
+      })
     }
   }
 
@@ -312,7 +305,6 @@ router.get("/:id", verify, async (req, res) => {
     })
   }
 })
-
 
 router.get("/user/:id", async (req, res) => {
   try {
@@ -355,17 +347,8 @@ module.exports = router
 router.post("/withdraw", async (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
 
-  const alph = 'abcdefghijklmnopqrstuvwxyz'
-  function generateRandomLetter() {
-    return alph[Math.floor(Math.random() * alph.length)]
-  }
-
-  const word = generateRandomLetter()
-  const words = generateRandomLetter()
-
   const tid = "00" + Math.floor(1000000 + Math.random() * 9000000)
 
-  const num = "001" + Math.floor(10000 + Math.random() * 90000) + word + words
 
   const body = {
     "account_bank": req.body.account_bank,
@@ -373,7 +356,7 @@ router.post("/withdraw", async (req, res) => {
     "amount": req.body.amount,
     "narration": req.body.narration,
     "currency": req.body.currency,
-    "reference": num,
+    "reference": tid,
     "callback_url": req.body.callback_url,
     "debit_currency": req.body.debit_currency
   }
@@ -438,7 +421,10 @@ router.post("/withdraw", async (req, res) => {
       }
 
     }).catch(function (error) {
-      console.log(error);
+      res.status(500).json({
+        msg: 'there is an unknown error sorry !',
+        status: 500
+      })
     });
   }
 
@@ -449,17 +435,7 @@ router.post("/withdraw", async (req, res) => {
 router.post("/bills", async (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
 
-  const alph = 'abcdefghijklmnopqrstuvwxyz'
-  function generateRandomLetter() {
-    return alph[Math.floor(Math.random() * alph.length)]
-  }
-
-  const word = generateRandomLetter()
-  const words = generateRandomLetter()
-
   const tid = "00" + Math.floor(1000000 + Math.random() * 9000000)
-
-  // const num = "001" + Math.floor(10000 + Math.random() * 90000) + word + words
 
   var config = {
     'method': 'POST',
@@ -529,8 +505,6 @@ router.post("/bills", async (req, res) => {
             transaction: transaction,
             status: 200
           })
-        }).catch((error) =>{
-          res.status(500).json({ msg: "Transaction failed", error, reference: tid, status: 500})
         })
       }
 
@@ -538,7 +512,7 @@ router.post("/bills", async (req, res) => {
       console.log(error);
       res.status(500).json({
         msg: 'there is an unknown error sorry !',
-        error, reference: tid, status: 500
+        status: 500
       })
     });
   }
