@@ -57,6 +57,7 @@ router.post("/", async (req, res) => {
             if (data) {
 
                 const details = {
+                    "flw_id": data.data.id,
                     "reference": tid,
                     "service_type": req.body.service_type,
                     "amount": req.body.amount,
@@ -147,7 +148,7 @@ router.get("/:id", verify, async (req, res) => {
         status: 500
       })
     }
-  })
+})
 
 
 module.exports = router   

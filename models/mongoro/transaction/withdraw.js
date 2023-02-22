@@ -23,6 +23,9 @@ const WithdrawSchema=new mongoose.Schema({
     full_name:{
         type:String
     },
+    flw_id:{
+        type:String
+    },
     account_number:{
         type:String
     },

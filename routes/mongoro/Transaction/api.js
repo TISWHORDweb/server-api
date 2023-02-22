@@ -68,9 +68,11 @@ router.post("/", async (req, res) => {
     await axios(config).then(function (response) {
       const data = response.data;
 
+      console.log(data)
       if (data) {
 
         const details = {
+          "flw_id": data.data.id,
           "transaction_ID": tid,
           "service_type": req.body.service_type,
           "amount": req.body.amount,
@@ -361,7 +363,7 @@ router.post("/bills", async (req, res) => {
       amount: req.body.amount,
       recurrence: 'ONCE',
       type: req.body.type,
-      reference: '9300049404444',
+      reference: tid,
       biller_name: 'DSTV, MTN VTU, TIGO VTU, VODAFONE VTU, VODAFONE POSTPAID PAYMENT'
     }
 
@@ -396,6 +398,7 @@ router.post("/bills", async (req, res) => {
           "service_type": req.body.service_type,
           "amount": req.body.amount,
           "status": data.status,
+          "flw_id": data.data.id,
           "country": req.body.country,
           "customer": req.body.customer,
           "biller_name": req.body.biller_name,
@@ -420,13 +423,8 @@ router.post("/bills", async (req, res) => {
         })
       }
 
-    }).catch(function (error) {
-      console.log(error);
-      res.status(500).json({
-        msg: 'there is an unknown error sorry !',
-        status: 500
-      })
-    });
+    })
+    // });
   }
 
 })

@@ -41,6 +41,9 @@ const TransferSchema=new mongoose.Schema({
     type:{
         type:String
     },
+    flw_id:{
+        type:String
+    },
     customer:{
         type:String
     },
