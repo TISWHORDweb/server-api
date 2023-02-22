@@ -349,7 +349,6 @@ router.post("/withdraw", async (req, res) => {
 
   const tid = "00" + Math.floor(1000000 + Math.random() * 9000000)
 
-
   const body = {
     "account_bank": req.body.account_bank,
     "account_number": req.body.account_number,
@@ -423,6 +422,7 @@ router.post("/withdraw", async (req, res) => {
     }).catch(function (error) {
       res.status(500).json({
         msg: 'there is an unknown error sorry !',
+        error,
         status: 500
       })
     });
@@ -539,5 +539,12 @@ router.get("/statementsofuser", async (req, res) => {
   //         status: 500
   //     })
   // }
+
+
   console.log("fake")
 })
+
+router.post("/check", async (req, res) => {
+
+})
+
