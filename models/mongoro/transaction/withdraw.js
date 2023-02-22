@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const TransferSchema=new mongoose.Schema({
+const WithdrawSchema=new mongoose.Schema({
     transaction_ID:{
         type:String
     },
@@ -32,18 +32,6 @@ const TransferSchema=new mongoose.Schema({
     userId:{
         type:String
     },
-    biller_name:{
-        type:String
-    },
-    country:{
-        type:String
-    },
-    type:{
-        type:String
-    },
-    customer:{
-        type:String
-    },
     narration:{
         type:String
     },
@@ -58,6 +46,6 @@ const TransferSchema=new mongoose.Schema({
 })
 
 
-const TransferModel=mongoose.model("transaction", TransferSchema)
+const WithdrawModel=mongoose.model("withdraw", WithdrawSchema)
 
-module.exports=TransferModel
+module.exports=WithdrawModel

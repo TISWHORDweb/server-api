@@ -326,7 +326,6 @@ router.get("/user/:id", async (req, res) => {
 module.exports = router
 
 
-
 // router.get('/payment-callback', async (req, res) => {
 //   if (req.query.status === 'successful') {
 //       const transactionDetails = await Transaction.find({ref: req.query.tx_ref});
@@ -342,93 +341,6 @@ module.exports = router
 //   }
 // });
 
-
-/////WITHDRAW
-router.post("/withdraw", async (req, res) => {
-  res.header("Access-Control-Allow-Origin", "*");
-
-  const tid = "00" + Math.floor(1000000 + Math.random() * 9000000)
-
-  const body = {
-    "account_bank": req.body.account_bank,
-    "account_number": req.body.account_number,
-    "amount": req.body.amount,
-    "narration": req.body.narration,
-    "currency": req.body.currency,
-    "reference": tid,
-    "callback_url": req.body.callback_url,
-    "debit_currency": req.body.debit_currency
-  }
-
-  var config = {
-    method: 'post',
-    url: 'https://api.flutterwave.com/v3/transfers',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${process.env.FLW_SECRET_KEY}`
-    },
-    data: body
-  };
-  const user = await MongoroUserModel.find({ _id: req.body.userId });
-
-  const oldAmount = user[0].wallet_balance
-  console.log(oldAmount)
-
-  if (oldAmount < req.body.amount) {
-    res.status(401).json({ msg: "Insufficient funds", status: 401 });
-  } else if (oldAmount < 100) {
-    res.status(401).json({ msg: "you dont have enough money", status: 401 });
-  } else if (req.body.amount < 100) {
-    res.status(401).json({ msg: "you cant send any have money lower than 100", status: 401 });
-  } else {
-
-    const newAmount = oldAmount - req.body.amount
-
-    console.log(newAmount)
-
-    await axios(config).then(function (response) {
-      const data = response.data;
-
-      if (data) {
-
-        const details = {
-          "transaction_ID": tid,
-          "service_type": req.body.service_type,
-          "amount": req.body.amount,
-          "status": data.status,
-          "full_name": data.data.full_name,
-          "account_number": data.data.account_number,
-          "bank_name": data.data.bank_name,
-          "userId": req.body.userId,
-        }
-
-        let transaction = new TransferModel(details)
-
-        transaction.save().then(transaction => {
-          if (transaction) {
-            MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(() => {
-              console.log("updated")
-            });
-          }
-
-          return res.status(200).json({
-            msg: 'Transaction successful !!!',
-            transaction: transaction,
-            status: 200
-          })
-        })
-      }
-
-    }).catch(function (error) {
-      res.status(500).json({
-        msg: 'there is an unknown error sorry !',
-        error,
-        status: 500
-      })
-    });
-  }
-
-})
 
 
 ////BILLS PAYMENT
