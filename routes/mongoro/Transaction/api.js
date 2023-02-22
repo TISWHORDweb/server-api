@@ -113,7 +113,7 @@ router.post("/retry", async (req, res) => {
     'method': 'POST',
     'url': `https://api.flutterwave.com/v3/transfers/${req.body.id}/retries`,
     'headers': {
-      'Authorization': 'Bearer FLWSECK_TEST-141328841fb7943a7b8d1788f0377d3c-X',
+      'Authorization': `Bearer ${process.env.FLW_SECRET_KEY}`,
       'Content-Type': 'application/json'
     }
   };
@@ -130,7 +130,7 @@ router.get("/banktransfers", async (req, res) => {
     'method': 'GET',
     'url': 'https://api.flutterwave.com/v3/transfers',
     'headers': {
-      'Authorization': 'Bearer FLWSECK_TEST-141328841fb7943a7b8d1788f0377d3c-X'
+      'Authorization': `Bearer ${process.env.FLW_SECRET_KEY}`
     }
   };
   request(options, function (error, response) {
@@ -147,7 +147,7 @@ router.get("/banktransfers/:id", async (req, res) => {
     'method': 'GET',
     'url': `https://api.flutterwave.com/v3/transfers/${req.params.id}`,
     'headers': {
-      'Authorization': 'Bearer FLWSECK_TEST-141328841fb7943a7b8d1788f0377d3c-X'
+      'Authorization': `Bearer ${process.env.FLW_SECRET_KEY}`
     }
   };
   request(options, function (error, response) {
@@ -366,7 +366,7 @@ router.post("/withdraw", async (req, res) => {
     url: 'https://api.flutterwave.com/v3/transfers',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer FLWSECK_TEST-141328841fb7943a7b8d1788f0377d3c-X'
+      'Authorization': `Bearer ${process.env.FLW_SECRET_KEY}`
     },
     data: body
   };
@@ -441,7 +441,7 @@ router.post("/bills", async (req, res) => {
     'method': 'POST',
     'url': 'https://api.flutterwave.com/v3/bills',
     'headers': {
-      'Authorization': 'Bearer FLWSECK_TEST-141328841fb7943a7b8d1788f0377d3c-X'
+      'Authorization': `Bearer ${process.env.FLW_SECRET_KEY}`
     },
     data: {
       country: req.body.country,
