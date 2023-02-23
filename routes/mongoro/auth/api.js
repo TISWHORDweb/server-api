@@ -125,7 +125,6 @@ router.post("/verify", async (req, res) => {
             subject: 'Verification code',
             html: `<p> Your code is <h1> ${email_code}</h1></p>`
         };
-
         transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
                 console.log(error);
@@ -146,7 +145,6 @@ router.post("/verify", async (req, res) => {
     }
 
 })
-
 
 
 router.post("/login", async (req, res) => {
