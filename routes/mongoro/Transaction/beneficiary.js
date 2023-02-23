@@ -47,7 +47,10 @@ router.post('/create', async (req, res) => {
 
     if (!req.body.beneficiary_name || !req.body.account_number || !req.body.account_bank || !req.body.userId ) return res.status(402).json({ msg: 'please check the fields ?' })
 
-    try {
+    if(req.body.usertag){
+    req.body.wallet_ID = req.body.usertag
+    }
+    // try {
         // const validate = await Mpos.findOne({ business_name: req.body.business_name })
         // if (validate) return res.status(404).json({ msg: 'This Business name is already picked !',status: 404 })
 
@@ -61,15 +64,13 @@ router.post('/create', async (req, res) => {
             })
         })
 
-
-    } catch (error) {
-        res.status(500).json({
-            msg: 'there is an unknown error sorry !',
-            status: 500
-        })
-    }
+    // } catch (error) {
+    //     res.status(500).json({
+    //         msg: 'there is an unknown error sorry !',
+    //         status: 500
+    //     })
+    // }
 })
-
 
 router.delete("/delete", async (req, res) => {
     try {

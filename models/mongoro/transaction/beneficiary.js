@@ -17,7 +17,12 @@ const BeneficiarySchema=new mongoose.Schema({
     userId:{
         type:String
     },
-
+    bank_name:{
+        type:String
+    },
+    wallet_ID:{
+        type:String
+    },
 })
 
 
