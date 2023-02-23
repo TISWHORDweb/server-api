@@ -325,4 +325,8 @@ router.put('/block', verify, async (req, res) => {
 
 })
 
+router.get('/state', async (req,res) =>{
+    console.log(state)
+})
+
 module.exports = router
