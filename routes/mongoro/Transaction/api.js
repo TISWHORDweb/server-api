@@ -5,6 +5,7 @@ const Flutterwave = require('flutterwave-node-v3');
 const verify = require("../../../verifyToken")
 const axios = require('axios')
 const MongoroUserModel = require("../../../models/mongoro/auth/mongoroUser_md")
+const CryptoJS = require("crypto-js")
 var request = require('request');
 
 
@@ -49,65 +50,69 @@ router.post("/", async (req, res) => {
   };
   const user = await MongoroUserModel.find({ _id: req.body.userId });
 
+  const bytes = CryptoJS.AES.decrypt(user[0].pin, process.env.SECRET_KEY);
+  const originalPin = bytes.toString(CryptoJS.enc.Utf8);
 
-  const oldAmount = user[0].wallet_balance
-  console.log(oldAmount)
-
-  if (oldAmount < req.body.amount) {
-    res.status(401).json({ msg: "Insufficient funds", status: 401 });
-  } else if (oldAmount < 100) {
-    res.status(401).json({ msg: "you dont have enough money", status: 401 });
-  } else if (req.body.amount < 100) {
-    res.status(401).json({ msg: "you cant send any have money lower than 100", status: 401 });
+  if (originalPin !== req.body.pin) {
+    res.status(401).json({ msg: "Wrong password", status: 401 });
   } else {
 
-    const newAmount = oldAmount - req.body.amount
+    const oldAmount = user[0].wallet_balance
+    console.log(oldAmount)
 
-    console.log(newAmount)
+    if (oldAmount < req.body.amount) {
+      res.status(401).json({ msg: "Insufficient funds", status: 401 });
+    } else if (oldAmount < 100) {
+      res.status(401).json({ msg: "you dont have enough money", status: 401 });
+    } else if (req.body.amount < 100) {
+      res.status(401).json({ msg: "you cant send any have money lower than 100", status: 401 });
+    } else {
 
-    await axios(config).then(function (response) {
-      const data = response.data;
+      const newAmount = oldAmount - req.body.amount
 
-      console.log(data)
-      if (data) {
+      console.log(newAmount)
 
-        const details = {
-          "flw_id": data.data.id,
-          "transaction_ID": tid,
-          "service_type": req.body.service_type,
-          "amount": req.body.amount,
-          "status": data.status,
-          "full_name": data.data.full_name,
-          "account_number": data.data.account_number,
-          "bank_name": data.data.bank_name,
-          "userId": req.body.userId,
-        }
+      await axios(config).then(function (response) {
+        const data = response.data;
 
-        let transaction = new TransferModel(details)
+        if (data) {
 
-        transaction.save().then(transaction => {
-          if (transaction) {
-            MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(() => {
-              console.log("updated")
-            });
+          const details = {
+            "flw_id": data.data.id,
+            "transaction_ID": tid,
+            "service_type": req.body.service_type,
+            "amount": req.body.amount,
+            "status": data.status,
+            "full_name": data.data.full_name,
+            "account_number": data.data.account_number,
+            "bank_name": data.data.bank_name,
+            "userId": req.body.userId,
           }
 
-          return res.status(200).json({
-            msg: 'Transaction successful !!!',
-            transaction: transaction,
-            status: 200
+          let transaction = new TransferModel(details)
+
+          transaction.save().then(transaction => {
+            if (transaction) {
+              MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(() => {
+                console.log("updated")
+              });
+            }
+
+            return res.status(200).json({
+              msg: 'Transaction successful !!!',
+              transaction: transaction,
+              status: 200
+            })
+          }).catch((error) => {
+            res.status(500).json({ msg: "Transaction failed", error, reference: tid, status: 500 })
           })
-        }).catch((error) =>{
-          res.status(500).json({ msg: "Transaction failed", error, reference: tid, status: 500})
-        })
-      }
+        }
 
-    })
-    
+      })
+
+    }
   }
-
 })
-
 
 router.post("/retry", async (req, res) => {
 
@@ -219,64 +224,67 @@ router.post('/wallet', verify, async (req, res) => {
 
   req.body.transaction_ID = tid
 
+  const users = await MongoroUserModel.find({ _id: req.body.userId });
+  const bytes = CryptoJS.AES.decrypt(users[0].pin, process.env.SECRET_KEY);
+  const originalPin = bytes.toString(CryptoJS.enc.Utf8);
+
   const sender = await MongoroUserModel.find({ _id: req.body.userId });
   const senderAmount = sender[0].wallet_balance
   const senderNewAmount = senderAmount - req.body.amount
-  console.log(senderNewAmount)
-  console.log(senderAmount)
-  console.log(senderAmount > req.body.amount)
 
   let user = await MongoroUserModel.findOne({ wallet_ID: req.body.wallet_ID })
   const oldAmount = user.wallet_balance
   newAmount = +oldAmount + +req.body.amount
 
-  console.log(oldAmount)
-  console.log(newAmount)
-  console.log(req.body.amount)
+  const value = sender[0].blocked
+  console.log(value)
 
-  const value = user.blocked
-
-  if (value === true) {
-    res.status(402).json({ msg: 'you are blocked' })
-  } else if (senderAmount < req.body.amount) {
-    res.status(401).json({ msg: "Insufficient funds", status: 401 });
-  } else if (senderAmount < 100) {
-    res.status(401).json({ msg: "you dont have enough money", status: 401 });
-  } else if (req.body.amount < 100) {
-    res.status(401).json({ msg: "you cant send any have money lower than 100", status: 401 });
+  if (originalPin !== req.body.pin) {
+    res.status(401).json({ msg: 'Wrong pin ', status: 401 })
   } else {
 
-    try {
-      let transaction = await new TransferModel(req.body)
+    if (value === true) {
+      res.status(402).json({ msg: 'you are blocked' })
+    } else if (senderAmount < req.body.amount) {
+      res.status(401).json({ msg: "Insufficient funds", status: 401 });
+    } else if (senderAmount < 100) {
+      res.status(401).json({ msg: "you dont have enough money", status: 401 });
+    } else if (req.body.amount < 100) {
+      res.status(401).json({ msg: "you cant send any have money lower than 100", status: 401 });
+    } else {
 
-      await transaction.save().then(transaction => {
-        const id = transaction._id
-        console.log(id)
-        if (transaction) {
-          MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: senderNewAmount, wallet_updated_at: Date.now() } }).then(() => {
-            console.log("updated")
-            TransferModel.updateOne({ _id: id }, { $set: { status: "Completed" } }).then(async () => {
-            })
-          });
-        }
+      try {
 
-        MongoroUserModel.updateOne({ wallet_ID: req.body.wallet_ID }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(async () => {
+        let transaction = await new TransferModel(req.body)
+
+        await transaction.save().then(transaction => {
+          const id = transaction._id
+          console.log(id)
+          if (transaction) {
+            MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: senderNewAmount, wallet_updated_at: Date.now() } }).then(() => {
+              console.log("updated")
+              TransferModel.updateOne({ _id: id }, { $set: { status: "Completed" } }).then(async () => {
+              })
+            });
+          }
+
+          MongoroUserModel.updateOne({ wallet_ID: req.body.wallet_ID }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(async () => {
+          })
+
+          return res.status(200).json({
+            msg: 'Transaction successful !!!',
+            transaction: transaction,
+            status: 200
+          })
         })
-
-        return res.status(200).json({
-          msg: 'Transaction successful !!!',
-          transaction: transaction,
-          status: 200
+      } catch (error) {
+        res.status(500).json({
+          msg: 'there is an unknown error sorry !',
+          status: 500
         })
-      })
-    } catch (error) {
-      res.status(500).json({
-        msg: 'there is an unknown error sorry !',
-        status: 500
-      })
+      }
     }
   }
-
 })
 
 router.delete("/delete", verify, async (req, res) => {
@@ -351,89 +359,111 @@ router.post("/bills", async (req, res) => {
 
   const tid = "00" + Math.floor(1000000 + Math.random() * 9000000)
 
-  var config = {
-    'method': 'POST',
-    'url': 'https://api.flutterwave.com/v3/bills',
-    'headers': {
-      'Authorization': `Bearer ${process.env.FLW_SECRET_KEY}`
-    },
-    data: {
-      country: req.body.country,
-      customer: req.body.customer,
-      amount: req.body.amount,
-      recurrence: 'ONCE',
-      type: req.body.type,
-      reference: tid,
-      biller_name: 'DSTV, MTN VTU, TIGO VTU, VODAFONE VTU, VODAFONE POSTPAID PAYMENT'
-    }
-
-  };
-
-  const user = await MongoroUserModel.find({ _id: req.body.userId });
-
-  const oldAmount = user[0].wallet_balance
-  console.log(oldAmount)
-
-  if (oldAmount < req.body.amount) {
-    res.status(401).json({ msg: "Insufficient funds", status: 401 });
-  } else if (oldAmount < 100) {
-    res.status(401).json({ msg: "you dont have enough money", status: 401 });
-  } else if (req.body.amount < 100) {
-    res.status(401).json({ msg: "you cant send any have money lower than 100", status: 401 });
-  } else {
-
-    const newAmount = oldAmount - req.body.amount
-
-    console.log(newAmount)
-
-    await axios(config).then(function (response) {
-      const data = response.data;
-
-      console.lpog(data)
-
-      if (data) {
-
-        const details = {
-          "transaction_ID": tid,
-          "service_type": req.body.service_type,
-          "amount": req.body.amount,
-          "status": data.status,
-          "flw_id": data.data.id,
-          "country": req.body.country,
-          "customer": req.body.customer,
-          "biller_name": req.body.biller_name,
-          "type": req.body.type,
-          "userId": req.body.userId,
-        }
-
-        let transaction = new TransferModel(details)
-
-        transaction.save().then(transaction => {
-          if (transaction) {
-            MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(() => {
-              console.log("updated")
-            });
-          }
-
-          return res.status(200).json({
-            msg: 'Transaction successful !!!',
-            transaction: transaction,
-            status: 200
-          })
-        })
+  const users = await MongoroUserModel.find({ _id: req.body.userId });
+  const bytes = CryptoJS.AES.decrypt(users[0].pin, process.env.SECRET_KEY);
+  const originalPin = bytes.toString(CryptoJS.enc.Utf8);
+  try {
+    var config = {
+      'method': 'POST',
+      'url': 'https://api.flutterwave.com/v3/bills',
+      'headers': {
+        'Authorization': `Bearer ${process.env.FLW_SECRET_KEY}`
+      },
+      data: {
+        country: req.body.country,
+        customer: req.body.customer,
+        amount: req.body.amount,
+        recurrence: 'ONCE',
+        type: req.body.type,
+        reference: tid,
+        biller_name: 'DSTV, MTN VTU, TIGO VTU, VODAFONE VTU, VODAFONE POSTPAID PAYMENT'
       }
 
-    })
-    // });
-  }
+    };
 
+    const user = await MongoroUserModel.find({ _id: req.body.userId });
+
+    const oldAmount = user[0].wallet_balance
+    console.log(oldAmount)
+
+    if (originalPin !== req.body.pin) {
+      res.status(401).json({ msg: 'Wrong pin ', status: 401 })
+    } else {
+
+      if (oldAmount < req.body.amount) {
+        res.status(401).json({ msg: "Insufficient funds", status: 401 });
+      } else if (oldAmount < 100) {
+        res.status(401).json({ msg: "you dont have enough money", status: 401 });
+      } else if (req.body.amount < 100) {
+        res.status(401).json({ msg: "you cant send any have money lower than 100", status: 401 });
+      } else {
+
+        const bytes = CryptoJS.AES.decrypt(user[0].pin, process.env.SECRET_KEY);
+        const originalPin = bytes.toString(CryptoJS.enc.Utf8);
+
+        if (originalPin !== req.body.pin) {
+          res.status(401).json({ msg: "Wrong password", status: 401 });
+        }
+
+        const newAmount = oldAmount - req.body.amount
+
+        console.log(newAmount)
+
+        await axios(config).then(function (response) {
+          const data = response.data;
+
+          console.lpog(data)
+
+          if (data) {
+
+            const details = {
+              "transaction_ID": tid,
+              "service_type": req.body.service_type,
+              "amount": req.body.amount,
+              "status": data.status,
+              "flw_id": data.data.id,
+              "country": req.body.country,
+              "customer": req.body.customer,
+              "biller_name": req.body.biller_name,
+              "type": req.body.type,
+              "userId": req.body.userId,
+            }
+
+            let transaction = new TransferModel(details)
+
+            transaction.save().then(transaction => {
+              if (transaction) {
+                MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(() => {
+                  console.log("updated")
+                });
+              }
+
+              return res.status(200).json({
+                msg: 'Transaction successful !!!',
+                transaction: transaction,
+                status: 200
+              })
+            })
+          }
+
+        })
+        // });
+      }
+    }
+  } catch (error) {
+    res.status(500).json({
+      msg: 'there is an unknown error sorry !',
+      status: 500,
+      error
+    })
+  }
 })
 
 
 ////ACCOUNT STATEMENT
 router.get("/statementsofuser", async (req, res) => {
-   
-  await TransferModel.find({"amount":{"gte":500,"$lte": 100}}).then((response)=>{
+
+  await TransferModel.find({ "amount": { "gte": 500, "$lte": 100 } }).then((response) => {
     res.send(response);
   })
   // try {
