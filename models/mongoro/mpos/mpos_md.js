@@ -28,6 +28,10 @@ const PosSchema=new mongoose.Schema({
     terminalId:{
         type:String
     },
+    termsAndConditions:{
+        type:Boolean,
+        default:false
+    },
     time_created:{type:Number, default:()=>Date.now()}		
 })
 
