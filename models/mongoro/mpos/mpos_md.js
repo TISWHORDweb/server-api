@@ -4,7 +4,7 @@ const PosSchema=new mongoose.Schema({
     business_name:{
         type:String
     },
-    owner_name:{
+    type:{
         type:String
     },
     phone:{
@@ -23,6 +23,9 @@ const PosSchema=new mongoose.Schema({
         type:String
     },
     country:{
+        type:String
+    },
+    terminalId:{
         type:String
     },
     time_created:{type:Number, default:()=>Date.now()}		

@@ -45,7 +45,7 @@ function paginatedResults(model) {
 //CREATE
 router.post('/request', verify,async (req, res) => {
 
-    if (!req.body.business_name || !req.body.owner_name || !req.body.phone || !req.body.quantity || !req.body.address || !req.body.state || !req.body.city || !req.body.country) return res.status(402).json({ msg: 'please check the fields ?' })
+    if (!req.body.business_name || !req.body.phone || !req.body.quantity || !req.body.address || !req.body.state || !req.body.city || !req.body.country) return res.status(402).json({ msg: 'please check the fields ?' })
 
     try {
         const validate = await Mpos.findOne({ business_name: req.body.business_name })
