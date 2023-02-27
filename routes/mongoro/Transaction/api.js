@@ -173,7 +173,7 @@ router.get("/verify/:id", async (req, res) => {
 })
 
 
-router.get('/all', verify, paginatedResults(TransferModel), (req, res) => {
+router.get('/all', paginatedResults(TransferModel), (req, res) => {
   res.json(res.paginatedResults)
 })
 

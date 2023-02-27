@@ -21,6 +21,7 @@ const mongoroStatement = require('./routes/mongoro/Transaction/statement')
 const mongoroWebhook = require('./routes/mongoro/Transaction/webhook')
 const mongoroWithdraw = require('./routes/mongoro/Transaction/withdraw')
 const mongoroState = require('./routes/state')
+const mongoroTotal = require('./routes/mongoro/total/total')
 const mongoroBenefiaciary = require('./routes/mongoro/Transaction/beneficiary')
 const mongoose=require('mongoose')
 
@@ -39,6 +40,7 @@ app.use(cors({"origin":"*"}))
 app.use(bodyParser.json())
 
 
+app.use("/mongoro/total", mongoroTotal)
 app.use("/mongoro_waitlist", mongoroWaitlistRoute)
 app.use("/reef_waitlist", reefWaitlistRoute)
 app.use("/mongoro/auth", mongoroAuth)

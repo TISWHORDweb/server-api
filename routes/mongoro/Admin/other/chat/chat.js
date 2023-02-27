@@ -16,6 +16,7 @@ router.post('/send', verify, async (req, res) => {
                 status: 200
             })
         })
+        
     } catch (error) {
         res.status(500).json({
             msg: 'there is an unknown error sorry !',
@@ -23,7 +24,6 @@ router.post('/send', verify, async (req, res) => {
         })
     }
 })
-
 
 router.get("/to/:id", verify, async (req, res) => {
     try {
