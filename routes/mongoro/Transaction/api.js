@@ -38,7 +38,6 @@ router.post("/", async (req, res) => {
     "debit_currency": req.body.debit_currency
   }
 
-
   var config = {
     method: 'post',
     url: 'https://api.flutterwave.com/v3/transfers',
