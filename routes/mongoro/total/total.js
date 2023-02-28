@@ -21,27 +21,54 @@ router.get("/user", async (req, res) => {
 })
 
 router.get("/transaction", async (req, res) => {
-    // try {
 
-    TransferModel.aggregate([{
+    try {
+
+    const rest = await TransferModel.aggregate([{
         $group: {
             _id: null,
-            "TotalAmount": {
-                $sum: "$amount"
-            }
+            "TotalTransaction": { 
+                '$sum': { 
+                    '$convert': { 'input': '$amount', 'to': 'int' }
+                } 
+             }
         }
-    }]).then((response) => {
-        res.send(response)
-    })
+    }])
 
+    res.status(200).json(rest)
+   
+    } catch (err) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
+
+})
+
+router.get("/saving", async (req, res) => {
+    
+    // try {
+
+    const rest = await MongoroUserModel.aggregate([{
+        $group: {
+            _id: null,
+            "TotalSaving":  {
+                $sum: "$wallet_balance"
+             }
+        }
+    }])
+
+    res.status(200).json(rest)
+   
     // } catch (err) {
     //     res.status(500).json({
     //         msg: 'there is an unknown error sorry !',
     //         status: 500
     //     })
     // }
-})
 
+})
 
 
 module.exports = router

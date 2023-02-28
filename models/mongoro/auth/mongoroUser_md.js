@@ -55,7 +55,7 @@ const mongoroUserSchema=new mongoose.Schema({
     occupation:{
         type:String,
     },
-    purpose:{
+    date:{
         type:String,    
     },
     pin:{

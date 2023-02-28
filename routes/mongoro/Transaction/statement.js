@@ -5,7 +5,6 @@ const Flutterwave = require('flutterwave-node-v3');
 const TransferModel = require('../../../models/mongoro/transaction/api')
 
 
-
 router.get("/get/:id", async (req, res) => {
     try {
         const user = await TransferModel.find({userId: req.params.id})

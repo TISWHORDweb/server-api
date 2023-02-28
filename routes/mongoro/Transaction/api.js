@@ -30,7 +30,7 @@ router.post("/", async (req, res) => {
   const body = {
     "account_bank": req.body.account_bank,
     "account_number": req.body.account_number,
-    "amount": req.body.amount,
+    "amount": Number(req.body.amount),
     "narration": req.body.narration,
     "currency": req.body.currency,
     "reference": num,
@@ -80,7 +80,7 @@ router.post("/", async (req, res) => {
             "flw_id": data.data.id,
             "transaction_ID": tid,
             "service_type": req.body.service_type,
-            "amount": req.body.amount,
+            "amount": Number(req.body.amount),
             "status": data.status,
             "full_name": data.data.full_name,
             "account_number": data.data.account_number,
