@@ -56,7 +56,7 @@ const mongoroUserSchema=new mongoose.Schema({
         type:String,
     },
     date:{
-        type:String,    
+        type:Date,    
     },
     pin:{
         type:String
