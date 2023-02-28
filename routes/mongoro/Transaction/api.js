@@ -5,6 +5,7 @@ const Flutterwave = require('flutterwave-node-v3');
 const verify = require("../../../verifyToken")
 const axios = require('axios')
 const MongoroUserModel = require("../../../models/mongoro/auth/mongoroUser_md")
+const GlobalModel = require('../../../models/mongoro/admin/super_admin/global/global_md')
 const CryptoJS = require("crypto-js")
 var request = require('request');
 
@@ -51,8 +52,15 @@ router.post("/", async (req, res) => {
 
   const bytes = CryptoJS.AES.decrypt(user[0].pin, process.env.SECRET_KEY);
   const originalPin = bytes.toString(CryptoJS.enc.Utf8);
+  const users = await GlobalModel.findOne({ _id: process.env.GLOBAL_ID })
+  const value = users.disable_all_transfer
+  const resultt = user[0].blocked
 
-  if (originalPin !== req.body.pin) {
+  if (resultt === true) {
+    res.status(403).json({ msg: "Sorry your account is blocked" })
+  } else if (value === true) {
+    res.status(400).json({ msg: "Sorry service temporarily unavailable", code: 400 })
+  } else if (originalPin !== req.body.pin) {
     res.status(401).json({ msg: "Wrong password", status: 401 });
   } else {
 
@@ -238,13 +246,19 @@ router.post('/wallet', verify, async (req, res) => {
   const value = sender[0].blocked
   console.log(value)
 
-  if (originalPin !== req.body.pin) {
+  const userss = await GlobalModel.findOne({ _id: process.env.GLOBAL_ID })
+  const resultt = userss.disable_all_transfer
+
+
+  if (value === true) {
+    res.status(403).json({ msg: "Sorry your account is blocked" })
+  } else if (resultt === true) {
+    res.status(400).json({ msg: "Sorry service temporarily unavailable", code: 400 })
+  } else if (originalPin !== req.body.pin) {
     res.status(401).json({ msg: 'Wrong pin ', status: 401 })
   } else {
 
-    if (value === true) {
-      res.status(402).json({ msg: 'you are blocked' })
-    } else if (senderAmount < req.body.amount) {
+    if (senderAmount < req.body.amount) {
       res.status(401).json({ msg: "Insufficient funds", status: 401 });
     } else if (senderAmount < 100) {
       res.status(401).json({ msg: "you dont have enough money", status: 401 });
@@ -385,7 +399,15 @@ router.post("/bills", async (req, res) => {
     const oldAmount = user[0].wallet_balance
     console.log(oldAmount)
 
-    if (originalPin !== req.body.pin) {
+    const users = await GlobalModel.findOne({ _id: process.env.GLOBAL_ID })
+    const value = users.disable_all_transfer
+    const resultt = user[0].blocked
+  
+    if (resultt === true) {
+      res.status(403).json({ msg: "Sorry your account is blocked" })
+    } else if (value === true) {
+      res.status(400).json({ msg: "Sorry service temporarily unavailable", code: 400 })
+    } else if (originalPin !== req.body.pin) {
       res.status(401).json({ msg: 'Wrong pin ', status: 401 })
     } else {
 

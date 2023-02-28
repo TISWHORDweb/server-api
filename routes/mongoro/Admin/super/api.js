@@ -3,6 +3,7 @@ const router = express.Router()
 const nodemailer = require('nodemailer');
 const SuperModel = require("../../../../models/mongoro/admin/super_admin/super_md")
 const dotenv = require("dotenv")
+const GlobalModel = require('../../../../models/mongoro/admin/super_admin/global/global_md')
 const speakeasy = require('speakeasy')
 const Qrcode = require('qrcode')
 dotenv.config()
@@ -15,7 +16,7 @@ router.post('/create', async (req, res) => {
     req.body.sms_code = Math.floor(100 + Math.random() * 900)
 
     try {
-        if (!req.body.email || !req.body.phone) return res.status(402).json({ msg: 'please check the fields ?',status: 402 })
+        if (!req.body.email || !req.body.phone) return res.status(402).json({ msg: 'please check the fields ?', status: 402 })
 
         const validate = await SuperModel.findOne({ email: req.body.email })
         if (validate) return res.status(404).json({ msg: 'There is another user with this email !', status: 404 })
@@ -96,17 +97,70 @@ router.get("/all", async (req, res) => {
     }
 })
 
+router.put("/disable_all_user", async (req, res) => {
+    try {
+        await GlobalModel.updateOne({ _id: process.env.GLOBAL_ID }, { $set: { disable_all_user: true, by: req.body.by, updated_at: Date.now() } }).then(async () => {
+        })
+        res.status(200).json({msg:"user Disabled successfully"})
+    } catch (err) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
+})
+
+router.put("/enable_all_user", async (req, res) => {
+    try {
+        await GlobalModel.updateOne({ _id: process.env.GLOBAL_ID }, { $set: { disable_all_user: false, by: req.body.by, updated_at: Date.now() } }).then(async () => {
+        })
+        res.status(200).json({msg:"user Enabled successfully"})
+    } catch (err) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
+})
+
+router.put("/disable_all_transaction", async (req, res) => {
+    try {
+        await GlobalModel.updateOne({ _id: process.env.GLOBAL_ID }, { $set: { disable_all_transfer: true, by: req.body.by, updated_at: Date.now() } }).then(async () => {
+        })
+        res.status(200).json({msg:"Transfer Disabled successfully"})
+    } catch (err) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
+})
+
+router.put("/enable_all_transaction", async (req, res) => {
+    try {
+        await GlobalModel.updateOne({ _id: process.env.GLOBAL_ID }, { $set: { disable_all_transfer: false, by: req.body.by, updated_at: Date.now() } }).then(async () => {
+        })
+        res.status(200).json({msg:"Transfer Enabled successfully"})
+    } catch (err) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
+})
+
+
 router.post("/check", async (req, res) => {
 
     const user = await SuperModel.findOne({ email_code: req.body.email_code });
 
     if (user == null) {
         console.log("Wrong Inputs");
-        res.status(401).json({ msg: "wrong Inputs !",status: 401 });
+        res.status(401).json({ msg: "wrong Inputs !", status: 401 });
     } else if (user.email_code != req.body.email_code || user.sms_code != req.body.sms_code) {
-        res.status(401).json({ msg: 'wrong Codes !',status: 401 });
+        res.status(401).json({ msg: 'wrong Codes !', status: 401 });
     } else {
-        res.status(200).json({ msg: 'Super Admin verified successfuly !',status: 200 });
+        res.status(200).json({ msg: 'Super Admin verified successfuly !', status: 200 });
     }
 })
 
@@ -138,6 +192,8 @@ router.put('/password', async (req, res) => {
 })
 
 
+
+
 router.get('/token', async (req, res) => {
 
     let secret = speakeasy.generateSecret({
@@ -163,12 +219,12 @@ router.post('/verify', async (req, res) => {
         token: req.body.token
     })
 
-    if(verified == true){
+    if (verified == true) {
         return res.status(200).json({
             msg: 'verified Successfully !!!',
             status: 200
         })
-    }else{
+    } else {
         res.status(500).json({
             msg: 'incorrect code !',
             status: 500

@@ -11,6 +11,7 @@ const address = require('address');
 const Word = require('../../words')
 const request = require('request');
 const bcrypt = require('bcryptjs')
+const GlobalModel = require('../../../models/mongoro/admin/super_admin/global/global_md')
 
 
 //CREATE
@@ -150,9 +151,16 @@ router.post("/verify", async (req, res) => {
 router.post("/login", async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
 
-    const user = await MongoroUserModel.findOne({ email: req.body.email })
+    const users = await GlobalModel.findOne({ _id: process.env.GLOBAL_ID})
+    const value = users.disable_all_user
+    const user = await MongoroUserModel.findOne({ email: req.body.email})
+    const resultt = user.blocked
 
-    if (!user) {
+    if(resultt === true){
+        res.status(403).json({msg:"Sorry your account is blocked"})
+    }else if (value === true) {
+        res.status(400).json({ msg: "Sorry service temporarily unavailable", code: 400 })
+    }else if (!user) {
         res.status(400).json({ msg: "user not found", code: 400 })
     } else {
         const originalPassword = await bcrypt.compare(req.body.password, user.password);

@@ -6,7 +6,7 @@ const axios = require('axios')
 const MongoroUserModel = require("../../../models/mongoro/auth/mongoroUser_md")
 var request = require('request');
 const CryptoJS = require("crypto-js")
-
+const GlobalModel = require('../../../models/mongoro/admin/super_admin/global/global_md')
 
 
 /////WITHDRAW
@@ -44,7 +44,15 @@ router.post("/", async (req, res) => {
     const oldAmount = user[0].wallet_balance
     console.log(oldAmount)
 
-    if (originalPin !== req.body.pin) {
+    const userss = await GlobalModel.findOne({ _id: process.env.GLOBAL_ID })
+    const value = userss.disable_all_transfer
+    const resultt = user[0].blocked
+  
+    if (resultt === true) {
+      res.status(403).json({ msg: "Sorry your account is blocked" })
+    } else if (value === true) {
+      res.status(400).json({ msg: "Sorry service temporarily unavailable", code: 400 })
+    } else if (originalPin !== req.body.pin) {
         res.status(401).json({ msg: 'Wrong pin ', status: 401 })
     } else {
 
