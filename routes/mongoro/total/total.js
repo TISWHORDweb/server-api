@@ -24,19 +24,19 @@ router.get("/transaction", async (req, res) => {
 
     try {
 
-    const rest = await TransferModel.aggregate([{
-        $group: {
-            _id: null,
-            "TotalTransaction": { 
-                '$sum': { 
-                    '$convert': { 'input': '$amount', 'to': 'int' }
-                } 
-             }
-        }
-    }])
+        const rest = await TransferModel.aggregate([{
+            $group: {
+                _id: null,
+                "TotalTransaction": {
+                    '$sum': {
+                        '$convert': { 'input': '$amount', 'to': 'int' }
+                    }
+                }
+            }
+        }])
 
-    res.status(200).json(rest)
-   
+        res.status(200).json(rest)
+
     } catch (err) {
         res.status(500).json({
             msg: 'there is an unknown error sorry !',
@@ -47,28 +47,28 @@ router.get("/transaction", async (req, res) => {
 })
 
 router.get("/saving", async (req, res) => {
-    
-    // try {
+
+    try {
 
     const rest = await MongoroUserModel.aggregate([{
         $group: {
             _id: null,
-            "TotalSaving": { 
-                '$sum': { 
+            "TotalSaving": {
+                '$sum': {
                     '$convert': { 'input': '$wallet_balance', 'to': 'int' }
-                } 
-             }
+                }
+            }
         }
     }])
 
     res.status(200).json(rest)
-   
-    // } catch (err) {
-    //     res.status(500).json({
-    //         msg: 'there is an unknown error sorry !',
-    //         status: 500
-    //     })
-    // }
+
+    } catch (err) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
 
 })
 
