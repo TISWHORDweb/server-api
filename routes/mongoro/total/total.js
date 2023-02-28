@@ -53,8 +53,10 @@ router.get("/saving", async (req, res) => {
     const rest = await MongoroUserModel.aggregate([{
         $group: {
             _id: null,
-            "TotalSaving":  {
-                $sum: "$wallet_balance"
+            "TotalSaving": { 
+                '$sum': { 
+                    '$convert': { 'input': '$wallet_balance', 'to': 'int' }
+                } 
              }
         }
     }])
