@@ -58,7 +58,7 @@ router.post('/create', async (req, res) => {
 
         await user.save().then(user => {
             return res.status(200).json({
-                msg: 'Beneficiary created successful !!!',
+                msg: 'Beneficiary created successful ',
                 user: user,
                 status: 200
             })
@@ -128,7 +128,7 @@ router.put('/edit',  async (req, res) => {
         await BeneficiaryModel.updateOne({ _id: id }, body).then(async () => {
             let user = await BeneficiaryModel.findOne({ _id: id })
             return res.status(200).json({
-                msg: 'Beneficiary Setup Successfully !!!',
+                msg: 'Beneficiary Setup Successfully ',
                 user: user,
                 status: 200
             })
@@ -138,7 +138,7 @@ router.put('/edit',  async (req, res) => {
 
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }

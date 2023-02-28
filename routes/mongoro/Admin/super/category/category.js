@@ -13,13 +13,13 @@ router.post('/create', async (req, res) => {
         if (!req.body.name ) return res.status(402).json({ msg: 'please check the fields ?' })
 
         const validate = await CategoryModel.findOne({ name: req.body.name })
-        if (validate) return res.status(404).json({ msg: 'There is another category with that name !' })
+        if (validate) return res.status(404).json({ msg: 'There is another category with that name ' })
 
         let category = await new CategoryModel(req.body)
 
         await category.save().then(category => {
             return res.status(200).json({
-                msg: 'Category created successfully !!!',
+                msg: 'Category created successfully ',
                 category: category,
                 status: 200
             })
@@ -27,7 +27,7 @@ router.post('/create', async (req, res) => {
 
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }
@@ -39,7 +39,7 @@ router.get("/all", async (req, res) => {
         res.status(200).json(category.reverse());
     } catch (err) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }
@@ -70,7 +70,7 @@ router.put('/edit', async (req, res) => {
             let category = await CategoryModel.findOne({ _id: id })
             await CategoryModel.updateOne({ updated_at: category.updated_at }, { $set: { updated_at: Date.now() } })
             return res.status(200).json({
-                msg: 'Category Updated Successfully !!!',
+                msg: 'Category Updated Successfully ',
                 category: category,
                 status: 200
             })
@@ -80,7 +80,7 @@ router.put('/edit', async (req, res) => {
 
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }
@@ -95,7 +95,7 @@ router.delete("/delete", async (req, res) => {
         res.status(200).json({msg: "Category deleted....",status: 200});
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }
@@ -112,7 +112,7 @@ router.post("/invite", async (req, res) => {
 
     if (user == null) {
         console.log("User does not exists");
-        res.status(401).json({msg: "sorry..... User does not exists!",status: 401});
+        res.status(401).json({msg: "sorry..... User does not exists",status: 401});
     } else {
         await MongoroUserModel.updateOne({ _id: user._id }, { $set: { category: req.body.category } })
 
@@ -133,7 +133,7 @@ router.post("/disable", async (req, res) => {
     } else {
         await MongoroUserModel.updateOne({ _id: user._id }, { $set: { category: "none" } })
 
-        res.status(200).json({ msg: 'User Disabled successfuly !',status: 500 });
+        res.status(200).json({ msg: 'User Disabled successfuly ',status: 500 });
     }
 
 })

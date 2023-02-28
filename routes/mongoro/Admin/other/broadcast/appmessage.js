@@ -18,7 +18,7 @@ router.post('/notification/email', async (req, res) => {
             MongoroUserModel.updateOne({ email: req.body.recipent }, { $set: { notification: { message: req.body.message, subject: req.body.subject, send_at: Date.now() } } }).then(async () => {
             })
             return res.status(200).json({
-                msg: 'Notification sent successful !!!',
+                msg: 'Notification sent successful ',
                 notification: notification,
                 status: 200
             })
@@ -26,7 +26,7 @@ router.post('/notification/email', async (req, res) => {
 
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }
@@ -44,14 +44,14 @@ router.post('/notification', async (req, res) => {
             MongoroUserModel.updateMany({ blocked: false }, { $set: { notification: { message: req.body.message, subject: req.body.subject, send_at: Date.now() } } }).then(async () => {
             })
             return res.status(200).json({
-                msg: 'Notification sent successful !!!',
+                msg: 'Notification sent successful',
                 notification: notification,
                 status: 200
             })
         })
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }
@@ -68,14 +68,14 @@ router.post('/notification/state', async (req, res) => {
             MongoroUserModel.updateMany({ state: req.body.state }, { $set: { notification: { message: req.body.message, subject: req.body.subject, send_at: Date.now() } } }).then(async () => {
             })
             return res.status(200).json({
-                msg: 'Notification sent successful !!!',
+                msg: 'Notification sent successful ',
                 notification: notification,
                 status: 200
             })
         })
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }
@@ -92,14 +92,14 @@ router.post('/notification/occupation', async (req, res) => {
             MongoroUserModel.updateMany({ occupation: req.body.occupation }, { $set: { notification: { message: req.body.message, subject: req.body.subject, send_at: Date.now() } } }).then(async () => {
             })
             return res.status(200).json({
-                msg: 'Notification sent successful !!!',
+                msg: 'Notification sent successful ',
                 notification: notification,
                 status: 200
             })
         })
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }
@@ -117,7 +117,7 @@ router.post('/widget/email', async (req, res) => {
             MongoroUserModel.updateOne({ email: req.body.recipent }, { $set: { widget: { message: req.body.message, subject: req.body.subject, send_at: Date.now() } } }).then(async () => {
             })
             return res.status(200).json({
-                msg: 'widget sent successful !!!',
+                msg: 'widget sent successful ',
                 widget: widget,
                 status: 200
             })
@@ -125,7 +125,7 @@ router.post('/widget/email', async (req, res) => {
 
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }
@@ -143,14 +143,14 @@ router.post('/widget', async (req, res) => {
             MongoroUserModel.updateMany({ blocked: false }, { $set: { widget: { message: req.body.message, subject: req.body.subject, send_at: Date.now() } } }).then(async () => {
             })
             return res.status(200).json({
-                msg: 'widget sent successful !!!',
+                msg: 'widget sent successful ',
                 widget: widget,
                 status: 200
             })
         })
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }
@@ -167,14 +167,14 @@ router.post('/widget/state', async (req, res) => {
             MongoroUserModel.updateMany({ state: req.body.state }, { $set: { widget: { message: req.body.message, subject: req.body.subject, send_at: Date.now() } } }).then(async () => {
             })
             return res.status(200).json({
-                msg: 'Notification sent successful !!!',
+                msg: 'Notification sent successful ',
                 widget: widget,
                 status: 200
             })
         })
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }
@@ -191,14 +191,14 @@ router.post('/widget/occupation', async (req, res) => {
             MongoroUserModel.updateMany({ occupation: req.body.occupation }, { $set: { widget: { message: req.body.message, subject: req.body.subject, send_at: Date.now() } } }).then(async () => {
             })
             return res.status(200).json({
-                msg: 'widget sent successful !!!',
+                msg: 'widget sent successful',
                 widget: widget,
                 status: 200
             })
         })
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }
@@ -211,7 +211,7 @@ router.get("/all", async (req, res) => {
         res.status(200).json(notification.reverse());
     } catch (err) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }
@@ -231,7 +231,7 @@ router.put('/edit', async (req, res) => {
 
 
             return res.status(200).json({
-                msg: 'Broadcast Updated Successfully !!!',
+                msg: 'Broadcast Updated Successfully ',
                 broadcast: broadcast,
                 status: 200
             })
@@ -241,7 +241,7 @@ router.put('/edit', async (req, res) => {
 
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }
@@ -256,7 +256,7 @@ router.delete("/delete", async (req, res) => {
         res.status(200).json({ msg: "Notification deleted....", status: 200 });
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }
@@ -294,14 +294,14 @@ router.post('/appmessage', async (req, res) => {
 
         await appmessage.save().then(appmessage => {
             return res.status(200).json({
-                msg: 'Notification sent successful !!!',
+                msg: 'Notification sent successful ',
                 appmessage: appmessage,
                 status: 200
             })
         })
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }
@@ -315,14 +315,14 @@ router.get('/appmessage/:email', async (req, res) => {
         let user = await BroadcastModel.findOne({ recipent: req.params.email })
 
         return res.status(200).json({
-            msg: 'notification Successful !!!',
+            msg: 'notification Successful ',
             user: user,
             status: 200
         })
 
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }
@@ -337,7 +337,7 @@ router.get('/appmessage/:state', async (req, res) => {
         let user = await BroadcastModel.findOne({ recipent: req.params.state })
         if (user) {
             return res.status(200).json({
-                msg: 'notification Successful !!!',
+                msg: 'notification Successful ',
                 user: user,
                 status: 200
             })
@@ -348,7 +348,7 @@ router.get('/appmessage/:state', async (req, res) => {
 
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }
@@ -362,14 +362,14 @@ router.get('/appmessage/:occupation', async (req, res) => {
         let user = await BroadcastModel.findOne({ recipent: req.params.occupation })
 
         return res.status(200).json({
-            msg: 'notification Successful !!!',
+            msg: 'notification Successful ',
             user: user,
             status: 200
         })
 
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }

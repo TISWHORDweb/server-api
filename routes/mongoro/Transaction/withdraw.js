@@ -95,7 +95,7 @@ router.post("/", async (req, res) => {
                         }
 
                         return res.status(200).json({
-                            msg: 'Transaction successful !!!',
+                            msg: 'Transaction successful',
                             transaction: transaction,
                             status: 200
                         })
@@ -104,7 +104,7 @@ router.post("/", async (req, res) => {
 
             }).catch(function (error) {
                 res.status(500).json({
-                    msg: 'there is an unknown error sorry !',
+                    msg: 'there is an unknown error sorry ',
                     error,
                     status: 500
                 })

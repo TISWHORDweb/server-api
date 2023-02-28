@@ -52,7 +52,7 @@ router.post('/create', async (req, res) => {
                     MongoroUserModel.updateOne({ email: email }, { $set: { account: acc, verification: { bvn: true } } }).then(async () => {
 
                         return res.status(200).json({
-                            msg: 'Details saved!!!',
+                            msg: 'Details saved ',
                             account: acc,
                             status: 200
                         })
@@ -70,7 +70,7 @@ router.post('/create', async (req, res) => {
 
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }

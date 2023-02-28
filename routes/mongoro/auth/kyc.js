@@ -60,7 +60,7 @@ router.post('/', verify, upload.any(), async (req, res) => {
 
         await user.save().then(user => {
             return res.status(200).json({
-                msg: 'Congratulation Kyc is done!!!',
+                msg: 'Congratulation Kyc is done ',
                 user: user,
                 status: 200
             })
@@ -69,7 +69,7 @@ router.post('/', verify, upload.any(), async (req, res) => {
 
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }

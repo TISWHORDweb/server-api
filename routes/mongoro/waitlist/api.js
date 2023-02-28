@@ -107,7 +107,7 @@ router.post('/create', async (req, res) => {
         let user = await new MongoroWaitlistModel(req.body)
         await user.save().then(user => {
             return res.status(200).json({
-                msg: 'Congratulation you just join our Waitlist!!! !',
+                msg: 'Congratulation you just join our Waitlist',
                 status: 200,
                 user: {
                     id: user.id,
@@ -120,7 +120,7 @@ router.post('/create', async (req, res) => {
 
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }

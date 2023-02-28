@@ -35,17 +35,17 @@ router.post('/register', async (req, res) => {
         if (!req.body.email || !req.body.usertag || !req.body.surname || !req.body.first_name || !req.body.password || !req.body.phone) return res.status(402).json({ msg: 'please check the fields ?', status: 402 })
 
         const validate = await MongoroUserModel.findOne({ wallet_ID: req.body.wallet_ID })
-        if (validate) return res.status(404).json({ msg: 'There is another user with this User Tag !', status: 404 })
+        if (validate) return res.status(404).json({ msg: 'There is another user with this User Tag ', status: 404 })
 
         const validates = await MongoroUserModel.findOne({ email: req.body.email })
-        if (validates) return res.status(404).json({ msg: 'There is another user with this email !', status: 404 })
+        if (validates) return res.status(404).json({ msg: 'There is another user with this email ', status: 404 })
 
 
         let user = await new MongoroUserModel(req.body)
 
         await user.save().then(user => {
             return res.status(200).json({
-                msg: 'Congratulation you just Created your Mongoro Account !!!',
+                msg: 'Congratulation you just Created your Mongoro Account ',
                 user: user,
                 status: 200
             })
@@ -54,7 +54,7 @@ router.post('/register', async (req, res) => {
 
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }
@@ -70,7 +70,7 @@ router.post('/register', async (req, res) => {
 //         } else {
 //             await MongoroUserModel.update({ isverified: false }, { $set: { isverified: true } })
 //             return res.status(200).json({
-//                 msg: 'Congratulation you Account is verified !!!',
+//                 msg: 'Congratulation you Account is verified',
 //                 status: 200
 //             })
 //         }
@@ -140,7 +140,7 @@ router.post("/verify", async (req, res) => {
         })
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }
@@ -243,7 +243,7 @@ router.put('/settings', async (req, res) => {
             date: req.body.date,
             occupation: req.body.occupation, setup_complete:true}}).then(async () => {
             return res.status(200).json({
-                msg: 'Account Setup Successfully !!!',
+                msg: 'Account Setup Successfully',
                 status: 200
             })
         }).catch((err) => {

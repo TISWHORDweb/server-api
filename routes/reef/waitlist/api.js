@@ -103,7 +103,7 @@ router.post('/create', async (req, res) => {
         let user = await new ReefWaitlistModel(req.body)
         await user.save().then(user => {
             return res.status(200).json({
-                msg: 'Congratulation you just join our Waitlist!!! !',
+                msg: 'Congratulation you just join our Waitlist',
                 status: 200,
                 user: {
                     id: user.id,

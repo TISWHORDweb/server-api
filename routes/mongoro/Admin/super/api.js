@@ -19,7 +19,7 @@ router.post('/create', async (req, res) => {
         if (!req.body.email || !req.body.phone) return res.status(402).json({ msg: 'please check the fields ?', status: 402 })
 
         const validate = await SuperModel.findOne({ email: req.body.email })
-        if (validate) return res.status(404).json({ msg: 'There is another user with this email !', status: 404 })
+        if (validate) return res.status(404).json({ msg: 'There is another user with this email ', status: 404 })
 
         var data = {
             "to": req.body.phone,
@@ -71,7 +71,7 @@ router.post('/create', async (req, res) => {
 
         await user.save().then(user => {
             return res.status(200).json({
-                msg: 'Congratulation you are now super admin !!!',
+                msg: 'Congratulation you are now super admin ',
                 user: user,
                 status: 200
             })
@@ -79,7 +79,7 @@ router.post('/create', async (req, res) => {
 
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }
@@ -104,7 +104,7 @@ router.put("/disable_all_user", async (req, res) => {
         res.status(200).json({msg:"user Disabled successfully"})
     } catch (err) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }
@@ -130,7 +130,7 @@ router.put("/disable_all_transaction", async (req, res) => {
         res.status(200).json({msg:"Transfer Disabled successfully"})
     } catch (err) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }
@@ -156,11 +156,11 @@ router.post("/check", async (req, res) => {
 
     if (user == null) {
         console.log("Wrong Inputs");
-        res.status(401).json({ msg: "wrong Inputs !", status: 401 });
+        res.status(401).json({ msg: "wrong Inputs ", status: 401 });
     } else if (user.email_code != req.body.email_code || user.sms_code != req.body.sms_code) {
-        res.status(401).json({ msg: 'wrong Codes !', status: 401 });
+        res.status(401).json({ msg: 'wrong Codes ', status: 401 });
     } else {
-        res.status(200).json({ msg: 'Super Admin verified successfuly !', status: 200 });
+        res.status(200).json({ msg: 'Super Admin verified successfuly ', status: 200 });
     }
 })
 
@@ -174,7 +174,7 @@ router.put('/password', async (req, res) => {
         await SuperModel.updateOne({ _id: id }, body).then(async () => {
             let user = await SuperModel.findOne({ _id: id })
             return res.status(200).json({
-                msg: 'Password created Successfully !!!',
+                msg: 'Password created Successfully ',
                 user: user,
                 status: 200
             })
@@ -184,7 +184,7 @@ router.put('/password', async (req, res) => {
 
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }
@@ -202,7 +202,7 @@ router.get('/token', async (req, res) => {
 
     Qrcode.toDataURL(secret.otpauth_url, async function (err, data) {
         return res.status(200).json({
-            msg: 'token created Successfully !!!',
+            msg: 'token created Successfully ',
             secret: secret,
             data: data,
             status: 200
@@ -221,7 +221,7 @@ router.post('/verify', async (req, res) => {
 
     if (verified == true) {
         return res.status(200).json({
-            msg: 'verified Successfully !!!',
+            msg: 'verified Successfully ',
             status: 200
         })
     } else {

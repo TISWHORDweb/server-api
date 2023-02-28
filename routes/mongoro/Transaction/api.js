@@ -25,7 +25,6 @@ router.post("/", async (req, res) => {
   const words = generateRandomLetter()
 
   const tid = "00" + Math.floor(10000000000 + Math.random() * 90000000000)
-
   const num = "001" + Math.floor(10000 + Math.random() * 90000) + word + words
 
   const body = {
@@ -106,7 +105,7 @@ router.post("/", async (req, res) => {
             }
 
             return res.status(200).json({
-              msg: 'Transaction successful !!!',
+              msg: 'Transaction successful ',
               transaction: transaction,
               status: 200
             })
@@ -285,7 +284,7 @@ router.post('/wallet', verify, async (req, res) => {
           })
 
           return res.status(200).json({
-            msg: 'Transaction successful !!!',
+            msg: 'Transaction successful ',
             transaction: transaction,
             status: 200
           })
@@ -460,7 +459,7 @@ router.post("/bills", async (req, res) => {
               }
 
               return res.status(200).json({
-                msg: 'Transaction successful !!!',
+                msg: 'Transaction successful ',
                 transaction: transaction,
                 status: 200
               })

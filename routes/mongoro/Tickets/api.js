@@ -53,7 +53,7 @@ router.post('/create', verify,async (req, res) => {
 
         await tickets.save().then(tickets => {
             return res.status(200).json({
-                msg: 'Ticket created successful !!!',
+                msg: 'Ticket created successful ',
                 tickets: tickets,
                 status: 200
             })
@@ -61,7 +61,7 @@ router.post('/create', verify,async (req, res) => {
 
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }
@@ -76,7 +76,7 @@ router.delete("/delete", verify, async (req, res) => {
         res.status(200).json("Tickets deleted....");
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }
@@ -91,7 +91,7 @@ router.get("/:id", verify, async (req, res) => {
         res.status(200).json(tickets);
     } catch (err) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }
@@ -107,7 +107,7 @@ router.put('/edit', verify, async (req, res) => {
         await TicketModel.updateOne({ _id: id }, body).then(async () => {
             let tickets = await TicketModel.findOne({ _id: id })
             return res.status(200).json({
-                msg: 'Ticket Edited Successfully !!!',
+                msg: 'Ticket Edited Successfully ',
                 tickets: tickets,
                 status: 200
             })
@@ -117,7 +117,7 @@ router.put('/edit', verify, async (req, res) => {
 
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }

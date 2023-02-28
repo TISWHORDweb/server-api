@@ -55,7 +55,7 @@ router.post('/request', verify,async (req, res) => {
 
         await user.save().then(user => {
             return res.status(200).json({
-                msg: 'Congratulation Your request is successful !!!',
+                msg: 'Congratulation Your request is successful ',
                 user: user,
                 status: 200
             })
@@ -79,7 +79,7 @@ router.delete("/delete", verify, async (req, res) => {
         res.status(200).json({msg:"Request deleted....",status: 200});
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }
@@ -94,7 +94,7 @@ router.get("/:id", verify, async (req, res) => {
         res.status(200).json(pos);
     } catch (err) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }
@@ -114,7 +114,7 @@ router.put('/edit', verify, async (req, res) => {
         await Mpos.updateOne({ _id: id }, body).then(async () => {
             let user = await Mpos.findOne({ _id: id })
             return res.status(200).json({
-                msg: 'Pos request Setup Successfully !!!',
+                msg: 'Pos request Setup Successfully ',
                 user: user,
                 status: 200
             })
@@ -124,7 +124,7 @@ router.put('/edit', verify, async (req, res) => {
 
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }

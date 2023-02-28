@@ -14,7 +14,7 @@ router.post('/send', verify, async (req, res) => {
 
         await chat.save().then(chat => {
             return res.status(200).json({
-                msg: 'Message send!!!',
+                msg: 'Message send',
                 chat: chat,
                 status: 200
             })
@@ -22,7 +22,7 @@ router.post('/send', verify, async (req, res) => {
 
     } catch (error) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }
@@ -36,7 +36,7 @@ router.get("/:id", verify, async (req, res) => {
         res.status(200).json(chat);
     } catch (err) {
         res.status(500).json({
-            msg: 'there is an unknown error sorry !',
+            msg: 'there is an unknown error sorry ',
             status: 500
         })
     }
@@ -53,7 +53,7 @@ router.put('/edit', async (req, res) => {
             let chat = await UserChatModel.findOne({ _id: id })
 
             return res.status(200).json({
-                msg: 'Admin chat Updated Successfully !!!',
+                msg: 'Admin chat Updated Successfully ',
                 chat: chat,
                 status: 200
             })
