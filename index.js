@@ -21,6 +21,8 @@ const mongoroStatement = require('./routes/mongoro/Transaction/statement')
 const mongoroWebhook = require('./routes/mongoro/Transaction/webhook')
 const mongoroWithdraw = require('./routes/mongoro/Transaction/withdraw')
 const mongoroState = require('./routes/state')
+const mongoroAdmin = require('./routes/mongoro/Admin/admin')
+const mongoroOther = require('./routes/mongoro/Admin/other/other_admin')
 const mongoroTotal = require('./routes/mongoro/total/total')
 const mongoroBenefiaciary = require('./routes/mongoro/Transaction/beneficiary')
 const mongoose=require('mongoose')
@@ -41,6 +43,7 @@ app.use(bodyParser.json())
 
 
 app.use("/mongoro/total", mongoroTotal)
+app.use("/mongoro/other", mongoroOther)
 app.use("/mongoro_waitlist", mongoroWaitlistRoute)
 app.use("/reef_waitlist", reefWaitlistRoute)
 app.use("/mongoro/auth", mongoroAuth)
@@ -57,6 +60,7 @@ app.use("/mongoro/broadcast", mongoroAppmessage)
 app.use("/mongoro/verify", mongoroU_verify)
 app.use("/mongoro/account", mongoroAccount)
 app.use("/mongoro", mongoroWebhook)
+app.use("/mongoro/admin", mongoroAdmin)
 app.use("/mongoro/state", mongoroState)
 app.use("/mongoro/withdraw", mongoroWithdraw)
 app.use("/mongoro/statement", mongoroStatement)
@@ -68,7 +72,7 @@ mongoose.set("strictQuery", true);
 mongoose .connect("mongodb+srv://mongoro:mongoro@mongoro.dbwd7pc.mongodb.net/?retryWrites=true&w=majority")
     // .connect(process.env.MONGO_URL)
     .then(() => {
-        console.log("MongoDB Connected")
+        console.log("Database Connected")
     })
     .catch((err) => console.log(err));
 

@@ -1,20 +1,20 @@
 const mongoose = require('mongoose')
 
-const SuperSchema=new mongoose.Schema({
+const OtherSchema=new mongoose.Schema({
     email:{
         type:String
     },
-    password:{
+    category:{
         type:String
     },
-    token:{
+    password:{
         type:String
     },
     time_created:{type:Number, default:()=>Date.now()}		
 })
 
 
-const SuperModel=mongoose.model("super", SuperSchema)
+const OtherModel=mongoose.model("other_admin", OtherSchema)
 
-module.exports=SuperModel
+module.exports=OtherModel
 
