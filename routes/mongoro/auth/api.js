@@ -153,13 +153,13 @@ router.post("/login", async (req, res) => {
     const user = await MongoroUserModel.findOne({ email: req.body.email })
     const resultt = user.blocked
 
-    if (resultt === true) {
-        res.status(403).json({ msg: "Sorry your account is blocked" })
-    } else if (value === true) {
-        res.status(400).json({ msg: "Sorry service temporarily unavailable", code: 400 })
-    } else if (!user) {
+   if (!user) {
         res.status(400).json({ msg: "user not found", code: 400 })
-    } else {
+    } else  if (resultt === true) {
+        res.status(403).json({ msg: "Sorry your account is blocked", code: 403 })
+    } else if (value === true) {
+        res.status(500).json({ msg: "Sorry service temporarily unavailable", code: 500 })
+    }  else {
         const originalPassword = await bcrypt.compare(req.body.password, user.password);
 
         if (!originalPassword) {
