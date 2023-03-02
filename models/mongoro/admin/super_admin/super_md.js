@@ -10,6 +10,9 @@ const SuperSchema=new mongoose.Schema({
     token:{
         type:String
     },
+    ip:{
+        type:String
+    },
     time_created:{type:Number, default:()=>Date.now()}		
 })
 

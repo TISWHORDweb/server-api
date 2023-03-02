@@ -165,7 +165,7 @@ router.put("/enable_all_transaction", async (req, res) => {
 //     }
 // })
 
-router.put('/password', async (req, res) => {
+router.post('/password', async (req, res) => {
 
     try {
 

@@ -5,6 +5,7 @@ const SuperModel = require('../../../../models/mongoro/admin/super_admin/super_m
 const CategoryModel = require("../../../../models/mongoro/admin/super_admin/category/category")
 const dotenv = require("dotenv")
 dotenv.config()
+const bcrypt = require('bcryptjs')
 
 
 router.get("/all", async (req, res) => {
@@ -49,24 +50,24 @@ router.post("/check", async (req, res) => {
 
 })
 
-router.put('/password', async (req, res) => {
+router.post('/password', async (req, res) => {
 
     try {
 
-        const supers = await SuperModel.findOne({ email: req.body.email })
+        const supers = await OtherModel.findOne({ email: req.body.email })
         
-        if (!req.body.email) return res.status(401).json({ msg: 'provide the id ?' })
+        if (!req.body.email) return res.status(401).json({ msg: 'provide the email ?' })
 
         if (req.body.password) {
             req.body.password = await bcrypt.hash(req.body.password, 13)
         }    
-        
+
         if(supers){
-            await SuperModel.updateOne({ email: req.body.email }, { $set: { password: req.body.password } }).then(async () => {
-                let super_admin = await SuperModel.findOne({ email: req.body.email })
+            await OtherModel.updateOne({ email: req.body.email }, { $set: { password: req.body.password } }).then(async () => {
+                let other_admin = await OtherModel.findOne({ email: req.body.email })
                 return res.status(200).json({
                     msg: 'Password created Successfully ',
-                    super:super_admin,
+                    other:other_admin,
                     status: 200
                 })
             }).catch((err) => {

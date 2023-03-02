@@ -5,6 +5,7 @@ const OtherModel = require('../../../../../models/mongoro/admin/other/otherAdmi_
 const SuperModel = require('../../../../../models/mongoro/admin/super_admin/super_md')
 const CategoryModel = require("../../../../../models/mongoro/admin/super_admin/category/category")
 const dotenv = require("dotenv")
+const nodemailer = require('nodemailer');
 dotenv.config()
 
 

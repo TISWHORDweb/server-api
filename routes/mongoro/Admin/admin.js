@@ -4,7 +4,10 @@ const SuperModel = require("../../../models/mongoro/admin/super_admin/super_md")
 const dotenv = require("dotenv")
 const GlobalModel = require('../../../models/mongoro/admin/super_admin/global/global_md')
 dotenv.config()
+const address = require('address');
+const jwt = require("jsonwebtoken")
 const bcrypt = require('bcryptjs')
+const OtherModel = require('../../../models/mongoro/admin/other/otherAdmi_md')
 
 
 
@@ -12,76 +15,63 @@ router.post("/login", async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
 
     const supers = await SuperModel.findOne({ email: req.body.email })
-    const superPassword = supers.password
 
-    const admin = GlobalModel.findOne({ email: req.body.email })
-    const adminPassword = admin.password
-
-    console.log(adminPassword)
-
-    // const value = users.disable_all_user
-    // const user = await MongoroUserModel.findOne({ email: req.body.email })
+    const admin = await OtherModel.findOne({ email: req.body.email })
 
     // if (!user) {
     //     res.status(400).json({ msg: "user not found", code: 400 })
     // } 
-    
+
     // const resultt = user.blocked
 
-    // if (user.category === "Admin") {
-    //     if (resultt === true) {
-    //         res.status(403).json({ msg: "Sorry your account is blocked", code: 403 })
-    //     } else if (value === true) {
-    //         res.status(500).json({ msg: "Sorry service temporarily unavailable", code: 500 })
-    //     } else {
+    if (admin) {
+        // const value = admin.blocked
+        // if (value === true) {
+        //     res.status(500).json({ msg: "your account is blocked", code: 500 })
+        // } else {
 
-    //         const originalPassword = await bcrypt.compare(req.body.password, user.password);
+        const originalPassword = await bcrypt.compare(req.body.password, admin.password);
 
-    //         if (!originalPassword) {
-    //             res.status(400).json({ msg: "wrong password", code: 400 })
-    //         } else {
-    //             const accessToken = jwt.sign(
-    //                 { id: user._id, isverified: user.isverified },
-    //                 process.env.SECRET_KEY,
-    //                 { expiresIn: "5h" }
-    //             );
+        if (!originalPassword) {
+            res.status(400).json({ msg: " Admin wrong password", code: 400 })
+        } else {
+            const accessToken = jwt.sign(
+                { email: req.body.email},
+                process.env.SECRET_KEY,
+                { expiresIn: "5h" }
+            );
 
-    //             const ip = address.ip();
+            const ip = address.ip();
 
-    //             await MongoroUserModel.updateOne({ _id: user._id }, { $set: { ip: ip } }).then(() => {
-    //                 res.status(200).json({ msg: 'logged in successfuly Admin !',category:"Admin", user: user, token: accessToken, ip_address: ip, status: 200 });
-    //             })
-    //         }
-    //     }
+            await OtherModel.updateOne({ email: req.body.email}, { $set: { ip: ip } }).then(() => {
+                res.status(200).json({ msg: 'logged in successfuly Admin !', category: "Admin", token: accessToken, ip_address: ip, status: 200 });
+            })
+        }
+        // }
 
-    // } else if (user.category === "Super Admin") {
+    } else if (supers) {
 
-    //     if (resultt === true) {
-    //         res.status(403).json({ msg: "Sorry your account is blocked", code: 403 })
-    //     } else {
+        const originalPassword = await bcrypt.compare(req.body.password, supers.password);
 
-    //         const originalPassword = await bcrypt.compare(req.body.password, user.password);
+        if (!originalPassword) {
+            res.status(400).json({ msg: "Super Admin wrong password", code: 400 })
+        } else {
+            const accessToken = jwt.sign(
+                { email: req.body.email},
+                process.env.SECRET_KEY,
+                { expiresIn: "5h" }
+            );
 
-    //         if (!originalPassword) {
-    //             res.status(400).json({ msg: "wrong password", code: 400 })
-    //         } else {
-    //             const accessToken = jwt.sign(
-    //                 { id: user._id, isverified: user.isverified },
-    //                 process.env.SECRET_KEY,
-    //                 { expiresIn: "5h" }
-    //             );
+            const ip = address.ip();
 
-    //             const ip = address.ip();
+            await SuperModel.updateOne({ email: req.body.email }, { $set: { ip: ip } }).then(() => {
+                res.status(200).json({ msg: 'logged in successfuly Super Admin', category: "Super Admin", token: accessToken, ip_address: ip, status: 200 });
+            })
+        }
 
-    //             await MongoroUserModel.updateOne({ _id: user._id }, { $set: { ip: ip } }).then(() => {
-    //                 res.status(200).json({ msg: 'logged in successfuly Super Admin', category:"Super Admin", user: user, token: accessToken, ip_address: ip, status: 200 });
-    //             })
-    //         }
-    //     }
-
-    // } else {
-    //     res.status(403).json({ msg: "Sorry you have No access ", code: 403 })
-    // }
+    } else {
+        res.status(400).json({ msg: "wrong email and password ", code: 403 })
+    }
 })
 
 

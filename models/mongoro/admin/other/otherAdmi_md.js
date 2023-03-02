@@ -10,6 +10,13 @@ const OtherSchema=new mongoose.Schema({
     password:{
         type:String
     },
+    blocked:{
+        type:Boolean,
+        default:false
+    },
+    ip:{
+        type:String
+    },
     time_created:{type:Number, default:()=>Date.now()}		
 })
 
