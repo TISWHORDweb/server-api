@@ -47,78 +47,78 @@ router.post("/", async (req, res) => {
     },
     data: body
   };
-  // const user = await MongoroUserModel.find({ _id: req.body.userId });
+  const user = await MongoroUserModel.find({ _id: req.body.userId });
 
-  // const bytes = CryptoJS.AES.decrypt(user[0].pin, process.env.SECRET_KEY);
-  // const originalPin = bytes.toString(CryptoJS.enc.Utf8);
-  // const users = await GlobalModel.findOne({ _id: process.env.GLOBAL_ID })
-  // const value = users.disable_all_transfer
-  // const resultt = user[0].blocked
+  const bytes = CryptoJS.AES.decrypt(user[0].pin, process.env.SECRET_KEY);
+  const originalPin = bytes.toString(CryptoJS.enc.Utf8);
+  const users = await GlobalModel.findOne({ _id: process.env.GLOBAL_ID })
+  const value = users.disable_all_transfer
+  const resultt = user[0].blocked
 
-  // if (resultt === true) {
-  //   res.status(403).json({ msg: "Sorry your account is blocked" })
-  // } else if (value === true) {
-  //   res.status(400).json({ msg: "Sorry service temporarily unavailable", code: 400 })
-  // } else if (originalPin !== req.body.pin) {
-  //   res.status(401).json({ msg: "Wrong password", status: 401 });
-  // } else {
+  if (resultt === true) {
+    res.status(403).json({ msg: "Sorry your account is blocked" })
+  } else if (value === true) {
+    res.status(400).json({ msg: "Sorry service temporarily unavailable", code: 400 })
+  } else if (originalPin !== req.body.pin) {
+    res.status(401).json({ msg: "Wrong password", status: 401 });
+  } else {
 
-  //   const oldAmount = user[0].wallet_balance
-  //   console.log(oldAmount)
+    const oldAmount = user[0].wallet_balance
+    console.log(oldAmount)
 
-  //   if (oldAmount < req.body.amount) {
-  //     res.status(401).json({ msg: "Insufficient funds", status: 401 });
-  //   } else if (oldAmount < 100) {
-  //     res.status(401).json({ msg: "you dont have enough money", status: 401 });
-  //   } else if (req.body.amount < 100) {
-  //     res.status(401).json({ msg: "you cant send any have money lower than 100", status: 401 });
-  //   } else {
+    if (oldAmount < req.body.amount) {
+      res.status(401).json({ msg: "Insufficient funds", status: 401 });
+    } else if (oldAmount < 100) {
+      res.status(401).json({ msg: "you dont have enough money", status: 401 });
+    } else if (req.body.amount < 100) {
+      res.status(401).json({ msg: "you cant send any have money lower than 100", status: 401 });
+    } else {
 
-  //     const newAmount = oldAmount - req.body.amount
+      const newAmount = oldAmount - req.body.amount
 
-  //     console.log(newAmount)
+      console.log(newAmount)
 
       await axios(config).then(function (response) {
         const data = response.data;
 
         console.log(data)
-        // if (data) {
+        if (data) {
 
-        //   const details = {
-        //     "flw_id": data.data.id,
-        //     "transaction_ID": tid,
-        //     "service_type": req.body.service_type,
-        //     "amount": Number(req.body.amount),
-        //     "status": data.status,
-        //     "full_name": data.data.full_name,
-        //     "account_number": data.data.account_number,
-        //     "bank_name": data.data.bank_name,
-        //     "userId": req.body.userId,
-        //   }
+          const details = {
+            "flw_id": data.data.id,
+            "transaction_ID": tid,
+            "service_type": req.body.service_type,
+            "amount": Number(req.body.amount),
+            "status": data.status,
+            "full_name": data.data.full_name,
+            "account_number": data.data.account_number,
+            "bank_name": data.data.bank_name,
+            "userId": req.body.userId,
+          }
 
-        //   let transaction = new TransferModel(details)
+          let transaction = new TransferModel(details)
 
-        //   transaction.save().then(transaction => {
-        //     if (transaction) {
-        //       MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(() => {
-        //         console.log("updated")
-        //       });
-        //     }
+          transaction.save().then(transaction => {
+            if (transaction) {
+              MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(() => {
+                console.log("updated")
+              });
+            }
 
-        //     return res.status(200).json({
-        //       msg: 'Transaction successful ',
-        //       transaction: transaction,
-        //       status: 200
-        //     })
-        //   }).catch((error) => {
-        //     res.status(500).json({ msg: "Transaction failed", error, reference: tid, status: 500 })
-        //   })
-        // }
+            return res.status(200).json({
+              msg: 'Transaction successful ',
+              transaction: transaction,
+              status: 200
+            })
+          }).catch((error) => {
+            res.status(500).json({ msg: "Transaction failed", error, reference: tid, status: 500 })
+          })
+        }
 
       })
 
-  //   }
-  // }
+    }
+  }
 })
 
 router.post("/retry", async (req, res) => {
