@@ -137,19 +137,19 @@ router.put('/edit', verify, async (req, res) => {
 
 router.post('/forgot_password', async (req, res) => {
 
-    const user = await MongoroUserModel.findOne({ _id: req.body.id });
+    const user = await MongoroUserModel.findOne({ email: req.body.email });
 
     try {
-        if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?', status: 402 })
+        if (!req.body.email) return res.status(402).json({ msg: 'provide the id ?', status: 402 })
 
         if (!user) {
             res.status(400).json({ msg: "No User is registered with this id!", status: 401 });
         } else {
             const newPassword = await bcrypt.hash(req.body.password, 13)
-            await MongoroUserModel.updateOne({ _id: req.body.id }, { password: newPassword }).then(async () => {
-                const Newuser = await MongoroUserModel.findOne({ _id: req.body.id });
+            await MongoroUserModel.updateOne({ email: req.body.email }, { password: newPassword }).then(async () => {
+                const Newuser = await MongoroUserModel.findOne({ email: req.body.email });
                 return res.status(200).json({
-                    msg: 'Account Setup Successfully ',
+                    msg: 'Password changed Successfully ',
                     user: Newuser,
                     status: 200
                 })
