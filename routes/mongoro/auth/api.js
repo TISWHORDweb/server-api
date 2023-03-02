@@ -44,9 +44,17 @@ router.post('/register', async (req, res) => {
         let user = await new MongoroUserModel(req.body)
 
         await user.save().then(user => {
+
+            const accessToken = jwt.sign(
+                { id: user._id},
+                process.env.SECRET_KEY,
+                { expiresIn: "5h" }
+                
+            );
             return res.status(200).json({
                 msg: 'Congratulation you just Created your Mongoro Account ',
                 user: user,
+                token: accessToken,
                 status: 200
             })
         })
@@ -176,13 +184,14 @@ router.post("/login", async (req, res) => {
 
             const ip = address.ip();
 
-            await MongoroUserModel.updateOne({ _id: user._id }, { $set: { ip: ip } }).then(() => {
+            await MongoroUserModel.updateOne({ _id: user._id }, { $set: { ip: ip, active: true } }).then(() => {
                 res.status(200).json({ msg: 'logged in successfuly ', user: user, token: accessToken, ip_address: ip, status: 200 });
             })
         }
     }
 
 })
+
 
 //FORGOTPASSWORD 
 router.post("/emailverify", async (req, res) => {

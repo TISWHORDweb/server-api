@@ -69,7 +69,7 @@ const mongoroUserSchema=new mongoose.Schema({
     },
     wallet_balance:{
         type:String,
-        default: "0.00"
+        default: 0
     },
     wallet_ID:{
         type:String
@@ -112,6 +112,10 @@ const mongoroUserSchema=new mongoose.Schema({
         send_at:{type:Number, default:()=>Date.now()},	
     },
     blocked:{
+        type:Boolean,
+        default: false
+    },
+    active:{
         type:Boolean,
         default: false
     },

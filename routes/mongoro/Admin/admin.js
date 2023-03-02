@@ -25,29 +25,29 @@ router.post("/login", async (req, res) => {
     // const resultt = user.blocked
 
     if (admin) {
-        // const value = admin.blocked
-        // if (value === true) {
-        //     res.status(500).json({ msg: "your account is blocked", code: 500 })
-        // } else {
 
-        const originalPassword = await bcrypt.compare(req.body.password, admin.password);
-
-        if (!originalPassword) {
-            res.status(400).json({ msg: " Admin wrong password", code: 400 })
+        if (admin.blocked === true) {
+            res.status(500).json({ msg: "your account is blocked", code: 500 })
         } else {
-            const accessToken = jwt.sign(
-                { email: req.body.email},
-                process.env.SECRET_KEY,
-                { expiresIn: "5h" }
-            );
 
-            const ip = address.ip();
+            const originalPassword = await bcrypt.compare(req.body.password, admin.password);
 
-            await OtherModel.updateOne({ email: req.body.email}, { $set: { ip: ip } }).then(() => {
-                res.status(200).json({ msg: 'logged in successfuly Admin !', category: "Admin", token: accessToken, ip_address: ip, status: 200 });
-            })
+            if (!originalPassword) {
+                res.status(400).json({ msg: " Admin wrong password", code: 400 })
+            } else {
+                const accessToken = jwt.sign(
+                    { email: req.body.email },
+                    process.env.SECRET_KEY,
+                    { expiresIn: "5h" }
+                );
+
+                const ip = address.ip();
+
+                await OtherModel.updateOne({ email: req.body.email }, { $set: { ip: ip } }).then(() => {
+                    res.status(200).json({ msg: 'logged in successfuly Admin !', category: "Admin", token: accessToken, ip_address: ip, status: 200 });
+                })
+            }
         }
-        // }
 
     } else if (supers) {
 
@@ -57,7 +57,7 @@ router.post("/login", async (req, res) => {
             res.status(400).json({ msg: "Super Admin wrong password", code: 400 })
         } else {
             const accessToken = jwt.sign(
-                { email: req.body.email},
+                { email: req.body.email },
                 process.env.SECRET_KEY,
                 { expiresIn: "5h" }
             );
@@ -73,6 +73,5 @@ router.post("/login", async (req, res) => {
         res.status(400).json({ msg: "wrong email and password ", code: 403 })
     }
 })
-
 
 module.exports = router

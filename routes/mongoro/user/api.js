@@ -91,6 +91,22 @@ router.get("/:id", verify, async (req, res) => {
     }
 })
 
+router.post("/inactive/:id", async (req, res) => {
+    try {
+        if (!req.params.id) return res.status(402).json({ msg: 'provide the id ?' })
+
+        await MongoroUserModel.updateOne({ _id: req.params.id }, { $set: { active: false } }).then(() => {
+            res.status(200).json({ msg: 'User turned inactive successfully ', status: 200 });
+        })
+        
+    } catch (err) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry ',
+            status: 500
+        })
+    }
+})
+
 
 router.put('/edit', verify, async (req, res) => {
     let body = JSON.parse(JSON.stringify(req.body));
