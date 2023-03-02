@@ -17,6 +17,7 @@ router.post("/webhook", async (req, res) => {
     }
 
     const payload = req.body
+    console.log(payload)
     // It's a good idea to log all received events.;
     const csEmail = payload.data.customer.email;
     const txAmount = payload.data.amount;

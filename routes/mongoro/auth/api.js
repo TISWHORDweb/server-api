@@ -14,6 +14,7 @@ const bcrypt = require('bcryptjs')
 const GlobalModel = require('../../../models/mongoro/admin/super_admin/global/global_md')
 
 
+
 //CREATE
 router.post('/register', async (req, res) => {
 

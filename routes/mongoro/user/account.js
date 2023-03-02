@@ -19,11 +19,11 @@ router.post('/create', async (req, res) => {
 
     const email = req.body.email
 
-    let details = await MongoroUserModel.findOne({ email: email })
-    const verify = details.verification.bvn
+    // let details = await MongoroUserModel.findOne({ email: email })
+    // const verify = details.verification.bvn
 
     try {
-        if (verify === true) {
+        // if (verify === true) {
 
             var body = JSON.stringify({
                 "email": email,
@@ -40,7 +40,7 @@ router.post('/create', async (req, res) => {
                 url: 'https://api.flutterwave.com/v3/virtual-account-numbers',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer FLWSECK_TEST-141328841fb7943a7b8d1788f0377d3c-X'
+                    'Authorization': `Bearer ${process.env.FLW_SECRET_KEY}`
                 },
                 data: body
             };
@@ -61,12 +61,12 @@ router.post('/create', async (req, res) => {
                 .catch(function (error) {
                     console.log(error);
                 });
-        } else {
-            res.status(402).json({
-                msg: 'Your bvn is not verified',
-                status: 402
-            })
-        }
+        // } else {
+        //     res.status(402).json({
+        //         msg: 'Your bvn is not verified',
+        //         status: 402
+        //     })
+        // }
 
     } catch (error) {
         res.status(500).json({
