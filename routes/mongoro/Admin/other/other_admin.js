@@ -44,7 +44,9 @@ router.post("/check", async (req, res) => {
     if (!user) {
         res.status(401).json({ msg: "wrong Email or you are not invited yet !", status: 401 });
     } else {
-        await OtherModel.deleteOne({ email: req.body.email })
+        let admin = new OtherModel(req.body)
+        admin.save()
+        await OtherModel.updateOne({ email: req.body.email }, { $set: { isverified: true } })
         res.status(200).json({ msg: 'Verified successfully ', status: 200 });
     }
 

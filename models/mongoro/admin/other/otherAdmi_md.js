@@ -14,6 +14,10 @@ const OtherSchema=new mongoose.Schema({
         type:Boolean,
         default:false
     },
+    isverified:{
+        type:Boolean,
+        default:false
+    },
     ip:{
         type:String
     },

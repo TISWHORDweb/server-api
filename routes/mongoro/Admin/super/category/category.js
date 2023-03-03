@@ -167,6 +167,8 @@ router.post("/invite", async (req, res) => {
 
     const user = await MongoroUserModel.findOne({ email: req.body.email });
 
+    const admin = await OtherModel.findOne({ email: req.body.email });
+
     const validate = await CategoryModel.findOne({ name: req.body.category })
     if (!validate) return res.status(404).json({ msg: 'There is no such category !' })
 
@@ -177,6 +179,8 @@ router.post("/invite", async (req, res) => {
         })
     } else if (user) {
         res.status(401).json({ msg: "sorry..... This email address alreday exist as a user, Can't be used to register as Admin", status: 401 });
+    } else if (admin) {
+        res.status(401).json({ msg: "sorry..... This email address is alreday Invited", status: 401 });
     } else {
         let category = await new OtherModel(req.body)
         await category.save()
