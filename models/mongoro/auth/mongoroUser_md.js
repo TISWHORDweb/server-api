@@ -122,6 +122,12 @@ const mongoroUserSchema=new mongoose.Schema({
     account:{
         type:{}
     },
+    real_bank_account_number:{
+        type:String
+    },
+    real_bank_name:{
+        type:String
+    },
     time_created:{type:Number, default:()=>Date.now()}		
 })
 

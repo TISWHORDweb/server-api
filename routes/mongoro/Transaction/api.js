@@ -38,6 +38,7 @@ router.post("/", async (req, res) => {
     "debit_currency": req.body.debit_currency
   }
 
+
   var config = {
     method: 'post',
     url: 'https://api.flutterwave.com/v3/transfers',
@@ -47,6 +48,7 @@ router.post("/", async (req, res) => {
     },
     data: body
   };
+  
   const user = await MongoroUserModel.find({ _id: req.body.userId });
 
   const bytes = CryptoJS.AES.decrypt(user[0].pin, process.env.SECRET_KEY);
@@ -82,7 +84,7 @@ router.post("/", async (req, res) => {
         const data = response.data;
 
         console.log(data)
-        if (data) {
+        if (data.status === success) {
 
           const details = {
             "flw_id": data.data.id,
@@ -110,9 +112,9 @@ router.post("/", async (req, res) => {
               transaction: transaction,
               status: 200
             })
-          }).catch((error) => {
-            res.status(500).json({ msg: "Transaction failed", error, reference: tid, status: 500 })
           })
+        }else {
+          res.status(500).json({ msg: "Transaction failed", flw_id: data.data.id, error, reference: tid, status: 500 })
         }
 
       })
@@ -120,6 +122,7 @@ router.post("/", async (req, res) => {
     }
   }
 })
+
 
 router.post("/retry", async (req, res) => {
 
@@ -248,7 +251,6 @@ router.post('/wallet', verify, async (req, res) => {
 
   const userss = await GlobalModel.findOne({ _id: process.env.GLOBAL_ID })
   const resultt = userss.disable_all_transfer
-
 
   if (value === true) {
     res.status(403).json({ msg: "Sorry your account is blocked" })
@@ -402,7 +404,7 @@ router.post("/bills", async (req, res) => {
     const users = await GlobalModel.findOne({ _id: process.env.GLOBAL_ID })
     const value = users.disable_all_transfer
     const resultt = user[0].blocked
-  
+
     if (resultt === true) {
       res.status(403).json({ msg: "Sorry your account is blocked" })
     } else if (value === true) {
@@ -481,31 +483,71 @@ router.post("/bills", async (req, res) => {
 })
 
 
-////ACCOUNT STATEMENT
-router.get("/statementsofuser", async (req, res) => {
+////OTP 
+router.post("/otp", async (req, res) => {
 
-  await TransferModel.find({ "amount": { "gte": 500, "$lte": 100 } }).then((response) => {
-    res.send(response);
-  })
-  // try {
-  //   const query = { "amount.0": { "$gte": 5000, "$lte": 200 } }
-  // const statement = await TransferModel.find();
+  var data = JSON.stringify({
+    "length": 7,
+    "customer": {
+      "name": "Emmanuel",
+      "email": "e.batimehin@gmail.com",
+      "phone": "2348120963057"
+    },
+    "sender": "Mongoro",
+    "send": true,
+    "medium": [
+      "email",
+      "sms"
+    ],
+    "expiry": 5
+  });
 
-  // res.status(200).json(statement);
+  var config = {
+    method: 'post',
+    url: 'https://api.flutterwave.com/v3/otps',
+    headers: {
+      'Authorization': `Bearer ${process.env.FLW_SECRET_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    data: data
+  };
+
+  axios(config)
+    .then(function (response) {
+      console.log(JSON.stringify(response.data));
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
 
 
-  // } catch (err) {
-  //     res.status(500).json({
-  //         msg: 'there is an unknown error sorrys !',
-  //         status: 500
-  //     })
-  // }
-
-
-  console.log("fake")
 })
 
-router.post("/check", async (req, res) => {
+
+router.post("/verify_otp", async (req, res) => {
+
+  var data = JSON.stringify({
+    "otp": "481208"
+  });
+  
+  var config = {
+    method: 'post',
+    url: `https://api.flutterwave.com/v3/otps/${req.params.reference}/validate`,
+    headers: {
+      'Authorization': `Bearer ${process.env.FLW_SECRET_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    data : data
+  };
+  
+  axios(config)
+  .then(function (response) {
+    console.log(JSON.stringify(response.data));
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+  
 
 })
 

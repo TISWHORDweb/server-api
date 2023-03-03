@@ -139,8 +139,6 @@ router.post("/verify", async (req, res) => {
             }
         });
 
-
-
         return res.status(200).json({
             code: code,
             status: 200
