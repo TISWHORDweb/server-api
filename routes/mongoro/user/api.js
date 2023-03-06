@@ -265,6 +265,7 @@ router.put('/image', upload.any(), async (req, res) => {
         await MongoroUserModel.updateOne({ _id: req.body.id }, { $set: { image: req.body.image }}).then(async () => {
             let user = await MongoroUserModel.findOne({ _id: req.body.id })
             return res.status(200).json({
+                
                 msg: 'Image Setup Successfully ',
                 image: user.image,
                 status: 200
