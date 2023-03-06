@@ -256,6 +256,7 @@ router.post('/edit_pin', verify, async (req, res) => {
     }
 
 })
+
 router.put('/image', upload.any(), async (req, res) => {
 
     try {
