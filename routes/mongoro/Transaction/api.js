@@ -113,7 +113,7 @@ router.post("/", async (req, res) => {
               status: 200
             })
           })
-        }else {
+        } else {
           res.status(500).json({ msg: "Transaction failed", flw_id: data.data.id, error, reference: tid, status: 500 })
         }
 
@@ -377,6 +377,7 @@ router.post("/bills", async (req, res) => {
   const users = await MongoroUserModel.find({ _id: req.body.userId });
   const bytes = CryptoJS.AES.decrypt(users[0].pin, process.env.SECRET_KEY);
   const originalPin = bytes.toString(CryptoJS.enc.Utf8);
+
   try {
     var config = {
       'method': 'POST',
@@ -384,9 +385,16 @@ router.post("/bills", async (req, res) => {
       'headers': {
         'Authorization': `Bearer ${process.env.FLW_SECRET_KEY}`
       },
-      data: req.body
+      data:{
+        "country": req.body.country,
+        "customer": req.body.customer,
+        "amount": req.body.amount,
+        "type": req.body.type,
+        "reference": req.body.reference
+    }
 
     };
+
 
     const user = await MongoroUserModel.find({ _id: req.body.userId });
 
@@ -416,10 +424,6 @@ router.post("/bills", async (req, res) => {
         const bytes = CryptoJS.AES.decrypt(user[0].pin, process.env.SECRET_KEY);
         const originalPin = bytes.toString(CryptoJS.enc.Utf8);
 
-        if (originalPin !== req.body.pin) {
-          res.status(401).json({ msg: "Wrong password", status: 401 });
-        }
-
         const newAmount = oldAmount - req.body.amount
 
         console.log(newAmount)
@@ -428,7 +432,7 @@ router.post("/bills", async (req, res) => {
           const data = response.data;
 
           console.log(data)
-      
+
           if (data) {
             const details = {
               "transaction_ID": tid,
@@ -460,15 +464,19 @@ router.post("/bills", async (req, res) => {
             })
           }
 
+        }).catch((error)=>{
+          console.log(error)
+          res.status(400).json({
+            msg: 'check the details and reference',
+            status: 400,
+          })
         })
-        // });
       }
     }
   } catch (error) {
     res.status(500).json({
       msg: 'there is an unknown error sorry !',
       status: 500,
-      error
     })
   }
 })
@@ -520,7 +528,7 @@ router.post("/verify_otp", async (req, res) => {
   var data = JSON.stringify({
     "otp": "481208"
   });
-  
+
   var config = {
     method: 'post',
     url: `https://api.flutterwave.com/v3/otps/${req.params.reference}/validate`,
@@ -528,17 +536,17 @@ router.post("/verify_otp", async (req, res) => {
       'Authorization': `Bearer ${process.env.FLW_SECRET_KEY}`,
       'Content-Type': 'application/json'
     },
-    data : data
+    data: data
   };
-  
+
   axios(config)
-  .then(function (response) {
-    console.log(JSON.stringify(response.data));
-  })
-  .catch(function (error) {
-    console.log(error);
-  });
-  
+    .then(function (response) {
+      console.log(JSON.stringify(response.data));
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+
 
 })
 
