@@ -49,7 +49,6 @@ router.post("/check", async (req, res) => {
         await OtherModel.updateOne({ email: req.body.email }, { $set: { isverified: true } })
         res.status(200).json({ msg: 'Verified successfully ', status: 200 });
     }
-
 })
 
 router.post('/password', async (req, res) => {

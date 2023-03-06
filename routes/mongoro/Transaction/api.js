@@ -48,7 +48,7 @@ router.post("/", async (req, res) => {
     },
     data: body
   };
-  
+
   const user = await MongoroUserModel.find({ _id: req.body.userId });
 
   const bytes = CryptoJS.AES.decrypt(user[0].pin, process.env.SECRET_KEY);
@@ -84,7 +84,7 @@ router.post("/", async (req, res) => {
         const data = response.data;
 
         console.log(data)
-        if (data.status === success) {
+        if (data.status === "success") {
 
           const details = {
             "flw_id": data.data.id,
@@ -384,15 +384,7 @@ router.post("/bills", async (req, res) => {
       'headers': {
         'Authorization': `Bearer ${process.env.FLW_SECRET_KEY}`
       },
-      data: {
-        country: req.body.country,
-        customer: req.body.customer,
-        amount: req.body.amount,
-        recurrence: 'ONCE',
-        type: req.body.type,
-        reference: tid,
-        biller_name: 'DSTV, MTN VTU, TIGO VTU, VODAFONE VTU, VODAFONE POSTPAID PAYMENT'
-      }
+      data: req.body
 
     };
 
@@ -435,10 +427,9 @@ router.post("/bills", async (req, res) => {
         await axios(config).then(function (response) {
           const data = response.data;
 
-          console.lpog(data)
-
+          console.log(data)
+      
           if (data) {
-
             const details = {
               "transaction_ID": tid,
               "service_type": req.body.service_type,
