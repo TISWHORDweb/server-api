@@ -261,17 +261,8 @@ router.put('/image', upload.any(), async (req, res) => {
 
     try {
         if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?' })
-        let user = await new MongoroUserModel(req.body)
 
-        req.files.map(e => {
-            switch (e.fieldname) {
-                case "image":
-                    user.image = e.filename
-                    break;
-            }
-        })
-
-        await MongoroUserModel.updateOne({ _id: req.body.id }, { image: user.image }).then(async () => {
+        await MongoroUserModel.updateOne({ _id: req.body.id }, { $set: { image: req.body.image }}).then(async () => {
             let user = await MongoroUserModel.findOne({ _id: req.body.id })
             return res.status(200).json({
                 msg: 'Image Setup Successfully ',
@@ -281,7 +272,7 @@ router.put('/image', upload.any(), async (req, res) => {
         }).catch((err) => {
             res.send(err)
         })
-
+        
     } catch (error) {
         res.status(500).json({
             msg: 'there is an unknown error sorry ',
