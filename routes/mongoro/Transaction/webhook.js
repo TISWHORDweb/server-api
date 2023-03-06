@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const TransferModel = require('../../../models/mongoro/transaction/api')
 const MongoroUserModel = require('../../../models/mongoro/auth/mongoroUser_md')
+const WebhookModel = require('../../../models/mongoro/transaction/webhook_resp_md.js')
 
 // verify transaction from the webhook and update the database
 router.post("/webhook", async (req, res) => {
@@ -10,6 +11,13 @@ router.post("/webhook", async (req, res) => {
     const signature = req.headers["verif-hash"];// grab the secret hash sent in the POST request header
 
     const tid = "00" + Math.floor(10000000000 + Math.random() * 90000000000)
+
+    const data = {
+        "response":req.body
+    }
+    let resp = await new WebhookModel(data)
+
+    await resp.save()
 
     // verify that the POST request came from Flutterwave
     if (!signature || signature !== secretHash) {
@@ -86,6 +94,46 @@ router.post("/webhook", async (req, res) => {
     //     });
     // }
 });
+
+
+router.get('/webhook/all', paginatedResults(WebhookModel), (req, res) => {
+    res.json(res.paginatedResults)
+})
+
+
+function paginatedResults(model) {
+    return async (req, res, next) => {
+        const page = parseInt(req.query.page)
+        const limit = parseInt(req.query.limit)
+
+        const startIndex = (page - 1) * limit
+        const endIndex = page * limit
+
+        const action = {}
+
+        if (endIndex < await model.countDocuments().exec()) {
+            action.next = {
+                page: page + 1,
+                limit: limit
+            }
+        }
+
+        if (startIndex > 0) {
+            action.previous = {
+                page: page - 1,
+                limit: limit
+            }
+        }
+        try {
+            const results = await model.find().limit(limit).skip(startIndex).exec()
+            let count = await WebhookModel.count()
+            res.paginatedResults = { action, results, TotalResult: count, Totalpages: Math.ceil(count / limit) }
+            next()
+        } catch (e) {
+            res.status(500).json({ message: e.message })
+        }
+    }
+}
 
 
 module.exports = router
