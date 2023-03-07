@@ -98,7 +98,7 @@ router.post("/inactive/:id", async (req, res) => {
         await MongoroUserModel.updateOne({ _id: req.params.id }, { $set: { active: false } }).then(() => {
             res.status(200).json({ msg: 'User turned inactive successfully ', status: 200 });
         })
-        
+
     } catch (err) {
         res.status(500).json({
             msg: 'there is an unknown error sorry ',
@@ -140,22 +140,34 @@ router.post('/forgot_password', async (req, res) => {
     const user = await MongoroUserModel.findOne({ email: req.body.email });
 
     try {
-        if (!req.body.email) return res.status(402).json({ msg: 'provide the id ?', status: 402 })
+        if (!req.body.email) return res.status(400).json({ msg: 'provide the email ?', status: 400 })
 
         if (!user) {
-            res.status(400).json({ msg: "No User is registered with this id!", status: 401 });
+            res.status(400).json({ msg: "No User is registered with this email", status: 400 });
+        }
+
+        const originalPassword = await bcrypt.compare(req.body.password, user.password);
+
+        if (originalPassword === req.body.newPassword) {
+            res.status(400).json({ msg: "You cant change your password to your previous password, use another password and try again", status: 400 });
+        }
+
+        if (!originalPassword) {
+            res.status(400).json({ msg: "wrong password", code: 400 })
         } else {
-            const newPassword = await bcrypt.hash(req.body.password, 13)
+
+            const newPassword = await bcrypt.hash(req.body.newpassword, 13)
             await MongoroUserModel.updateOne({ email: req.body.email }, { password: newPassword }).then(async () => {
-                const Newuser = await MongoroUserModel.findOne({ email: req.body.email });
+                const NewPassword = await MongoroUserModel.findOne({ email: req.body.email });
                 return res.status(200).json({
                     msg: 'Password changed Successfully ',
-                    user: Newuser,
+                    user: NewPassword,
                     status: 200
                 })
             }).catch((err) => {
                 res.send(err)
             })
+
         }
 
     } catch (error) {
@@ -181,7 +193,7 @@ router.post('/create_pin', verify, async (req, res) => {
 
         req.body.pin = CryptoJS.AES.encrypt(req.body.pin, "mongoro").toString()
 
-        await MongoroUserModel.updateOne({ _id: req.body.id }, {pin:req.body.pin}).then(async () => {
+        await MongoroUserModel.updateOne({ _id: req.body.id }, { pin: req.body.pin }).then(async () => {
             let user = await MongoroUserModel.findOne({ _id: req.body.id })
             return res.status(200).json({
                 msg: 'Pin created Successfully ',
@@ -262,10 +274,10 @@ router.put('/image', upload.any(), async (req, res) => {
     try {
         if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?' })
 
-        await MongoroUserModel.updateOne({ _id: req.body.id }, { $set: { image: req.body.image }}).then(async () => {
+        await MongoroUserModel.updateOne({ _id: req.body.id }, { $set: { image: req.body.image } }).then(async () => {
             let user = await MongoroUserModel.findOne({ _id: req.body.id })
             return res.status(200).json({
-                
+
                 msg: 'Image Setup Successfully ',
                 image: user.image,
                 status: 200
@@ -333,7 +345,7 @@ router.put('/block', verify, async (req, res) => {
 
 })
 
-router.get('/state', async (req,res) =>{
+router.get('/state', async (req, res) => {
     console.log(state)
 })
 
