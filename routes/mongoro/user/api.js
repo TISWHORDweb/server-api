@@ -135,7 +135,52 @@ router.put('/edit', verify, async (req, res) => {
 
 })
 
-router.post('/forgot_password', async (req, res) => {
+router.post('/change_password', async (req, res) => {
+
+    const user = await MongoroUserModel.findOne({ _id: req.body.id });
+
+    try {
+        if (!req.body.id) return res.status(400).json({ msg: 'provide the id ?', status: 400 })
+
+        if (!user) {
+            res.status(400).json({ msg: "No User is registered with this id", status: 400 });
+        }
+
+        const originalPassword = await bcrypt.compare(req.body.password, user.password);
+
+        // if (originalPassword === true) {
+        //     res.status(400).json({ msg: "You cant change your password to your previous password, use another password and try again", status: 400 });
+        // } 
+        
+        if (!originalPassword) {
+            res.status(400).json({ msg: "wrong password", code: 400 })
+        } else {
+
+            const newPassword = await bcrypt.hash(req.body.newpassword, 13)
+            await MongoroUserModel.updateOne({ _id: req.body.id }, { password: newPassword }).then(async () => {
+                const NewPassword = await MongoroUserModel.findOne({ _id: req.body.id });
+                return res.status(200).json({
+                    msg: 'Password changed Successfully ',
+                    user: NewPassword,
+                    status: 200
+                })
+            }).catch((err) => {
+                res.send(err)
+            })
+            
+        }
+
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry ',
+            status: 500
+        })
+    }
+
+})
+
+
+router.post('/reset_password', async (req, res) => {
 
     const user = await MongoroUserModel.findOne({ email: req.body.email });
 
@@ -148,27 +193,17 @@ router.post('/forgot_password', async (req, res) => {
 
         const originalPassword = await bcrypt.compare(req.body.password, user.password);
 
-        if (originalPassword === req.body.newPassword) {
-            res.status(400).json({ msg: "You cant change your password to your previous password, use another password and try again", status: 400 });
-        }
+        // if (originalPassword === true) {
+        //     res.status(400).json({ msg: "You cant change your password to your previous password, use another password and try again", status: 400 });
+        // }
 
-        if (!originalPassword) {
-            res.status(400).json({ msg: "wrong password", code: 400 })
-        } else {
-
-            const newPassword = await bcrypt.hash(req.body.newpassword, 13)
-            await MongoroUserModel.updateOne({ email: req.body.email }, { password: newPassword }).then(async () => {
-                const NewPassword = await MongoroUserModel.findOne({ email: req.body.email });
-                return res.status(200).json({
-                    msg: 'Password changed Successfully ',
-                    user: NewPassword,
-                    status: 200
-                })
-            }).catch((err) => {
-                res.send(err)
-            })
-
-        }
+        const newPassword = await bcrypt.hash(req.body.password, 13)
+        await MongoroUserModel.updateOne({ email: req.body.email }, { $set: { password: newPassword }})
+        res.status(200).json({
+            msg: 'Password changed Successfully ',
+            password: newPassword,
+            status: 200
+        })
 
     } catch (error) {
         res.status(500).json({
@@ -178,6 +213,7 @@ router.post('/forgot_password', async (req, res) => {
     }
 
 })
+
 
 //PIN
 router.post('/create_pin', verify, async (req, res) => {
@@ -268,6 +304,7 @@ router.put('/edit_pin', verify, async (req, res) => {
     }
 
 })
+
 
 router.put('/image', upload.any(), async (req, res) => {
 
