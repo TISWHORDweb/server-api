@@ -97,6 +97,10 @@ const mongoroUserSchema=new mongoose.Schema({
             type:Boolean,
             default: false
         },
+        kyc:{
+            type:Boolean,
+            default: false
+        },
     },
     widget:{
         message:{

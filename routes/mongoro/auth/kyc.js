@@ -25,47 +25,48 @@ let storage = multer.diskStorage({
 let upload = multer({ storage })
 
 //CREATE
-router.post('/', verify, upload.any(), async (req, res) => {
+router.post('/', verify, async (req, res) => {
 
-    if (req.body.bvn) {
-        req.body.bvn = CryptoJS.AES.encrypt(req.body.bvn, "mongoro").toString()
-    }
 
-    if (req.body.myidentikey) {
-        req.body.myidentikey = CryptoJS.AES.encrypt(req.body.myidentikey, "mongoro").toString()
-    }
 
     try {
-        const validate = await KycModel.findOne({ userId: req.body.userId })
-        if (validate) return res.status(404).json({ msg: 'This user is verified already !',status: 404 })
+        // const validate = await KycModel.findOne({ userId: req.body.userId })
+        // if (validate) return res.status(404).json({ msg: 'This user is verified already ', status: 404 })
 
+        if (req.body.bvn) {
+            req.body.bvn = CryptoJS.AES.encrypt(req.body.bvn, "mongoro").toString()
+        }
+    
+        if (req.body.myidentikey) {
+            req.body.myidentikey = CryptoJS.AES.encrypt(req.body.myidentikey, "mongoro").toString()
+        }
 
         let user = await new KycModel(req.body)
 
-        req.files.map(e => {
-            switch (e.fieldname) {
-                case "national_id":
-                    user.national_id = e.filename
-                    break;
-            }
-        })
+        // req.files.map(e => {
+        //     switch (e.fieldname) {
+        //         case "national_id":
+        //             user.national_id = e.filename
+        //             break;
+        //     }
+        // })
 
-        req.files.map(e => {
-            switch (e.fieldname) {
-                case "international_passport":
-                    user.international_passport = e.filename
-                    break;
-            }
-        })
+        // req.files.map(e => {
+        //     switch (e.fieldname) {
+        //         case "international_passport":
+        //             user.international_passport = e.filename
+        //             break;
+        //     }
+        // })
 
-        await user.save().then(user => {
-            return res.status(200).json({
-                msg: 'Congratulation Kyc is done ',
-                user: user,
-                status: 200
+        await user.save().then(() => {
+            MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { verification: { kyc: true } } }).then(() => {
+                res.status(200).json({
+                    msg: 'Congratulation Kyc is done ',
+                    status: 200
+                })
             })
         })
-
 
     } catch (error) {
         res.status(500).json({
@@ -91,7 +92,7 @@ router.get("/all", verify, async (req, res) => {
 //Single 
 router.get("/single", verify, async (req, res) => {
     try {
-        if (!req.body.userId) return res.status(402).json({ msg: 'provide the id ?' , status: 402})
+        if (!req.body.userId) return res.status(402).json({ msg: 'provide the id ?', status: 400 })
 
         let user = await KycModel.find({ userId: req.body.userId })
         res.status(200).json(user);
