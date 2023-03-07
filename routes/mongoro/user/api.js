@@ -234,7 +234,7 @@ router.post("/verify_pin", verify, async (req, res) => {
     }
 })
 
-router.post('/edit_pin', verify, async (req, res) => {
+router.put('/edit_pin', verify, async (req, res) => {
 
     const user = await MongoroUserModel.findOne({ _id: req.body.id });
     const bytes = CryptoJS.AES.decrypt(user.pin, process.env.SECRET_KEY);
