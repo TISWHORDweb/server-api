@@ -250,7 +250,8 @@ router.put('/settings', async (req, res) => {
                 city: req.body.city,
                 gender: req.body.gender,
                 date: req.body.date,
-                occupation: req.body.occupation, setup_complete: true
+                occupation: req.body.occupation, 
+                setup_complete: true
             }
         }).then(async () => {
             return res.status(200).json({
