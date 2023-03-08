@@ -56,7 +56,14 @@ router.post('/', async (req, res) => {
             ent()
             // let user = await MongoroUserModel.find({ email: email })
             // res.send(user)
-            res.send(validate)
+            await MongoroUserModel.updateOne({ email: req.body.email }, { $set: { verification: { bvn: true } } }).then(() => {
+                console.log( 'Congratulation Bvn verified already')
+            })
+
+            res.send({verified:"verified already",validate})
+
+          
+
         } else {
             console.log("account")
 
@@ -88,13 +95,21 @@ router.post('/', async (req, res) => {
                     }
 
                     let details = new BvnDefaultModel(bodys)
-                    details.save()
-                    res.send(details)
-                    MongoroUserModel.updateOne({ email: email }, { $set: { verification: { bvn: true } } })
 
+                    details.save().then(() => {
+                        MongoroUserModel.updateOne({ email: req.body.email }, { $set: { verification: { bvn: true } } }).then(() => {
+                            res.status(200).json({
+                                msg: 'Congratulation Bvn verified ',
+                                status: 200
+                            })
+                        })
+                    })
+
+                    res.send(details)
                 }
 
             })
+
         }
 
     } catch (error) {
