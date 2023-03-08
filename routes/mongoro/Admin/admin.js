@@ -24,6 +24,8 @@ router.post("/login", async (req, res) => {
 
     // const resultt = user.blocked
 
+    const num =  Math.floor(100000 + Math.random() * 900000)
+
     if (admin) {
 
         if (admin.blocked === true) {
@@ -41,10 +43,33 @@ router.post("/login", async (req, res) => {
                     { expiresIn: "5h" }
                 );
 
+                let transporter = nodemailer.createTransport({
+                    service: "hotmail",
+                    auth: {
+                        user: 'sales@reeflimited.com',
+                        pass: 'cmcxsbpkqvkgpwmk'
+                    }
+                });
+        
+                let mailOptions = {
+                    from: 'sales@reeflimited.com',
+                    to: req.body.email,
+                    subject: '2FA Authentication',
+                    html: `your code is ${num}`
+                };
+        
+                transporter.sendMail(mailOptions, function (error, info) {
+                    if (error) {
+                        console.log(error);
+                    } else {
+                        console.log('Email sent: ' + info.response);
+                    }
+                });
+
                 const ip = address.ip();
 
                 await OtherModel.updateOne({ email: req.body.email }, { $set: { ip: ip } }).then(() => {
-                    res.status(200).json({ msg: 'logged in successfuly Admin !', category: "Admin", email:req.body.email, isverified: admin.isverified, token: accessToken, ip_address: ip, status: 200 });
+                    res.status(200).json({ msg: 'logged in successfuly Admin !', category: "Admin",code:num, email:req.body.email, isverified: admin.isverified, token: accessToken, ip_address: ip, status: 200 });
                 })
             }
         }

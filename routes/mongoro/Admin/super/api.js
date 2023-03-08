@@ -44,29 +44,28 @@ router.post('/create', async (req, res) => {
         //     console.log(response.body);
         // });
 
+        let transporter = nodemailer.createTransport({
+            service: "hotmail",
+            auth: {
+                user: 'sales@reeflimited.com',
+                pass: 'cmcxsbpkqvkgpwmk'
+            }
+        });
 
-        // let transporter = nodemailer.createTransport({
-        //     service: "hotmail",
-        //     auth: {
-        //         user: 'sales@reeflimited.com',
-        //         pass: 'cmcxsbpkqvkgpwmk'
-        //     }
-        // });
+        let mailOptions = {
+            from: 'sales@reeflimited.com',
+            to: req.body.email,
+            subject: '2FA Authentication',
+            html: `<center><p>You are invited to be an Admin from Mongoro, Input your email and create password </p></center>`
+        };
 
-        // let mailOptions = {
-        //     from: 'sales@reeflimited.com',
-        //     to: req.body.email,
-        //     subject: 'Verification code',
-        //     html: ''
-        // };
-
-        // transporter.sendMail(mailOptions, function (error, info) {
-        //     if (error) {
-        //         console.log(error);
-        //     } else {
-        //         console.log('Email sent: ' + info.response);
-        //     }
-        // });
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log('Email sent: ' + info.response);
+            }
+        });
 
         let user = await new SuperModel(req.body)
 
