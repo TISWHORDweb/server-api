@@ -57,7 +57,7 @@ router.post('/', async (req, res) => {
             // let user = await MongoroUserModel.find({ email: email })
             // res.send(user)
             await MongoroUserModel.updateOne({ email: req.body.email }, { $set: { verification: { bvn: true } } }).then(() => {
-                console.log( 'Congratulation Bvn verified already')
+                console.log( ' Bvn verified already')
             })
 
             res.send({verified:"verified already",validate})

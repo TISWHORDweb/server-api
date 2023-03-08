@@ -156,18 +156,18 @@ router.post('/change_password', async (req, res) => {
             res.status(400).json({ msg: "wrong password", code: 400 })
         } else {
 
-            const newPassword = await bcrypt.hash(req.body.newpassword, 13)
-            await MongoroUserModel.updateOne({ _id: req.body.id }, { password: newPassword }).then(async () => {
-                const NewPassword = await MongoroUserModel.findOne({ _id: req.body.id });
+            const NewPassword = await bcrypt.hash(req.body.newPassword, 13)
+            await MongoroUserModel.updateOne({ _id: req.body.id }, { password: NewPassword }).then(async () => {
+                const New = await MongoroUserModel.findOne({ _id: req.body.id });
                 return res.status(200).json({
                     msg: 'Password changed Successfully ',
-                    user: NewPassword,
+                    user: New,
                     status: 200
                 })
             }).catch((err) => {
                 res.send(err)
             })
-            
+
         }
 
     } catch (error) {
@@ -191,17 +191,17 @@ router.post('/reset_password', async (req, res) => {
             res.status(400).json({ msg: "No User is registered with this email", status: 400 });
         }
 
-        const originalPassword = await bcrypt.compare(req.body.password, user.password);
+        // const originalPassword = await bcrypt.compare(req.body.newPassword, user.password);
 
         // if (originalPassword === true) {
         //     res.status(400).json({ msg: "You cant change your password to your previous password, use another password and try again", status: 400 });
         // }
 
-        const newPassword = await bcrypt.hash(req.body.password, 13)
-        await MongoroUserModel.updateOne({ email: req.body.email }, { $set: { password: newPassword }})
+        const NewPassword = await bcrypt.hash(req.body.newPassword, 13)
+        await MongoroUserModel.updateOne({ email: req.body.email }, { $set: { password: NewPassword }})
         res.status(200).json({
             msg: 'Password changed Successfully ',
-            password: newPassword,
+            password: NewPassword,
             status: 200
         })
 
