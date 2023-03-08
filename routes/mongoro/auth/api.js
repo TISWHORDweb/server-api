@@ -47,10 +47,10 @@ router.post('/register', async (req, res) => {
         await user.save().then(user => {
 
             const accessToken = jwt.sign(
-                { id: user._id},
+                { id: user._id },
                 process.env.SECRET_KEY,
                 { expiresIn: "5h" }
-                
+
             );
             return res.status(200).json({
                 msg: 'Congratulation you just Created your Mongoro Account ',
@@ -193,9 +193,14 @@ router.post("/login", async (req, res) => {
 
 
 //FORGOTPASSWORD 
-router.post("/emailverify", async (req, res) => {
+router.post("/password_verify", async (req, res) => {
+
+    const email_code = Math.floor(100 + Math.random() * 900)
+    const sms_code = Math.floor(100 + Math.random() * 900)
+    let code = { email_code, sms_code }
 
     const user = await MongoroUserModel.findOne({ email: req.body.email });
+    const number = user.phone
 
     if (!user) {
         return res.status(404).json({ msg: 'No User is registered with this email', status: 400 })
@@ -208,12 +213,12 @@ router.post("/emailverify", async (req, res) => {
                 pass: 'cmcxsbpkqvkgpwmk'
             }
         });
-
+        
         let mailOptions = {
             from: 'sales@reeflimited.com',
             to: req.body.email,
             subject: 'Verification code',
-            html: `<button>Reset Password</button>`
+            html: `Your code is ${email_code}`
         };
 
         transporter.sendMail(mailOptions, function (error, info) {
@@ -224,9 +229,31 @@ router.post("/emailverify", async (req, res) => {
             }
         });
 
+        var data = {
+            "to": number,
+            "from": "Mongoro-PIN",
+            "sms": "Your code is " + sms_code,
+            "type": "plain",
+            "api_key": "TLMPIOB7Oe4V8NRRc7KnukwGgTAY9PZLqwVw2DMhrr8o0CEXh4BMmBfN6C0cNf",
+            "channel": "generic",
+        };
+        var options = {
+            'method': 'POST',
+            'url': 'https://api.ng.termii.com/api/sms/send',
+            'headers': {
+                'Content-Type': ['application/json', 'application/json']
+            },
+            body: JSON.stringify(data)
+
+        };
+        request(options, function (error, response) {
+            if (error) throw new Error(error);
+            console.log(response.body);
+        });
+
         res.status(200).json({
             msg: 'OTP sent successfully!',
-            id: user._id,
+            code:code,
             status: 200
         })
 
@@ -250,7 +277,7 @@ router.put('/settings', async (req, res) => {
                 city: req.body.city,
                 gender: req.body.gender,
                 date: req.body.date,
-                occupation: req.body.occupation, 
+                occupation: req.body.occupation,
                 setup_complete: true
             }
         }).then(async () => {
