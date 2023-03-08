@@ -174,13 +174,13 @@ router.post("/invite", async (req, res) => {
 
     if (!supers) {
         res.status(400).json({
-            msg: 'you dont have access to create category',
+            msg: 'you dont have access to Invite Admin',
             status: 400
         })
-    } else if (user) {
-        res.status(401).json({ msg: "sorry..... This email address alreday exist as a user, Can't be used to register as Admin", status: 401 });
+    // } else if (user) {
+    //     res.status(401).json({ msg: "sorry..... This email address alreday exist as a user, Can't be used to register as Admin", status: 401 });
     } else if (admin) {
-        res.status(401).json({ msg: "sorry..... This email address is alreday Invited", status: 401 });
+        res.status(401).json({ msg: "sorry..... This email address is already Invited", status: 401 });
     } else {
         let category = await new OtherModel(req.body)
         await category.save()

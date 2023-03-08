@@ -5,6 +5,7 @@ const SuperModel = require('../../../../models/mongoro/admin/super_admin/super_m
 const CategoryModel = require("../../../../models/mongoro/admin/super_admin/category/category")
 const dotenv = require("dotenv")
 dotenv.config()
+const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs')
 
 
@@ -46,35 +47,53 @@ router.post("/check", async (req, res) => {
     } else {
         let admin = new OtherModel(req.body)
         admin.save()
-        await OtherModel.updateOne({ email: req.body.email }, { $set: { isverified: true } })
         res.status(200).json({ msg: 'Verified successfully ', status: 200 });
     }
 })
+
+router.post("/otp_verify", async (req, res) => {
+
+    const user = await OtherModel.findOne({ email: req.body.email });
+
+    if (!req.body.email) return res.status(400).json({ msg: 'provide the email ?', status: 400 })
+
+    if (!user) {
+        res.status(400).json({ msg: "wrong Email or you are not invited yet !", status: 400 });
+    }
+
+    if (user.code === req.body.code) {
+        await OtherModel.updateOne({ email: req.body.email }, { $set: { isverified: true } })
+        res.status(200).json({ msg: 'Verified successfully ', status: 200 });
+    } else {
+        res.status(400).json({ msg: "Wrong code ", status: 400 });
+    }
+})
+
 
 router.post('/password', async (req, res) => {
 
     try {
 
         const supers = await OtherModel.findOne({ email: req.body.email })
-        
+
         if (!req.body.email) return res.status(401).json({ msg: 'provide the email ?' })
 
         if (req.body.password) {
             req.body.password = await bcrypt.hash(req.body.password, 13)
-        }    
+        }
 
-        if(supers){
+        if (supers) {
             await OtherModel.updateOne({ email: req.body.email }, { $set: { password: req.body.password } }).then(async () => {
                 let other_admin = await OtherModel.findOne({ email: req.body.email })
                 return res.status(200).json({
                     msg: 'Password created Successfully ',
-                    other:other_admin,
+                    other: other_admin,
                     status: 200
                 })
             }).catch((err) => {
                 res.send(err)
             })
-        }else{
+        } else {
             res.status(400).json({
                 msg: 'you dont have access or invalid email ',
                 status: 400

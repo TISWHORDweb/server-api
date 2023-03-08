@@ -21,6 +21,9 @@ const OtherSchema=new mongoose.Schema({
     ip:{
         type:String
     },
+    code:{
+        type:String
+    },
     time_created:{type:Number, default:()=>Date.now()}		
 })
 
