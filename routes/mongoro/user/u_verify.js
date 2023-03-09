@@ -61,9 +61,7 @@ router.post('/', async (req, res) => {
             })
 
             res.send({verified:"verified already",validate})
-
-          
-
+              
         } else {
             console.log("account")
 
