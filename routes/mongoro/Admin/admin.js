@@ -70,7 +70,7 @@ router.post("/login", async (req, res) => {
                                                         <td>
                                                             <h3 class="header" style='color: #161616'>Welcome to Mongoro 🚀 </h3>
                                                             <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
-                                                                    Thanks for joining Mongoro. To access the admin dashboard, please verify your account by entering the code below and proceed to change your password.
+                                                                    Thanks for joining Mongoro. To access the admin dashboard, <br/> please verify your account by entering the code below and proceed to Login again.
                                                                 <br>
                                                                 <p style='margin:3rem 0; color: #161616; line-height: 1.5rem; font-size: 45px; text-align: center;'>
                                                                     <span><b>${num}</b></span>

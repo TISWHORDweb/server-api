@@ -12,7 +12,7 @@ const Word = require('../../words')
 const request = require('request');
 const bcrypt = require('bcryptjs')
 const GlobalModel = require('../../../models/mongoro/admin/super_admin/global/global_md')
-
+const platform = require('platform');
 
 
 //CREATE
@@ -191,7 +191,6 @@ router.post("/login", async (req, res) => {
 
 })
 
-
 //FORGOTPASSWORD 
 router.post("/password_verify", async (req, res) => {
 
@@ -213,7 +212,7 @@ router.post("/password_verify", async (req, res) => {
                 pass: 'cmcxsbpkqvkgpwmk'
             }
         });
-        
+
         let mailOptions = {
             from: 'sales@reeflimited.com',
             to: req.body.email,
@@ -253,7 +252,7 @@ router.post("/password_verify", async (req, res) => {
 
         res.status(200).json({
             msg: 'OTP sent successfully!',
-            code:code,
+            code: code,
             status: 200
         })
 

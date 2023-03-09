@@ -48,7 +48,7 @@ router.delete('/delete', async (req, res) => {
     try {
         if (!req.body.id) return res.status(400).json({ msg: 'provide the details ?', status: 402 })
 
-        await BankModel.deleteOne({ id: req.body.id })
+        await BankModel.deleteOne({ _id: req.body.id })
         return res.status(200).json({
             msg: "Deleted successfully",
             status: 200
