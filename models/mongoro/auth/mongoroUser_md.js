@@ -132,6 +132,36 @@ const mongoroUserSchema=new mongoose.Schema({
     real_bank_name:{
         type:String
     },
+    welcome_message:{
+        notification:{
+            type:Boolean,
+            default: true
+        },
+        email:{
+            type:Boolean,
+            default: false
+        },
+    },
+    transaction_alert:{
+        notification:{
+            type:Boolean,
+            default: true
+        },
+        email:{
+            type:Boolean,
+            default: false
+        },
+    },
+    login_alert:{
+        notification:{
+            type:Boolean,
+            default: true
+        },
+        email:{
+            type:Boolean,
+            default: false
+        },
+    },
     time_created:{type:Number, default:()=>Date.now()}		
 })
 

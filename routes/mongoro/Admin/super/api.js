@@ -84,7 +84,7 @@ router.post('/create', async (req, res) => {
                                                         <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
                                                                 Thanks for joining Mongoro. To access your dashboard, please verify your account by clicking the button below and proceed to change your password.
                                                             <br>
-                                                            <div style='padding: 1rem; background: #EAEDC6'><a href="https://mongoro-ad.netlify.app/change-password" style="text-decoration:none">
+                                                            <div style='padding: 1rem; background: #EAEDC6'><a href="https://mongoro-ad.netlify.app/change-password/${req.body.email}" style="text-decoration:none">
                                                                 <button 
                                                                     style='font-family: "Plus Jakarta Sans", sans-serif; width: 15rem; color: #fff; background: #ffab01; border: none; display: block; margin: 0 auto; padding: 0.8rem; font-weight: 600; border-radius: 4px;'
                                                                 >
