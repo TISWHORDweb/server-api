@@ -23,7 +23,7 @@ router.post('/', async (req, res) => {
 
     const header = {
         headers: {
-            token: "N1R1Uqih.KzO0nYgYnXyfo4Wljkp8pE3DtuHB7qS3id3e"
+            token: "PX5PKOeq.kxH0ThxPCDj2HidqDZMV0x0iw9TMXp7Z6z42"
         }
     }
 
@@ -56,12 +56,7 @@ router.post('/', async (req, res) => {
             ent()
             // let user = await MongoroUserModel.find({ email: email })
             // res.send(user)
-            await MongoroUserModel.updateOne({ email: req.body.email }, { $set: { verification: { bvn: true } } }).then(() => {
-                console.log( ' Bvn verified already')
-            })
-
-            res.send({verified:"verified already",validate})
-              
+            res.send(validate)
         } else {
             console.log("account")
 
@@ -93,21 +88,13 @@ router.post('/', async (req, res) => {
                     }
 
                     let details = new BvnDefaultModel(bodys)
-
-                    details.save().then(() => {
-                        MongoroUserModel.updateOne({ email: req.body.email }, { $set: { verification: { bvn: true } } }).then(() => {
-                            res.status(200).json({
-                                msg: 'Congratulation Bvn verified ',
-                                status: 200
-                            })
-                        })
-                    })
-
+                    details.save()
                     res.send(details)
+                    MongoroUserModel.updateOne({ email: email }, { $set: { verification: { bvn: true } } })
+
                 }
 
             })
-
         }
 
     } catch (error) {
