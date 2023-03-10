@@ -306,7 +306,7 @@ router.put('/edit_pin', verify, async (req, res) => {
 })
 
 
-router.put('/image', upload.any(), async (req, res) => {
+router.put('/image',  async (req, res) => {
 
     try {
         if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?' })
@@ -382,10 +382,32 @@ router.put('/block', verify, async (req, res) => {
 
 })
 
-router.get('/state', async (req, res) => {
-    console.log(state)
-})
+// router.get('/state', async (req, res) => {
+//     console.log(state)
+// })
 
+
+
+router.post('/verify_tag', async (req, res) => {
+
+    const user = await MongoroUserModel.find({ wallet_ID: req.body.usertag });
+
+    try {
+
+        if (user) {
+            res.status(400).json({ msg: "Unavailable", status: 400 });
+        }else{
+            res.status(200).json({ msg: " Available", status: 200 });
+        }
+
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry ',
+            status: 500
+        })
+    }
+
+})
 
 
 module.exports = router

@@ -3,7 +3,7 @@ const router = express.Router()
 const MongoroUserModel = require("../../../models/mongoro/auth/mongoroUser_md")
 
 
-router.post('/widget/email', async (req, res) => {
+router.post('/welcome', async (req, res) => {
 
     try {
         if (!req.body.recipent || !req.body.message || !req.body.type) return res.status(402).json({ msg: 'provide the id ?', status: 402 })
@@ -19,7 +19,6 @@ router.post('/widget/email', async (req, res) => {
                 status: 200
             })
         })
-
     } catch (error) {
         res.status(500).json({
             msg: 'there is an unknown error sorry ',
