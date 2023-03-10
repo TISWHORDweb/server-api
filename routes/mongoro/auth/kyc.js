@@ -408,6 +408,35 @@ router.get("/all", async (req, res) => {
     }
 })
 
+router.get("/user/:id", async (req, res) => {
+    try {
+
+        const kyc = await KycModel.find({ userId: req.params.id });
+
+        res.status(200).json(kyc);
+    } catch (err) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
+})
+
+router.get("/type/:id", async (req, res) => {
+    try {
+
+        const kyc = await KycModel.find({ type: req.params.id });
+
+        res.status(200).json(kyc);
+    } catch (err) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
+})
+
+
 
 
 module.exports = router
