@@ -1,22 +1,28 @@
 const mongoose = require('mongoose')
 
 const kycSchema=new mongoose.Schema({
-    bvn:{
+    type:{
         type:String
     },
-    national_id:{
-        type:String
+    auth_id: {
+        type: String,
     },
-    international_passport:{
-        type:String
+    check: {
+        type: String,
     },
-    myidentikey:{
-        type:String
+    data: {
+        type: {},
     },
     userId:{
         type:String
     },
-    time_created:{type:Number, default:()=>Date.now()}		
+    expire_at:{
+        type:String
+    },
+    image:{
+        type:String
+    },
+    validate_at:{type:Number, default:()=>Date.now()}		
 })
 
 
