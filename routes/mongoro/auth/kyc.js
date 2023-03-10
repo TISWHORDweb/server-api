@@ -11,7 +11,6 @@ const axios = require("axios")
 //NIN
 router.post('/nin', async (req, res) => {
 
-    const id = req.body.userId
     const lastName = req.body.lastName
     const firstName = req.body.firstName
 
@@ -25,6 +24,9 @@ router.post('/nin', async (req, res) => {
             token: process.env.U_VERIFY_KEY
         }
     }
+        
+    const code = await bcrypt.hash(req.body.auth_id, 13)
+
     try {
 
         const validate = await KycModel.findOne({ check: "MON" + check + "GORO" })
@@ -74,7 +76,7 @@ router.post('/nin', async (req, res) => {
                     console.log({ msg: "All details match " })
 
                     const bodys = {
-                        "auth_id": bcrypt.hash(req.body.auth_id, 13),
+                        "auth_id": code,
                         "type":req.body.type,
                         "userId":req.body.userId,
                         "check": "MON" + check + "GORO",
@@ -106,7 +108,6 @@ router.post('/nin', async (req, res) => {
 //PASSPORT
 router.post('/passport', async (req, res) => {
 
-    const id = req.body.userId
     const lastName = req.body.lastName
     const firstName = req.body.firstName
 
@@ -120,6 +121,9 @@ router.post('/passport', async (req, res) => {
             token: process.env.U_VERIFY_KEY
         }
     }
+    
+    const code = await bcrypt.hash(req.body.auth_id, 13)
+
     try {
 
         const validate = await KycModel.findOne({ check: "MON" + check + "GORO" })
@@ -169,7 +173,7 @@ router.post('/passport', async (req, res) => {
                     console.log({ msg: "All details match " })
 
                     const bodys = {
-                        "auth_id": bcrypt.hash(req.body.auth_id, 13),_id,
+                        "auth_id": code,
                         "type":req.body.type,
                         "userId":req.body.userId,
                         "check": "MON" + check + "GORO",
@@ -201,7 +205,6 @@ router.post('/passport', async (req, res) => {
 //DRIVER LICENSE
 router.post('/driver_license', async (req, res) => {
 
-    const id = req.body.userId
     const lastName = req.body.lastName
     const firstName = req.body.firstName
 
@@ -215,6 +218,9 @@ router.post('/driver_license', async (req, res) => {
             token: process.env.U_VERIFY_KEY
         }
     }
+
+    const code = await bcrypt.hash(req.body.auth_id, 13)
+
     try {
 
         const validate = await KycModel.findOne({ check: "MON" + check + "GORO" })
@@ -264,7 +270,7 @@ router.post('/driver_license', async (req, res) => {
                     console.log({ msg: "All details match " })
 
                     const bodys = {
-                        "auth_id": bcrypt.hash(req.body.auth_id, 13),
+                        "auth_id": code,
                         "type":req.body.type,
                         "userId":req.body.userId,
                         "check": "MON" + check + "GORO",
@@ -293,6 +299,101 @@ router.post('/driver_license', async (req, res) => {
 })
 
 
+//PVC 
+router.post('/pvc', async (req, res) => {
+
+    const lastName = req.body.lastName
+    const firstName = req.body.firstName
+
+    const check = req.body.auth_id.substr(req.body.auth_id.length - 5)
+    console.log(check)
+
+    const url = "https://api.sandbox.youverify.co/v2/api/identity/ng/pvc"
+
+    const header = {
+        headers: {
+            token: process.env.U_VERIFY_KEY
+        }
+    }
+
+    const code = await bcrypt.hash(req.body.auth_id, 13)
+
+    try {
+
+        const validate = await KycModel.findOne({ check: "MON" + check + "GORO" })
+
+        function ent() {
+            const checking = validate.data.data
+
+            if (checking.firstName !== firstName) {
+                res.status(400).json({
+                    msg: 'Credentials does not match !',
+                    status: 400
+                })
+            } else if (checking.lastName !== lastName) {
+                res.status(400).json({
+                    msg: 'Credentials does not match !',
+                    status: 400
+                })
+            } 
+        }
+
+        if (validate) {
+            ent()
+
+            res.send({verified:"Verified before",validate})
+        } else {
+            console.log("account")
+
+            await axios.post(url, {
+                "id": req.body.auth_id,
+                "isSubjectConsent": true,
+                "validations": {
+                    "data": {
+                        "firstName": req.body.firstName,
+                        "lastName": req.body.lastName
+                    }
+                }
+            }, header).then(resp => {
+                const data = resp.data.data
+                if (!data) {
+                    res.status(400).json({ msg: `Invalid ${req.body.type}` })
+                }
+                if (data.lastName !== lastName) {
+                    res.status(400).json({ msg: 'Credentials does not match ?' })
+                } else if (data.firstName !== firstName) {
+                    res.status(400).json({ msg: 'Credentials does not match ?' })
+                } else {
+                    console.log({ msg: "All details match " })
+
+                    const bodys = {
+                        "auth_id": code,
+                        "type":req.body.type,
+                        "userId":req.body.userId,
+                        "check": "MON" + check + "GORO",
+                        "data": resp.data,
+                        "image": req.body.image,
+                        "expire_at": req.body.expire_at
+                    }
+
+                    let details = new KycModel(bodys)
+                    details.save()
+                    res.send(details)
+                    // MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { verification: { kyc: true } } })
+
+                }
+
+            })
+        }
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            msg: 'There is an unknown error sorry.... Please contact our support ',
+            status: 500
+        })
+    }
+})
 
 
 router.get("/all", async (req, res) => {
