@@ -387,10 +387,9 @@ router.put('/block', verify, async (req, res) => {
 // })
 
 
-
 router.post('/verify_tag', async (req, res) => {
 
-    const user = await MongoroUserModel.find({ wallet_ID: req.body.usertag });
+    const user = await MongoroUserModel.findOne({ wallet_ID: req.body.usertag });
 
     try {
 
@@ -409,5 +408,26 @@ router.post('/verify_tag', async (req, res) => {
 
 })
 
+
+router.get('/withtag/:tag', verify, async (req, res) => {
+
+    const user = await MongoroUserModel.findOne({ wallet_ID: req.params.tag });
+
+    try {
+
+        if (user) {
+            res.status(200).json({ msg: "User fetch successfully", user , status: 200 });
+        }else{
+            res.status(400).json({ msg: "User not found", status: 400 });
+        }
+
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry ',
+            status: 500
+        })
+    }
+
+})
 
 module.exports = router
