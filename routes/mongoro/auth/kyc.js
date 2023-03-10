@@ -437,6 +437,20 @@ router.get("/type/:id", async (req, res) => {
 })
 
 
+router.delete("/delete", async (req, res) => {
+    try {
+        if (!req.body.id ) return res.status(402).json({ msg: 'provide the id ?' })
+
+        await BeneficiaryModel.deleteOne({ _id: req.body.id })
+        res.status(200).json({msg:"Request deleted....",status: 200});
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
+
+});
 
 
 module.exports = router
