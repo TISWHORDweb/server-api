@@ -166,6 +166,7 @@ router.post("/verify_transfer", async (req, res) => {
           MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } })
           return res.status(200).json({
             msg: 'Transaction in Successful ',
+            data,
             status: 200
           })
         });
@@ -173,6 +174,7 @@ router.post("/verify_transfer", async (req, res) => {
         TransferModel.updateOne({ flw_id: req.body.flw_id }, { $set: { status: "Failed" } }).then(() => {
           return res.status(400).json({
             msg: 'Transaction is Unsuccessful ',
+            data,
             status: 400
           })
         })

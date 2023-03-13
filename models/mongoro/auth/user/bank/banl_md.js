@@ -10,6 +10,12 @@ const bankSchema=new mongoose.Schema({
     real_bank_name:{
         type:String
     },
+    real_bank_code:{
+        type:String
+    },
+    account_name:{
+        type:String
+    },
     time_created:{type:Number, default:()=>Date.now()}		
 })
 
