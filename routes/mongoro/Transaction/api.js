@@ -9,8 +9,11 @@ const GlobalModel = require('../../../models/mongoro/admin/super_admin/global/gl
 const CryptoJS = require("crypto-js")
 var request = require('request');
 
-
 const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_KEY);
+
+function Tier1(){
+  
+}
 
 //Treansaction
 router.post("/", async (req, res) => {
