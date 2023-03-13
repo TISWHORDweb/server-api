@@ -1,92 +1,79 @@
 const express = require('express')
 const router = express.Router()
 const verify = require("../../../verifyToken")
-const bcrypt = require('bcryptjs')
+const CryptoJS = require("crypto-js")
 const axios = require('axios')
 const TransferModel = require("../../../models/mongoro/transaction/api")
 const MongoroUserModel = require('../../../models/mongoro/auth/mongoroUser_md')
 
 router.post('/create', async (req, res) => {
-    // const alph = 'abcdefghijklmnopqrstuvwxyz'
-    // function generateRandomLetter() {
-    //     return alph[Math.floor(Math.random() * alph.length)]
-    // }
 
-    // const word = generateRandomLetter()
-    // const words = generateRandomLetter()
+    const userId = req.body.userId
 
-    // const num = Math.floor(100 + Math.random() * 900)
+    let details = await MongoroUserModel.findOne({ _id: userId })
+    const verify = details.verification.bvn
 
-    const email = req.body.email
+    const bytes = CryptoJS.AES.decrypt(details.verification_number, process.env.SECRET_KEY);
+    const b_id = bytes.toString(CryptoJS.enc.Utf8);
 
-    let details = await MongoroUserModel.findOne({ email: email })
-    // const verify = details.verification.bvn
+    if (details.account_created === true) return res.status(404).json({ msg: 'Sorry..... You can only create account once ', status: 404 })
 
-    console.log(details)
-    // try {
-    //     if (verify === true) {
+    try {
+        if (verify === true) {
 
-    //         var body = JSON.stringify({
-    //             "email": email,
-    //             "is_permanent": true,
-    //             "bvn": req.body.bvn,
-    //             "phonenumber": req.body.phonenumber,
-    //             "firstname": req.body.firstname,
-    //             "lastname": req.body.lastname,
-    //             "narration": req.body.narration
+            var body = JSON.stringify({
+                "email": details.email,
+                "is_permanent": true,
+                "bvn": b_id,
+                "phonenumber": details.phone,
+                "firstname": details.first_name,
+                "lastname": details.surname,
+                "narration": details.first_name+" "+details.surname
 
-    //         });
+            });
 
-    //         var config = {
-    //             method: 'post',
-    //             url: 'https://api.flutterwave.com/v3/virtual-account-numbers',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //                 'Authorization': `Bearer ${process.env.FLW_SECRET_KEY}`
-    //             },
-    //             data: body
-    //         };
+            var config = {
+                method: 'post',
+                url: 'https://api.flutterwave.com/v3/virtual-account-numbers',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${process.env.FLW_SECRET_KEY}`
+                },
 
-    //         await axios(config)
-    //             .then(function (response) {
-    //                 console.log(JSON.stringify(response.data));
-    //                 const acc = response.data
-    //                 MongoroUserModel.updateOne({ email: email }, { $set: { account: acc, verification: { bvn: true } } }).then(async () => {
+                data: body
+            };
 
-    //                     return res.status(200).json({
-    //                         msg: 'Account created',
-    //                         account: acc,
-    //                         status: 200
-    //                     })
-    //                 })
-    //             })
-    //             .catch(function (error) {
-    //                 console.log(error);
-    //             });
-    //     } else {
-    //         res.status(402).json({
-    //             msg: 'Your bvn is not verified',
-    //             status: 402
-    //         })
-    //     }
+            await axios(config)
+                .then(function (response) {
+                    console.log(JSON.stringify(response.data));
+                    const account = response.data.data
+                    MongoroUserModel.updateOne({ _id: userId }, { $set: { account: account ,  account_created: true} }).then(async () => {
 
-    // } catch (error) {
-    //     res.status(500).json({
-    //         msg: 'there is an unknown error sorry ',
-    //         status: 500
-    //     })
-    // }
+                        return res.status(200).json({
+                            msg: 'Account created',
+                            account,
+                            status: 200
+                        })
+                    })
+                })
+
+                .catch(function (error) {
+                    res.status(400).json(error);
+                });
+        } else {
+            res.status(402).json({
+                msg: 'Your bvn is not verified',
+                status: 402
+            })
+        }
+
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry ',
+            status: 500
+        })
+    }
 })
-
-// /////ACCOUNT ENT
-// router.get("/statement", async (req, res) => {
-
-
-//     TransferModel.find({where: {Date:{between: ['2010-01-05 10:00', '2012-05-10 10:00']}}}).then(result => {
-//         res.send(result);
-//     })
-  
-//   });
 
 module.exports = router
 

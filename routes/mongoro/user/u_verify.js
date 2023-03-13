@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const verify = require("../../../verifyToken")
-const bcrypt = require('bcryptjs')
+const CryptoJS = require("crypto-js")
 const axios = require('axios')
 const Flutterwave = require('flutterwave-node-v3');
 const MongoroUserModel = require('../../../models/mongoro/auth/mongoroUser_md')
@@ -9,14 +9,14 @@ const BvnDefaultModel = require('../../../models/mongoro/auth/user/verification/
 
 
 
-
 router.post('/', async (req, res) => {
 
     // const email = req.body.email
-    const lastName = req.body.lastName
-    const firstName = req.body.firstName
-    const middleName = req.body.middleName
-    const bvv = await bcrypt.hash(req.body.b_id, 13)
+    const lastName = req.body.lastName.toUpperCase();
+    const firstName = req.body.firstName.toUpperCase();
+    const middleName = req.body.middleName.toUpperCase();
+
+    const bvv  = CryptoJS.AES.encrypt(req.body.b_id, "mongoro").toString()
     const userId = req.body.userId
 
     const check = req.body.b_id.substr(req.body.b_id.length - 4)
@@ -62,13 +62,13 @@ router.post('/', async (req, res) => {
             res.status(200).json(validate)
             
         } else {
-            console.log("account")
-
+            
             await axios.post(url, {
                 "id": req.body.b_id,
                 "isSubjectConsent": true
             }, header).then(resp => {
                 const data = resp.data.data
+                console.log(data)
                 if (!data) {
                     res.status(400).json({ msg: 'Invalid BVN' })
                 }

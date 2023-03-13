@@ -24,6 +24,10 @@ const mongoroUserSchema=new mongoose.Schema({
         type:Boolean,
         default: false,
     },
+    account_created:{
+        type:Boolean,
+        default: false,
+    },
     isverified:{
         type:Boolean,
         default: false,
