@@ -20,60 +20,62 @@ router.post('/create', async (req, res) => {
     const email = req.body.email
 
     let details = await MongoroUserModel.findOne({ email: email })
-    const verify = details.verification.bvn
+    // const verify = details.verification.bvn
 
-    try {
-        if (verify === true) {
+    console.log(details)
+    // try {
+    //     if (verify === true) {
 
-            var body = JSON.stringify({
-                "email": email,
-                "is_permanent": true,
-                "bvn": req.body.bvn,
-                "phonenumber": req.body.phonenumber,
-                "firstname": req.body.firstname,
-                "lastname": req.body.lastname,
-                "narration": req.body.narration
-            });
+    //         var body = JSON.stringify({
+    //             "email": email,
+    //             "is_permanent": true,
+    //             "bvn": req.body.bvn,
+    //             "phonenumber": req.body.phonenumber,
+    //             "firstname": req.body.firstname,
+    //             "lastname": req.body.lastname,
+    //             "narration": req.body.narration
 
-            var config = {
-                method: 'post',
-                url: 'https://api.flutterwave.com/v3/virtual-account-numbers',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${process.env.FLW_SECRET_KEY}`
-                },
-                data: body
-            };
+    //         });
 
-            await axios(config)
-                .then(function (response) {
-                    console.log(JSON.stringify(response.data));
-                    const acc = response.data
-                    MongoroUserModel.updateOne({ email: email }, { $set: { account: acc, verification: { bvn: true } } }).then(async () => {
+    //         var config = {
+    //             method: 'post',
+    //             url: 'https://api.flutterwave.com/v3/virtual-account-numbers',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //                 'Authorization': `Bearer ${process.env.FLW_SECRET_KEY}`
+    //             },
+    //             data: body
+    //         };
 
-                        return res.status(200).json({
-                            msg: 'Account created',
-                            account: acc,
-                            status: 200
-                        })
-                    })
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-        } else {
-            res.status(402).json({
-                msg: 'Your bvn is not verified',
-                status: 402
-            })
-        }
+    //         await axios(config)
+    //             .then(function (response) {
+    //                 console.log(JSON.stringify(response.data));
+    //                 const acc = response.data
+    //                 MongoroUserModel.updateOne({ email: email }, { $set: { account: acc, verification: { bvn: true } } }).then(async () => {
 
-    } catch (error) {
-        res.status(500).json({
-            msg: 'there is an unknown error sorry ',
-            status: 500
-        })
-    }
+    //                     return res.status(200).json({
+    //                         msg: 'Account created',
+    //                         account: acc,
+    //                         status: 200
+    //                     })
+    //                 })
+    //             })
+    //             .catch(function (error) {
+    //                 console.log(error);
+    //             });
+    //     } else {
+    //         res.status(402).json({
+    //             msg: 'Your bvn is not verified',
+    //             status: 402
+    //         })
+    //     }
+
+    // } catch (error) {
+    //     res.status(500).json({
+    //         msg: 'there is an unknown error sorry ',
+    //         status: 500
+    //     })
+    // }
 })
 
 // /////ACCOUNT ENT
