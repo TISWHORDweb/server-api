@@ -24,6 +24,10 @@ const mongoroUserSchema=new mongoose.Schema({
         type:Boolean,
         default: false,
     },
+    account_created:{
+        type:Boolean,
+        default: false,
+    },
     isverified:{
         type:Boolean,
         default: false,
@@ -130,6 +134,9 @@ const mongoroUserSchema=new mongoose.Schema({
         type:String
     },
     real_bank_name:{
+        type:String
+    },
+    verification_number:{
         type:String
     },
     welcome_message:{

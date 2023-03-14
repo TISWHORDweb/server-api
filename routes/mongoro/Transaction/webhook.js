@@ -32,6 +32,7 @@ router.post("/webhook", async (req, res) => {
     const txReference = payload.data.tx_ref;
 
     if (payload.data.status === "successful") {
+        console.log("successful")
         // find user on the database using the email
         const userWallet = await MongoroUserModel.findOne({ email: csEmail });
 
@@ -43,12 +44,12 @@ router.post("/webhook", async (req, res) => {
                 message: `User ${csEmail} doesn't exist`,
             };
         }
-
+        ///NOT SHOOTING
+        
         console.log(userWallet);
         const id = userWallet._id;
         const oldAmount = userWallet.wallet_balance
         const newAmount = +oldAmount + +txAmount
-
 
         // update the user's balance on the database
         await MongoroUserModel.updateOne(
@@ -56,7 +57,7 @@ router.post("/webhook", async (req, res) => {
             { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }
         );
 
-        // // update transaction details on the database
+        // update transaction details on the database
 
         const details = {
             "transaction_ID": tid,

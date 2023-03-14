@@ -7,6 +7,9 @@ const BvnDetailsSchema=new mongoose.Schema({
     check: {
         type: String,
     },
+    userId: {
+        type: String,
+    },
     data: {
         type: {},
     },

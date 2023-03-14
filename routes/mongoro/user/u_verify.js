@@ -1,20 +1,23 @@
 const express = require('express')
 const router = express.Router()
 const verify = require("../../../verifyToken")
-const bcrypt = require('bcryptjs')
+const CryptoJS = require("crypto-js")
 const axios = require('axios')
 const Flutterwave = require('flutterwave-node-v3');
 const MongoroUserModel = require('../../../models/mongoro/auth/mongoroUser_md')
 const BvnDefaultModel = require('../../../models/mongoro/auth/user/verification/u-verify_md')
-const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_KEY);
+
 
 
 router.post('/', async (req, res) => {
 
-    const email = req.body.email
-    const lastName = req.body.lastName
-    const firstName = req.body.firstName
-    const middleName = req.body.middleName
+    // const email = req.body.email
+    const lastName = req.body.lastName.toUpperCase();
+    const firstName = req.body.firstName.toUpperCase();
+    const middleName = req.body.middleName.toUpperCase();
+
+    const bvv  = CryptoJS.AES.encrypt(req.body.b_id, "mongoro").toString()
+    const userId = req.body.userId
 
     const check = req.body.b_id.substr(req.body.b_id.length - 4)
     console.log(check)
@@ -23,9 +26,10 @@ router.post('/', async (req, res) => {
 
     const header = {
         headers: {
-            token: "PX5PKOeq.kxH0ThxPCDj2HidqDZMV0x0iw9TMXp7Z6z42"
+            token: process.env.U_VERIFY_KEY
         }
     }
+
     try {
 
         const validate = await BvnDefaultModel.findOne({ check: "MON" + check + "GORO" })
@@ -55,15 +59,16 @@ router.post('/', async (req, res) => {
             ent()
             // let user = await MongoroUserModel.find({ email: email })
             // res.send(user)
-            res.send(validate)
+            res.status(200).json(validate)
+            
         } else {
-            console.log("account")
-
+            
             await axios.post(url, {
                 "id": req.body.b_id,
                 "isSubjectConsent": true
             }, header).then(resp => {
                 const data = resp.data.data
+                console.log(data)
                 if (!data) {
                     res.status(400).json({ msg: 'Invalid BVN' })
                 }
@@ -76,26 +81,22 @@ router.post('/', async (req, res) => {
                 } else {
                     console.log({ msg: "All details match " })
 
-                    if (req.body.b_id) {
-                        req.body.b_id = bcrypt.hash(req.body.b_id, 13)
-                    }
-
                     const bodys = {
-                        // "b_id": req.body.b_id,
                         "check": "MON" + check + "GORO",
-                        "data": resp.data
+                        "data": resp.data,
+                        "userId":userId
                     }
 
                     let details = new BvnDefaultModel(bodys)
                     details.save()
-                    res.send(details)
-                    MongoroUserModel.updateOne({ email: email }, { $set: { verification: { bvn: true } } })
+                    MongoroUserModel.updateOne({ _id: userId }, { $set: { verification: { bvn: true }, verification_number: bvv}}).then(()=>{
+                        res.send(details)
+                    })
 
                 }
 
             })
         }
-
     } catch (error) {
         console.log(error)
         res.status(500).json({
@@ -104,6 +105,8 @@ router.post('/', async (req, res) => {
         })
     }
 })
+
+
 
 router.get("/banks", async (req, res) => {
     const url = "https://api.sandbox.youverify.co/v2/api/identity/ng/bank-account-number/bank-list"
