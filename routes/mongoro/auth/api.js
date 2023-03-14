@@ -275,7 +275,7 @@ router.put('/settings', async (req, res) => {
                 country: req.body.country,
                 city: req.body.city,
                 gender: req.body.gender,
-                date: req.body.date,
+                date_of_birth: req.body.date_of_birth,
                 occupation: req.body.occupation,
                 setup_complete: true
             }
