@@ -12,7 +12,8 @@ const TierSchema=new mongoose.Schema({
         type:String
     },
     amount:{
-        type:String
+        type:Number,
+        default:0
     },
     limit:{
         type:String

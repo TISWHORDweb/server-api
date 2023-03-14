@@ -28,20 +28,38 @@ router.get("/tier/all", async (req, res) => {
 router.post("/tier", async (req, res) => {
 
   let number ;
+  let per ;
 
   const user = await MongoroUserModel.findOne({ _id: req.body.userId })
+  const allTransfer = await TierModel.findOne({ userId: req.body.userId })
+  const allTotal = allTransfer.amount
   const type = user.tiers
   console.log(type)
   if(type === "one"){
-    number = "100"
+    number = "100000"
+    per = "20000"
   }
   if(type === "two"){
     number = "1000000"
+    per = "100000"
   }
   if(type === "three"){
     number = "10000000"
+    per = "1000000"
   }
+
+  if(req.body.amount > per){
+    res.send({msg:"You can only send 20,000 at once any amount greater than that is not accepted, on else you upgrade your account, Thanks", status:400});
+  } else{
+    const total = +req.body.amount + +allTotal
+
+    await TierModel.updateOne({ userId: req.body.userId }, { $set: { amount: total } }).then(() => {
+      res.send({ msg: 'Added ', status: 200 });
+  })
+  }
+
   console.log(number)
+  console.log(per)
 
   const date = new Date();
   let day = date.getDate();
@@ -51,11 +69,9 @@ router.post("/tier", async (req, res) => {
   let currentDate = `${day}-${month}-${year}`;
   console.log(currentDate);
 
-
   let body={
     date: currentDate,
     userId: req.body.userId,
-    amount: req.body.amount,
     limit: number
   }
 
@@ -66,8 +82,6 @@ router.post("/tier", async (req, res) => {
     tier.save().then(()=>{
       res.status(200).json(tier);
     })
-  }else{
-    res.status(200).json("still today");
   }
 
 })
