@@ -59,7 +59,7 @@ const mongoroUserSchema=new mongoose.Schema({
     occupation:{
         type:String,
     },
-    date:{
+    date_of_birth:{
         type:Date,    
     },
     pin:{
