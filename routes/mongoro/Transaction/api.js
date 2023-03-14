@@ -4,6 +4,7 @@ const TransferModel = require("../../../models/mongoro/transaction/api")
 const Flutterwave = require('flutterwave-node-v3');
 const verify = require("../../../verifyToken")
 const axios = require('axios')
+const TierModel = require('../../../models/mongoro/transaction/tier_md')
 const MongoroUserModel = require("../../../models/mongoro/auth/mongoroUser_md")
 const GlobalModel = require('../../../models/mongoro/admin/super_admin/global/global_md')
 const CryptoJS = require("crypto-js")
@@ -11,9 +12,65 @@ var request = require('request');
 
 const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_KEY);
 
-function Tier1(){
-  
-}
+router.get("/tier/all", async (req, res) => {
+  try {
+      const tier = await TierModel.find();
+      res.status(200).json(tier.reverse());
+  } catch (err) {
+      res.status(500).json({
+          msg: 'there is an unknown error sorry ',
+          status: 500
+      })
+  }
+})
+
+
+router.post("/tier", async (req, res) => {
+
+  let number ;
+
+  const user = await MongoroUserModel.findOne({ _id: req.body.userId })
+  const type = user.tiers
+  console.log(type)
+  if(type === "one"){
+    number = "100"
+  }
+  if(type === "two"){
+    number = "1000000"
+  }
+  if(type === "three"){
+    number = "10000000"
+  }
+  console.log(number)
+
+  const date = new Date();
+  let day = date.getDate();
+  let month = date.getMonth() + 1;
+  let year = date.getFullYear();
+
+  let currentDate = `${day}-${month}-${year}`;
+  console.log(currentDate);
+
+
+  let body={
+    date: currentDate,
+    userId: req.body.userId,
+    amount: req.body.amount,
+    limit: number
+  }
+
+  const check = await TierModel.findOne({ userId: req.body.userId, date: currentDate })
+
+  if (!check) {
+    let tier = new TierModel(body)
+    tier.save().then(()=>{
+      res.status(200).json(tier);
+    })
+  }else{
+    res.status(200).json("still today");
+  }
+
+})
 
 //Treansaction
 router.post("/", async (req, res) => {
@@ -23,6 +80,8 @@ router.post("/", async (req, res) => {
   function generateRandomLetter() {
     return alph[Math.floor(Math.random() * alph.length)]
   }
+
+  Tier1(req.body.userId)
 
   const word = generateRandomLetter()
   const words = generateRandomLetter()

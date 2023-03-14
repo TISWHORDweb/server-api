@@ -71,6 +71,9 @@ const mongoroUserSchema=new mongoose.Schema({
     image:{
         type:String
     },
+    tiers:{
+        type:String
+    },
     wallet_balance:{
         type:String,
         default: 0
