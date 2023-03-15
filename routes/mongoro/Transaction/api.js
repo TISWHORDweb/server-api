@@ -377,14 +377,11 @@ router.post('/wallet', verify, async (req, res) => {
 
   const check = await TierModel.findOne({ userId: req.body.userId, date: currentDate })
 
-
   const tid = "00" + Math.floor(10000000000 + Math.random() * 90000000000)
 
   if (!req.body.wallet_ID || !req.body.userId) return res.status(400).json({ msg: 'please check the fields ?' })
 
-
   req.body.transaction_ID = tid
-
 
   const bytes = CryptoJS.AES.decrypt(users.pin, process.env.SECRET_KEY);
   const originalPin = bytes.toString(CryptoJS.enc.Utf8);
@@ -408,7 +405,7 @@ router.post('/wallet', verify, async (req, res) => {
     tier.save().then(() => {
       res.status(200).json(tier);
     })
-    
+
   } else {
 
     if (req.body.amount > per) {
