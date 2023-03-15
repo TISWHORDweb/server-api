@@ -12,16 +12,27 @@ const BvnDefaultModel = require('../../../models/mongoro/auth/user/verification/
 router.post('/', async (req, res) => {
 
     // const email = req.body.email
-    const lastName = req.body.lastName.toUpperCase();
-    const firstName = req.body.firstName.toUpperCase();
-    const middleName = req.body.middleName.toUpperCase();
+   
+    const where = "Test"
+
+    let middleName ;
+    let lastName ;
+    let firstName ;
+
+    if(where === "Test"){
+        middleName = req.body.middleName
+         lastName = req.body.lastName
+         firstName = req.body.firstName
+    }else{
+        middleName = req.body.middleName.toUpperCase();
+         lastName = req.body.lastName.toUpperCase();
+         firstName = req.body.firstName.toUpperCase();
+    }
 
     const bvv  = CryptoJS.AES.encrypt(req.body.b_id, "mongoro").toString()
     const userId = req.body.userId
 
     const check = req.body.b_id.substr(req.body.b_id.length - 4)
-    console.log(check)
-
     const url = "https://api.sandbox.youverify.co/v2/api/identity/ng/bvn"
 
     const header = {
@@ -30,26 +41,26 @@ router.post('/', async (req, res) => {
         }
     }
 
-    try {
+    // try {
 
         const validate = await BvnDefaultModel.findOne({ check: "MON" + check + "GORO" })
 
         function ent() {
             const checking = validate.data.data
-
+            console.log(checking)
             if (checking.firstName !== firstName) {
-                res.status(400).json({
-                    msg: 'Credentials does not match !',
+                res.send({
+                    msg: 'firstName does not match !',
                     status: 400
                 })
             } else if (checking.lastName !== lastName) {
-                res.status(400).json({
-                    msg: 'Credentials does not match !',
+                res.send({
+                    msg: 'lastName does not match !',
                     status: 400
                 })
             } else if (checking.middleName !== middleName) {
-                res.status(400).json({
-                    msg: 'Credentials does not match !',
+                res.send({
+                    msg: 'middleName does not match !',
                     status: 400
                 })
             }
@@ -59,7 +70,7 @@ router.post('/', async (req, res) => {
             ent()
             // let user = await MongoroUserModel.find({ email: email })
             // res.send(user)
-            res.status(200).json(validate)
+            res.send(validate)
             
         } else {
             
@@ -68,16 +79,16 @@ router.post('/', async (req, res) => {
                 "isSubjectConsent": true
             }, header).then(resp => {
                 const data = resp.data.data
-                console.log(data)
+                
                 if (!data) {
                     res.status(400).json({ msg: 'Invalid BVN' })
                 }
                 if (data.lastName !== lastName) {
-                    res.status(400).json({ msg: 'Credentials does not match ?' })
+                    res.send({ msg: 'lastName does not match ?' })
                 } else if (data.firstName !== firstName) {
-                    res.status(400).json({ msg: 'Credentials does not match ?' })
+                    res.send({ msg: 'firstName does not match ?' })
                 } else if (data.middleName !== middleName) {
-                    res.status(400).json({ msg: 'Credentials does not match ?' })
+                    res.send({ msg: 'middleName does not match ?' })
                 } else {
                     console.log({ msg: "All details match " })
 
@@ -97,13 +108,13 @@ router.post('/', async (req, res) => {
 
             })
         }
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({
-            msg: 'There is an unknown error sorry.... Please contact our support !',
-            status: 500
-        })
-    }
+    // } catch (error) {
+    //     console.log(error)
+    //     res.send({
+    //         msg: 'There is an unknown error sorry.... Please contact our support !',
+    //         status: 500
+    //     })
+    // }
 })
 
 

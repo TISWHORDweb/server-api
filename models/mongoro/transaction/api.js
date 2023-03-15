@@ -10,7 +10,7 @@ const TransferSchema=new mongoose.Schema({
     },
     amount:{
         type:String
-    },
+   },
     wallet_ID:{
         type:String
     },
