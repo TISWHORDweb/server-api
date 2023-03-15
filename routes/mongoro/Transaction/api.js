@@ -223,6 +223,7 @@ router.post("/", async (req, res) => {
                 "account_number": data.data.account_number,
                 "bank_name": data.data.bank_name,
                 "userId": req.body.userId,
+                "sender_status":"Debit"
               }
 
               let transaction = new TransferModel(details)
@@ -405,19 +406,19 @@ router.post('/wallet', verify, async (req, res) => {
 
   req.body.transaction_ID = tid
 
-  const users = await MongoroUserModel.find({ _id: req.body.userId });
-  const bytes = CryptoJS.AES.decrypt(users[0].pin, process.env.SECRET_KEY);
+  const users = await MongoroUserModel.findOne({ _id: req.body.userId });
+  const bytes = CryptoJS.AES.decrypt(users.pin, process.env.SECRET_KEY);
   const originalPin = bytes.toString(CryptoJS.enc.Utf8);
 
-  const sender = await MongoroUserModel.find({ _id: req.body.userId });
-  const senderAmount = sender[0].wallet_balance
+  const sender = await MongoroUserModel.findOne({ _id: req.body.userId });
+  const senderAmount = sender.wallet_balance
   const senderNewAmount = senderAmount - req.body.amount
 
   let user = await MongoroUserModel.findOne({ wallet_ID: req.body.wallet_ID })
   const oldAmount = user.wallet_balance
   newAmount = +oldAmount + +req.body.amount
 
-  const value = sender[0].blocked
+  const value = sender.blocked
   console.log(value)
 
   const userss = await GlobalModel.findOne({ _id: process.env.GLOBAL_ID })
@@ -451,7 +452,7 @@ router.post('/wallet', verify, async (req, res) => {
           if (transaction) {
             MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: senderNewAmount, wallet_updated_at: Date.now() } }).then(() => {
               console.log("updated")
-              TransferModel.updateOne({ _id: id }, { $set: { status: "succesful" } }).then(async () => {
+              TransferModel.updateOne({ _id: id }, { $set: { status: "succesful",sender_status:"Debit",receive_status:"Credit" } }).then(async () => {
                 let transaction = await TransferModel.findOne({ _id: id })
                 return res.status(200).json({
                   msg: 'Transaction successful ',
@@ -535,7 +536,19 @@ router.get("/user/:id", async (req, res) => {
   }
 })
 
+router.get("/wallet/:id", async (req, res) => {
+  try {
+    if (!req.params.id) return res.status(402).json({ msg: 'provide the id ?' })
 
+    let transaction = await TransferModel.find({ wallet_ID: req.params.id })
+    res.status(200).json(transaction);
+  } catch (err) {
+    res.status(500).json({
+      msg: 'there is an unknown error sorry !',
+      status: 500
+    })
+  }
+})
 
 
 module.exports = router

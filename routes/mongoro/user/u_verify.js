@@ -85,7 +85,7 @@ router.post('/', async (req, res) => {
                         "check": "MON" + check + "GORO",
                         "data": resp.data,
                         "userId":userId
-                    }
+                    } 
 
                     let details = new BvnDefaultModel(bodys)
                     details.save()

@@ -158,13 +158,13 @@ router.post("/login", async (req, res) => {
     const users = await GlobalModel.findOne({ _id: process.env.GLOBAL_ID })
     const value = users.disable_all_user
     const user = await MongoroUserModel.findOne({ email: req.body.email })
-
+    let resultt ;
     if (!user) {
         res.status(400).json({ msg: "user not found", code: 400 })
+    }else{
+        resultt = user.blocked
     }
-
-    const resultt = user.blocked
-
+    
     if (resultt === true) {
         res.status(403).json({ msg: "Sorry your account is blocked", code: 403 })
     } else if (value === true) {
