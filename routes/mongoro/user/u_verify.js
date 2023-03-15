@@ -100,7 +100,7 @@ router.post('/', async (req, res) => {
 
                     let details = new BvnDefaultModel(bodys)
                     details.save()
-                    MongoroUserModel.updateOne({ _id: userId }, { $set: { verification: { bvn: true }, verification_number: bvv}}).then(()=>{
+                    MongoroUserModel.updateOne({ _id: userId }, { $set: { verification: { bvn: true }, verification_number: bvv, tiers: "one"}}).then(()=>{
                         res.send(details)
                     })
 
@@ -124,7 +124,7 @@ router.get("/banks", async (req, res) => {
 
     const header = {
         headers: {
-            token: "PX5PKOeq.kxH0ThxPCDj2HidqDZMV0x0iw9TMXp7Z6z42"
+            token: process.env.U_VERIFY_KEY
         }
     }
     try {

@@ -88,7 +88,7 @@ router.post('/nin', async (req, res) => {
                     let details = new KycModel(bodys)
                     details.save()
                     res.send(details)
-                    // MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { verification: { kyc: true } } })
+                    MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { verification: { nin: true } } })
 
                 }
 
@@ -185,10 +185,10 @@ router.post('/passport', async (req, res) => {
                     let details = new KycModel(bodys)
                     details.save()
                     res.send(details)
-                    // MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { verification: { kyc: true } } })
+                    MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { verification: { passport: true } } })
 
                 }
-
+6
             })
         }
 
@@ -282,7 +282,7 @@ router.post('/driver_license', async (req, res) => {
                     let details = new KycModel(bodys)
                     details.save()
                     res.send(details)
-                    // MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { verification: { kyc: true } } })
+                    MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { verification: { driver_license: true } } })
 
                 }
 
@@ -379,7 +379,7 @@ router.post('/pvc', async (req, res) => {
                     let details = new KycModel(bodys)
                     details.save()
                     res.send(details)
-                    // MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { verification: { kyc: true } } })
+                    MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { verification: { pvc: true } } })
 
                 }
 

@@ -104,7 +104,19 @@ const mongoroUserSchema=new mongoose.Schema({
             type:Boolean,
             default: false
         },
-        kyc:{
+        nin:{
+            type:Boolean,
+            default: false
+        },
+        passport:{
+            type:Boolean,
+            default: false
+        },
+        pvc:{
+            type:Boolean,
+            default: false
+        },
+        driver_license:{
             type:Boolean,
             default: false
         },
