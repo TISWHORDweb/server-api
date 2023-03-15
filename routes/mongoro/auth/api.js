@@ -155,22 +155,21 @@ router.post("/verify", async (req, res) => {
 router.post("/login", async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
 
+    let UserPassword ;
+
     const users = await GlobalModel.findOne({ _id: process.env.GLOBAL_ID })
     const value = users.disable_all_user
     const user = await MongoroUserModel.findOne({ email: req.body.email })
     let resultt ;
     if (user) {
         resultt = user.blocked
-    }else{
-        res.status(400).json({ msg: "user not found", code: 400 })
-    }
-
-    if (resultt === true) {
+        UserPassword = user.password
+    }else if (resultt === true) {
         res.status(403).json({ msg: "Sorry your account is blocked", code: 403 })
     } else if (value === true) {
         res.status(500).json({ msg: "Sorry service temporarily unavailable", code: 500 })
-    } else {
-        const originalPassword = await bcrypt.compare(req.body.password, user.password);
+    } else if(UserPassword) {
+        const originalPassword = await bcrypt.compare(req.body.password, UserPassword);
 
         if (!originalPassword) {
             res.status(400).json({ msg: "wrong password", code: 400 })
@@ -187,6 +186,8 @@ router.post("/login", async (req, res) => {
                 res.status(200).json({ msg: 'logged in successfuly ', user: user, token: accessToken, ip_address: ip, status: 200 });
             })
         }
+    }else{
+        res.status(400).json({ msg: "user not found", code: 400 })
     }
 
 })
