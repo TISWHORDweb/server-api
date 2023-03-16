@@ -14,7 +14,14 @@ router.post('/', async (req, res) => {
     // const email = req.body.email
     const lastName = req.body.lastName.toUpperCase();
     const firstName = req.body.firstName.toUpperCase();
-    const middleName = req.body.middleName.toUpperCase();
+
+    let middleName;
+
+    if(req.body.middleName === null){
+        middleName = req.body.middleName
+    }else{
+        middleName = req.body.middleName.toUpperCase();
+    }
 
     // const lastName = req.body.lastName
     // const firstName = req.body.firstName
