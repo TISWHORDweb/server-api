@@ -50,17 +50,17 @@ router.post('/', async (req, res) => {
 
             if (checking.firstName !== firstName) {
                 res.status(400).json({
-                    msg: 'Credentials does not match !',
+                    msg: 'firstName does not match !',
                     status: 400
                 })
             } else if (checking.lastName !== lastName) {
                 res.status(400).json({
-                    msg: 'Credentials does not match !',
+                    msg: 'lastName does not match !',
                     status: 400
                 })
             } else if (checking.middleName !== middleName) {
                 res.status(400).json({
-                    msg: 'Credentials does not match !',
+                    msg: 'middleName does not match !',
                     status: 400
                 })
             }
@@ -87,11 +87,11 @@ router.post('/', async (req, res) => {
                     res.status(400).json({ msg: 'Invalid BVN' })
                 }
                 if (data.lastName !== lastName) {
-                    res.status(400).json({ msg: 'Credentials does not match ?' })
+                    res.status(400).json({ msg: 'lastName does not match ?' })
                 } else if (data.firstName !== firstName) {
-                    res.status(400).json({ msg: 'Credentials does not match ?' })
+                    res.status(400).json({ msg: 'firstName does not match ?' })
                 } else if (data.middleName !== middleName) {
-                    res.status(400).json({ msg: 'Credentials does not match ?' })
+                    res.status(400).json({ msg: 'middleName does not match ?' })
                 } else {
                     console.log({ msg: "All details match " })
 
