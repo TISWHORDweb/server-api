@@ -42,7 +42,7 @@ router.post('/', async (req, res) => {
     }
 
     try {
-
+        console.log(middleName,lastName,firstName)
         const validate = await BvnDefaultModel.findOne({ check: "MON" + check + "GORO" })
 
         function ent() {
