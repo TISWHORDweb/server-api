@@ -13,23 +13,34 @@ router.post('/create', async (req, res) => {
     let details = await MongoroUserModel.findOne({ _id: userId })
     const verify = details.verification.bvn
 
-    const bytes = CryptoJS.AES.decrypt(details.verification_number, process.env.SECRET_KEY);
-    const b_id = bytes.toString(CryptoJS.enc.Utf8);
+    // const bytes = CryptoJS.AES.decrypt(details.verification_number, process.env.SECRET_KEY);
+    // const b_id = bytes.toString(CryptoJS.enc.Utf8);
 
     if (details.account_created === true) return res.status(404).json({ msg: 'Sorry..... You can only create account once ', status: 404 })
 
     try {
         if (verify === true) {
 
-            var body = JSON.stringify({
-                "email": details.email,
-                "is_permanent": true,
-                "bvn": b_id,
-                "phonenumber": details.phone,
-                "firstname": details.first_name,
-                "lastname": details.surname,
-                "narration": details.first_name+" "+details.surname
+            // var body = JSON.stringify({
+            //     "email": details.email,
+            //     "is_permanent": true,
+            //     "bvn": b_id,
+            //     "phonenumber": details.phone,
+            //     "firstname": details.first_name,
+            //     "lastname": details.surname,
+            //     "narration": details.first_name+" "+details.surname
 
+            // });
+            
+            var body = JSON.stringify({
+                "email": req.body.email,
+                "is_permanent": true,
+                "bvn": req.body.bvn,
+                "phonenumber": req.body.phone,
+                "firstname": req.body.first_name,
+                "lastname": req.body.surname,
+                "narration": req.body.narration,
+                "tx_ref": req.body.tx_ref
             });
 
             var config = {
@@ -37,7 +48,7 @@ router.post('/create', async (req, res) => {
                 url: 'https://api.flutterwave.com/v3/virtual-account-numbers',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${process.env.FLW_SECRET_KEY}`
+                    'Authorization': `Bearer ${process.env.FLW_TEST_SECRET_KEY}`
                 },
 
                 data: body
