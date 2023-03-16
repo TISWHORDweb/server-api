@@ -53,10 +53,7 @@ const TransferSchema=new mongoose.Schema({
     reference:{
         type:String
     },
-    sender_status:{
-        type:String
-    },
-    receive_status:{
+    status_type:{
         type:String
     },
     archive:{

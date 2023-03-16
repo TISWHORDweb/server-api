@@ -24,6 +24,21 @@ router.get("/tier/all", async (req, res) => {
   }
 })
 
+router.delete("/tier/delete", async (req, res) => {
+  try {
+      if (!req.body.id ) return res.status(402).json({ msg: 'provide the id ?' })
+
+      await TierModel.deleteOne({ _id: req.body.id })
+      res.status(200).json({msg:"Tier deleted....",status: 200});
+  } catch (error) {
+      res.status(500).json({
+          msg: 'there is an unknown error sorry !',
+          status: 500
+      })
+  }
+
+});
+
 
 //Treansaction
 router.post("/", async (req, res) => {
@@ -341,10 +356,9 @@ router.post('/wallet', verify, async (req, res) => {
 
   let number;
   let per;
+  let allTotal;
 
   const users = await MongoroUserModel.findOne({ _id: req.body.userId });
-  const allTransfer = await TierModel.findOne({ userId: req.body.userId })
-  const allTotal = allTransfer.amount
   const type = users.tiers
 
   if (type === "one") {
@@ -402,90 +416,115 @@ router.post('/wallet', verify, async (req, res) => {
 
   if (!check) {
     let tier = new TierModel(body)
-    tier.save().then(() => {
-      res.status(200).json(tier);
-    })
+    tier.save()
+    allTotal = 0
+    console.log(tier)
+  }else{
+    const allTransfer = await TierModel.findOne({ userId: req.body.userId })
+    allTotal = allTransfer.amount
+  }
 
+   console.log(allTotal)
+
+  if (req.body.amount > per) {
+    res.send({ msg: `You can only send ${per} at once any amount greater than that is not accepted, Upgrade your account to have access, Thanks`, status: 400 });
+  } else if (allTotal > number) {
+    res.send({ msg: "You have reach your daily transaction limit, Upgrade your account to have access" })
   } else {
+    const total = +req.body.amount + +allTotal
 
-    if (req.body.amount > per) {
-      res.send({ msg: `You can only send ${per} at once any amount greater than that is not accepted, Upgrade your account to have access, Thanks`, status: 400 });
-    } else if (allTotal > number) {
-      res.send({ msg: "You have reach your daily transaction limit, Upgrade your account to have access" })
+    await TierModel.updateOne({ userId: req.body.userId }, { $set: { amount: total } }).then(() => {
+    })
+  }
+
+
+  if (value === true) {
+    res.status(403).json({ msg: "Sorry your account is blocked" })
+  } else if (resultt === true) {
+    res.status(400).json({ msg: "Sorry service temporarily unavailable", code: 400 })
+    } else if (originalPin !== req.body.pin) {
+      res.status(401).json({ msg: 'Wrong pin ', status: 401 })
+  }
+  else {
+
+    if (senderAmount < req.body.amount) {
+      res.status(400).json({ msg: "Insufficient funds", status: 400 });
+    } else if (senderAmount < 100) {
+      res.status(400).json({ msg: "you dont have enough money", status: 400 });
+    } else if (req.body.amount < 100) {
+      res.status(400).json({ msg: "you cant send any have money lower than 100", status: 400 });
     } else {
-      const total = +req.body.amount + +allTotal
 
-      await TierModel.updateOne({ userId: req.body.userId }, { $set: { amount: total } }).then(() => {
-        res.send({ msg: 'Added ', status: 200 });
-      })
+      try {
 
-      if (value === true) {
-        res.status(403).json({ msg: "Sorry your account is blocked" })
-      } else if (resultt === true) {
-        res.status(400).json({ msg: "Sorry service temporarily unavailable", code: 400 })
-        // } else if (originalPin !== req.body.pin) {
-        //   res.status(401).json({ msg: 'Wrong pin ', status: 401 })
-      }
-      else {
+        const single = await MongoroUserModel.findOne({ wallet_ID: req.body.wallet_ID })
+        const receiver = single._id
 
-        if (senderAmount < req.body.amount) {
-          res.status(400).json({ msg: "Insufficient funds", status: 400 });
-        } else if (senderAmount < 100) {
-          res.status(400).json({ msg: "you dont have enough money", status: 400 });
-        } else if (req.body.amount < 100) {
-          res.status(400).json({ msg: "you cant send any have money lower than 100", status: 400 });
-        } else {
-
-          try {
-
-            let transaction = await new TransferModel(req.body)
-
-            await transaction.save().then(transaction => {
-              const id = transaction._id
-              console.log({ "id": id })
-              console.log(id)
-              if (transaction) {
-                MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: senderNewAmount, wallet_updated_at: Date.now() } }).then(() => {
-                  console.log("updated")
-                  TransferModel.updateOne({ _id: id }, { $set: { status: "succesful", sender_status: "Debit", receive_status: "Credit" } }).then(async () => {
-                    let transaction = await TransferModel.findOne({ _id: id })
-                    return res.status(200).json({
-                      msg: 'Transaction successful ',
-                      transaction: transaction,
-                      status: 200
-                    }).catch((err) => {
-                      res.send(err)
-                    })
-                  })
-                });
-              }
-
-              MongoroUserModel.updateOne({ wallet_ID: req.body.wallet_ID }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(async () => {
-              })
-
-            })
-          } catch (error) {
-
-            let transaction = await new TransferModel(req.body)
-
-            await transaction.save().then(transaction => {
-              const id = transaction._id
-              console.log({ "id": id })
-              console.log(id)
-              if (transaction) {
-                TransferModel.updateOne({ _id: id }, { $set: { status: "failed" } }).then(async () => {
-                  let transaction = await TransferModel.findOne({ _id: id })
-                  return res.status(400).json({
-                    msg: 'Transaction Unsuccessful ',
-                    transaction: transaction,
-                    status: 400
-                  })
-                });
-              }
-            })
-          }
+        const datas = {
+          "amount": req.body.amount,
+          "wallet_ID": req.body.wallet_ID,
+          "service_type": req.body.service_type,
+          "userId": receiver,
+          "narration": req.body.narration,
+          "status_type": "Credit"
         }
+
+        const body = {
+          "amount": req.body.amount,
+          "wallet_ID": req.body.wallet_ID,
+          "service_type": req.body.service_type,
+          "userId": req.body.userId,
+          "narration": req.body.narration,
+          "status_type": "Debit"
+        }
+
+        let transaction = await new TransferModel(body)
+
+        await transaction.save().then(transaction => {
+          const id = transaction._id
+          console.log({ "id": id })
+          console.log(id)
+          if (transaction) {
+            MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: senderNewAmount, wallet_updated_at: Date.now() } }).then(() => {
+              console.log("updated")
+              TransferModel.updateOne({ _id: id }, { $set: { status: "succesful", sender_status: "Debit", receive_status: "Credit" } }).then(async () => {
+                let transaction = await TransferModel.findOne({ _id: id })
+                return res.status(200).json({
+                  msg: 'Transaction successful ',
+                  transaction: transaction,
+                  status: 200
+                })
+              })
+            });
+          }
+
+          MongoroUserModel.updateOne({ wallet_ID: req.body.wallet_ID }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(async () => {
+            let receiver = await new TransferModel(datas)
+            await receiver.save()
+          })
+
+        })
+      } catch (error) {
+
+        let transaction = await new TransferModel(req.body)
+
+        await transaction.save().then(transaction => {
+          const id = transaction._id
+          console.log({ "id": id })
+          console.log(id)
+          if (transaction) {
+            TransferModel.updateOne({ _id: id }, { $set: { status: "failed" } }).then(async () => {
+              let transaction = await TransferModel.findOne({ _id: id })
+              return res.status(400).json({
+                msg: 'Transaction Unsuccessful ',
+                transaction: transaction,
+                status: 400
+              })
+            });
+          }
+        })
       }
+
 
     }
   }
@@ -525,20 +564,6 @@ router.get("/user/:id", async (req, res) => {
     if (!req.params.id) return res.status(402).json({ msg: 'provide the id ?' })
 
     let transaction = await TransferModel.find({ userId: req.params.id })
-    res.status(200).json(transaction);
-  } catch (err) {
-    res.status(500).json({
-      msg: 'there is an unknown error sorry !',
-      status: 500
-    })
-  }
-})
-
-router.get("/wallet/:id", async (req, res) => {
-  try {
-    if (!req.params.id) return res.status(402).json({ msg: 'provide the id ?' })
-
-    let transaction = await TransferModel.find({ wallet_ID: req.params.id })
     res.status(200).json(transaction);
   } catch (err) {
     res.status(500).json({
