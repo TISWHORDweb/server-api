@@ -26,7 +26,7 @@ router.post('/', async (req, res) => {
     const check = req.body.b_id.substr(req.body.b_id.length - 4)
     console.log(check)
 
-    const url = "https://api.sandbox.youverify.co/v2/api/identity/ng/bvn"
+    const url = "https://api.youverify.co/v2/api/identity/ng/bvn"
 
     const header = {
         headers: {
@@ -116,11 +116,11 @@ router.post('/', async (req, res) => {
 
 
 router.get("/banks", async (req, res) => {
-    const url = "https://api.sandbox.youverify.co/v2/api/identity/ng/bank-account-number/bank-list"
+    const url = "https://api.youverify.co/v2/api/identity/ng/bank-account-number/bank-list"
 
     const header = {
         headers: {
-            token: "PX5PKOeq.kxH0ThxPCDj2HidqDZMV0x0iw9TMXp7Z6z42"
+            token: process.env.U_VERIFY_KEY
         }
     }
     try {

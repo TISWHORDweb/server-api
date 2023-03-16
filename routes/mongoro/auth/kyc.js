@@ -17,7 +17,7 @@ router.post('/nin', async (req, res) => {
     const check = req.body.auth_id.substr(req.body.auth_id.length - 5)
     console.log(check)
 
-    const url = "https://api.sandbox.youverify.co/v2/api/identity/ng/vnin"
+    const url = "https://api.youverify.co/v2/api/identity/ng/vnin"
 
     const header = {
         headers: {
@@ -117,7 +117,7 @@ router.post('/passport', async (req, res) => {
     const check = req.body.auth_id.substr(req.body.auth_id.length - 5)
     console.log(check)
 
-    const url = "https://api.sandbox.youverify.co/v2/api/identity/ng/passport"
+    const url = "https://api.youverify.co/v2/api/identity/ng/passport"
 
     const header = {
         headers: {
@@ -217,7 +217,7 @@ router.post('/driver_license', async (req, res) => {
     const check = req.body.auth_id.substr(req.body.auth_id.length - 5)
     console.log(check)
 
-    const url = "https://api.sandbox.youverify.co/v2/api/identity/ng/drivers-license"
+    const url = "https://api.youverify.co/v2/api/identity/ng/drivers-license"
 
     const header = {
         headers: {
@@ -317,7 +317,7 @@ router.post('/pvc', async (req, res) => {
     const check = req.body.auth_id.substr(req.body.auth_id.length - 5)
     console.log(check)
 
-    const url = "https://api.sandbox.youverify.co/v2/api/identity/ng/pvc"
+    const url = "https://api.youverify.co/v2/api/identity/ng/pvc"
 
     const header = {
         headers: {
