@@ -11,6 +11,9 @@ const BvnDefaultModel = require('../../../models/mongoro/auth/user/verification/
 
 router.post('/', async (req, res) => {
 
+    const firstName = req.body.firstName.toLowerCase()
+    const lastName = req.body.lastName.toLowerCase()
+
     const bvv = CryptoJS.AES.encrypt(req.body.b_id, "mongoro").toString()
     const userId = req.body.userId
 
@@ -31,9 +34,9 @@ router.post('/', async (req, res) => {
         const val = checking.validations.data
 
         console.log(val)
-        if (val.firstName.value !== req.body.firstName) {
+        if (val.firstName.value !== firstName) {
             res.send({ msg: 'firstName does not match...' })
-        } else if (val.lastName.value !== req.body.lastName) {
+        } else if (val.lastName.value !== lastName) {
             res.send({ msg: 'lastname does not match...' })
         } else {
 
@@ -50,8 +53,8 @@ router.post('/', async (req, res) => {
             "isSubjectConsent": true,
             "validations": {
                 "data": {
-                    "lastName": req.body.lastName,
-                    "firstName": req.body.firstName
+                    "lastName": lastName,
+                    "firstName": firstName
                 }
             }
 
