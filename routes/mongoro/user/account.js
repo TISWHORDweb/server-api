@@ -11,7 +11,14 @@ router.post('/create', async (req, res) => {
     const userId = req.body.userId
 
     let details = await MongoroUserModel.findOne({ _id: userId })
-    const verify = details.verification.bvn
+
+    let verify;
+
+    if(details){
+        verify = details.verification.bvn
+    }else{
+        res.status(400).json({ msg: 'User not found', status: 400 })
+    }
 
     // const bytes = CryptoJS.AES.decrypt(details.verification_number, process.env.SECRET_KEY);
     // const b_id = bytes.toString(CryptoJS.enc.Utf8);
