@@ -12,13 +12,13 @@ const BvnDefaultModel = require('../../../models/mongoro/auth/user/verification/
 router.post('/', async (req, res) => {
 
     // const email = req.body.email
-    // const lastName = req.body.lastName.toUpperCase();
-    // const firstName = req.body.firstName.toUpperCase();
-    // const middleName = req.body.middleName.toUpperCase();
+    const lastName = req.body.lastName.toUpperCase();
+    const firstName = req.body.firstName.toUpperCase();
+    const middleName = req.body.middleName.toUpperCase();
 
-    const lastName = req.body.lastName
-    const firstName = req.body.firstName
-    const middleName = req.body.middleName
+    // const lastName = req.body.lastName
+    // const firstName = req.body.firstName
+    // const middleName = req.body.middleName
 
     const bvv  = CryptoJS.AES.encrypt(req.body.b_id, "mongoro").toString()
     const userId = req.body.userId
