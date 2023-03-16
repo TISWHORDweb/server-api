@@ -201,11 +201,12 @@ router.post("/password_verify", async (req, res) => {
     let code = { email_code, sms_code }
 
     const user = await MongoroUserModel.findOne({ email: req.body.email });
-    const number = user.phone
 
     if (!user) {
         return res.status(404).json({ msg: 'No User is registered with this email', status: 400 })
     } else {
+        
+        const number = user.phone
 
         let transporter = nodemailer.createTransport({
             service: "hotmail",

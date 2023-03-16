@@ -24,7 +24,7 @@ router.post('/nin', async (req, res) => {
             token: process.env.U_VERIFY_KEY
         }
     }
-        
+
     const code = await bcrypt.hash(req.body.auth_id, 13)
 
     try {
@@ -44,18 +44,20 @@ router.post('/nin', async (req, res) => {
                     msg: 'Credentials does not match !',
                     status: 400
                 })
-            } 
+            }
         }
 
         if (validate) {
             ent()
 
-            res.send({verified:"Verified before",validate})
+            await MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { verification: { nin: true }, tiers: "two" } }).then(() => {
+                res.send({ verified: "Verified before", validate })
+            })
         } else {
             console.log("account")
 
             await axios.post(url, {
-                "id":req.body.auth_id,
+                "id": req.body.auth_id,
                 "isSubjectConsent": true,
                 "validations": {
                     "data": {
@@ -77,8 +79,8 @@ router.post('/nin', async (req, res) => {
 
                     const bodys = {
                         "auth_id": code,
-                        "type":req.body.type,
-                        "userId":req.body.userId,
+                        "type": req.body.type,
+                        "userId": req.body.userId,
                         "check": "MON" + check + "GORO",
                         "data": resp.data,
                         "image": req.body.image,
@@ -87,8 +89,10 @@ router.post('/nin', async (req, res) => {
 
                     let details = new KycModel(bodys)
                     details.save()
-                    res.send(details)
-                    MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { verification: { nin: true } } })
+                   
+                    MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { verification: { nin: true }, tiers: "two" } }).then(()=>{
+                        res.send(details)
+                    })
 
                 }
 
@@ -103,7 +107,6 @@ router.post('/nin', async (req, res) => {
         })
     }
 })
-
 
 //PASSPORT
 router.post('/passport', async (req, res) => {
@@ -121,7 +124,7 @@ router.post('/passport', async (req, res) => {
             token: process.env.U_VERIFY_KEY
         }
     }
-    
+
     const code = await bcrypt.hash(req.body.auth_id, 13)
 
     try {
@@ -141,13 +144,15 @@ router.post('/passport', async (req, res) => {
                     msg: 'Credentials does not match !',
                     status: 400
                 })
-            } 
+            }
         }
 
         if (validate) {
             ent()
 
-            res.send({verified:"Verified before",validate})
+            await MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { verification: { passport: true }, tiers: "two" } }).then(() => {
+                res.send({ verified: "Verified before", validate })
+            })
         } else {
             console.log("account")
 
@@ -174,8 +179,8 @@ router.post('/passport', async (req, res) => {
 
                     const bodys = {
                         "auth_id": code,
-                        "type":req.body.type,
-                        "userId":req.body.userId,
+                        "type": req.body.type,
+                        "userId": req.body.userId,
                         "check": "MON" + check + "GORO",
                         "data": resp.data,
                         "image": req.body.image,
@@ -184,11 +189,13 @@ router.post('/passport', async (req, res) => {
 
                     let details = new KycModel(bodys)
                     details.save()
-                    res.send(details)
-                    MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { verification: { passport: true } } })
+                  
+                    MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { verification: { passport: true }, tiers: "two" } }).then(()=>{
+                        res.send(details)
+                    })
 
                 }
-6
+                
             })
         }
 
@@ -200,7 +207,6 @@ router.post('/passport', async (req, res) => {
         })
     }
 })
-
 
 //DRIVER LICENSE
 router.post('/driver_license', async (req, res) => {
@@ -238,13 +244,15 @@ router.post('/driver_license', async (req, res) => {
                     msg: 'Credentials does not match !',
                     status: 400
                 })
-            } 
+            }
         }
 
         if (validate) {
             ent()
 
-            res.send({verified:"Verified before",validate})
+            await MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { verification: { driver_license: true }, tiers: "two" } }).then(() => {
+                res.send({ verified: "Verified before", validate })
+            })
         } else {
             console.log("account")
 
@@ -271,8 +279,8 @@ router.post('/driver_license', async (req, res) => {
 
                     const bodys = {
                         "auth_id": code,
-                        "type":req.body.type,
-                        "userId":req.body.userId,
+                        "type": req.body.type,
+                        "userId": req.body.userId,
                         "check": "MON" + check + "GORO",
                         "data": resp.data,
                         "image": req.body.image,
@@ -281,8 +289,10 @@ router.post('/driver_license', async (req, res) => {
 
                     let details = new KycModel(bodys)
                     details.save()
-                    res.send(details)
-                    MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { verification: { driver_license: true } } })
+
+                    MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { verification: { driver_license: true }, tiers: "two" } }).then(()=>{
+                        res.send(details)
+                    })
 
                 }
 
@@ -297,7 +307,6 @@ router.post('/driver_license', async (req, res) => {
         })
     }
 })
-
 
 //PVC 
 router.post('/pvc', async (req, res) => {
@@ -335,13 +344,16 @@ router.post('/pvc', async (req, res) => {
                     msg: 'Credentials does not match !',
                     status: 400
                 })
-            } 
+            }
         }
 
         if (validate) {
             ent()
 
-            res.send({verified:"Verified before",validate})
+            await MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { verification: { pvc: true }, tiers: "two" } }).then(() => {
+                res.send({ verified: "Verified before", validate })
+            })
+
         } else {
             console.log("account")
 
@@ -368,8 +380,8 @@ router.post('/pvc', async (req, res) => {
 
                     const bodys = {
                         "auth_id": code,
-                        "type":req.body.type,
-                        "userId":req.body.userId,
+                        "type": req.body.type,
+                        "userId": req.body.userId,
                         "check": "MON" + check + "GORO",
                         "data": resp.data,
                         "image": req.body.image,
@@ -378,9 +390,10 @@ router.post('/pvc', async (req, res) => {
 
                     let details = new KycModel(bodys)
                     details.save()
-                    res.send(details)
-                    MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { verification: { pvc: true } } })
 
+                    MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { verification: { pvc: true }, tiers: "two" } }).then(()=>{
+                        res.send(details)
+                    })
                 }
 
             })
@@ -439,10 +452,10 @@ router.get("/type/:id", async (req, res) => {
 
 router.delete("/delete", async (req, res) => {
     try {
-        if (!req.body.id ) return res.status(402).json({ msg: 'provide the id ?' })
+        if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?' })
 
         await KycModel.deleteOne({ _id: req.body.id })
-        res.status(200).json({msg:"KYC deleted....",status: 200});
+        res.status(200).json({ msg: "KYC deleted....", status: 200 });
     } catch (error) {
         res.status(500).json({
             msg: 'there is an unknown error sorry !',
