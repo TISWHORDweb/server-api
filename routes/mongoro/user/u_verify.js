@@ -11,23 +11,7 @@ const BvnDefaultModel = require('../../../models/mongoro/auth/user/verification/
 
 router.post('/', async (req, res) => {
 
-    // const email = req.body.email
-    const lastName = req.body.lastName.toUpperCase();
-    const firstName = req.body.firstName.toUpperCase();
-
-    let middleName;
-
-    if(req.body.middleName === null){
-        middleName = req.body.middleName
-    }else{
-        middleName = req.body.middleName.toUpperCase();
-    }
-
-    // const lastName = req.body.lastName
-    // const firstName = req.body.firstName
-    // const middleName = req.body.middleName
-
-    const bvv  = CryptoJS.AES.encrypt(req.body.b_id, "mongoro").toString()
+    const bvv = CryptoJS.AES.encrypt(req.body.b_id, "mongoro").toString()
     const userId = req.body.userId
 
     const check = req.body.b_id.substr(req.body.b_id.length - 4)
@@ -40,89 +24,67 @@ router.post('/', async (req, res) => {
             token: process.env.U_VERIFY_KEY
         }
     }
+    const validate = await BvnDefaultModel.findOne({ check: "MON" + check + "GORO" })
 
-    try {
-        console.log(middleName,lastName,firstName)
-        const validate = await BvnDefaultModel.findOne({ check: "MON" + check + "GORO" })
+    if (validate) {
+        const checking = validate.data.data
+        const val = checking.validations.data
 
-        function ent() {
-            const checking = validate.data.data
-
-            if (checking.firstName !== firstName) {
-                res.status(400).json({
-                    msg: 'firstName does not match !',
-                    status: 400
-                })
-            } 
-            // else if (checking.lastName !== lastName) {
-            //     res.status(400).json({
-            //         msg: 'lastName does not match !',
-            //         status: 400
-            //     })
-            // } else if (checking.middleName !== middleName) {
-            //     res.status(400).json({
-            //         msg: 'middleName does not match !',
-            //         status: 400
-            //     })
-            // }
-        }
-
-        if (validate) {
-            ent()
-            // let user = await MongoroUserModel.find({ email: email })
-            // res.send(user)
-
-            MongoroUserModel.updateOne({ _id: userId }, { $set: { verification: { bvn: true }, verification_number: bvv, tiers: "one"}}).then(()=>{
-                res.send(validate)
-            })
-            
+        console.log(val)
+        if (val.firstName.value !== req.body.firstName) {
+            res.send({ msg: 'firstName does not match...' })
+        } else if (val.lastName.value !== req.body.lastName) {
+            res.send({ msg: 'lastname does not match...' })
         } else {
-            
-            await axios.post(url, {
-                "id": req.body.b_id,
-                "isSubjectConsent": true
-            }, header).then(resp => {
-                const data = resp.data.data
-                console.log(data)
-                if (!data) {
-                    res.status(400).json({ msg: 'Invalid BVN' })
-                }
-                // if (data.lastName !== lastName) {
-                //     res.status(400).json({ msg: 'lastName does not match ?' })
-                // } else 
-                if (data.firstName !== firstName) {
-                    res.status(400).json({ msg: 'firstName does not match ?' })
-                // }
-                //  else if (data.middleName !== middleName) {
-                //     res.status(400).json({ msg: 'middleName does not match ?' })
-                } else {
-                    console.log({ msg: "All details match " })
 
-                    const bodys = {
-                        "check": "MON" + check + "GORO",
-                        "data": resp.data,
-                        "userId":userId
-                    }
-
-                    let details = new BvnDefaultModel(bodys)
-                    details.save()
-                    MongoroUserModel.updateOne({ _id: userId }, { $set: { verification: { bvn: true }, verification_number: bvv, tiers: "one"}}).then(()=>{
-                        res.send(details)
-                    })
-
-                }
-
+            MongoroUserModel.updateOne({ _id: userId }, { $set: { verification: { bvn: true }, verification_number: bvv, tiers: "one" } }).then(() => {
+                res.send(validate)
+                console.log("already")
             })
+
         }
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({
-            msg: 'There is an unknown error sorry.... Please contact our support !',
-            status: 500
+    } else {
+
+        axios.post(url, {
+            "id": req.body.b_id,
+            "isSubjectConsent": true,
+            "validations": {
+                "data": {
+                    "lastName": req.body.lastName,
+                    "firstName": req.body.firstName
+                }
+            }
+
+        }, header).then(resp => {
+            const data = resp.data.data
+            const val = data.validations.data
+
+            if (val.firstName.validated !== true) {
+                res.status(400).json({ msg: 'firstName does not match ?' })
+            }
+            else if (val.lastName.validated !== true) {
+                res.status(400).json({ msg: 'lastname does not match ?' })
+            } else {
+                console.log({ msg: "All details match " })
+
+                const bodys = {
+                    "check": "MON" + check + "GORO",
+                    "data": resp.data,
+                    "userId": req.body.userId
+                }
+
+                let details = new BvnDefaultModel(bodys)
+                details.save()
+                
+                MongoroUserModel.updateOne({ _id: userId }, { $set: { verification: { bvn: true }, verification_number: bvv, tiers: "one" } }).then(()=>{
+                    res.send(details)
+                })
+
+            }
+
         })
     }
 })
-
 
 
 router.get("/banks", async (req, res) => {
