@@ -57,12 +57,11 @@ router.post('/create', async (req, res) => {
                 url: 'https://api.flutterwave.com/v3/virtual-account-numbers',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${process.env.FLW_TEST_SECRET_KEY}`
+                    'Authorization': `Bearer ${process.env.FLW_SECRET_KEY}`
                 },
 
                 data: body
             };
-
             await axios(config)
                 .then(function (response) {
                     console.log(JSON.stringify(response.data));
