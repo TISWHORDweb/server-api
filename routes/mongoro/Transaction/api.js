@@ -350,7 +350,6 @@ function paginatedResults(model) {
 }
 
 
-
 //CREATE
 router.post('/wallet', verify, async (req, res) => {
 
@@ -374,8 +373,6 @@ router.post('/wallet', verify, async (req, res) => {
     per = "1000000"
   }
 
-
-
   const date = new Date();
   let day = date.getDate();
   let month = date.getMonth() + 1;
@@ -395,7 +392,7 @@ router.post('/wallet', verify, async (req, res) => {
 
   if (!req.body.wallet_ID || !req.body.userId) return res.status(400).json({ msg: 'please check the fields ?' })
 
-  req.body.transaction_ID = tid
+  
 
   const bytes = CryptoJS.AES.decrypt(users.pin, process.env.SECRET_KEY);
   const originalPin = bytes.toString(CryptoJS.enc.Utf8);
@@ -423,8 +420,6 @@ router.post('/wallet', verify, async (req, res) => {
     const allTransfer = await TierModel.findOne({ userId: req.body.userId })
     allTotal = allTransfer.amount
   }
-
-   console.log(allTotal)
 
   if (req.body.amount > per) {
     res.send({ msg: `You can only send ${per} at once any amount greater than that is not accepted, Upgrade your account to have access, Thanks`, status: 400 });
@@ -466,7 +461,8 @@ router.post('/wallet', verify, async (req, res) => {
           "service_type": req.body.service_type,
           "userId": receiver,
           "narration": req.body.narration,
-          "status_type": "Credit"
+          "status_type": "Credit",
+          "transaction_ID" : tid
         }
 
         const body = {
@@ -475,7 +471,8 @@ router.post('/wallet', verify, async (req, res) => {
           "service_type": req.body.service_type,
           "userId": req.body.userId,
           "narration": req.body.narration,
-          "status_type": "Debit"
+          "status_type": "Debit",
+          "transaction_ID" : tid
         }
 
         let transaction = await new TransferModel(body)
