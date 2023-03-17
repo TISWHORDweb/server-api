@@ -91,7 +91,7 @@ router.get("/:id", verify, async (req, res) => {
         
         
     } catch (err) {
-        res.status(500).json({
+        res.send({
             msg: 'there is an unknown error sorry ',
             status: 500
         })
@@ -422,7 +422,7 @@ router.put('/tier_three', verify, async (req, res) => {
 router.post('/verify_tag', async (req, res) => {
 
     try {
-        
+
         const user = await MongoroUserModel.findOne({ wallet_ID: req.body.usertag });
 
         if (user) {
