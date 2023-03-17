@@ -78,40 +78,27 @@ router.delete("/delete", verify, async (req, res) => {
 });
 
 router.get("/:id", verify, async (req, res) => {
-    try {
-        if (!req.params.id) return res.status(402).json({ msg: 'provide the id ?' })
 
-        let user = await MongoroUserModel.find({ _id: req.params.id })
+    if (!req.params.id) return res.status(402).json({ msg: 'provide the id ?' })
 
-        if(user){
-            res.status(200).json(user);
-        }else{
-            res.status(400).json("user not found");
-        }
-        
-        
-    } catch (err) {
-        res.send({
-            msg: 'there is an unknown error sorry ',
-            status: 500
-        })
+    let user = await MongoroUserModel.find({ _id: req.params.id })
+
+    if (user) {
+        res.status(200).json(user);
+    } else {
+        res.status(400).json("user not found");
     }
+
 })
 
 router.post("/inactive/:id", async (req, res) => {
-    try {
-        if (!req.params.id) return res.status(402).json({ msg: 'provide the id ?' })
 
-        await MongoroUserModel.updateOne({ _id: req.params.id }, { $set: { active: false } }).then(() => {
-            res.status(200).json({ msg: 'User turned inactive successfully ', status: 200 });
-        })
+    if (!req.params.id) return res.status(402).json({ msg: 'provide the id ?' })
 
-    } catch (err) {
-        res.status(500).json({
-            msg: 'there is an unknown error sorry ',
-            status: 500
-        })
-    }
+    await MongoroUserModel.updateOne({ _id: req.params.id }, { $set: { active: false } }).then(() => {
+        res.status(200).json({ msg: 'User turned inactive successfully ', status: 200 });
+    })
+
 })
 
 
@@ -158,7 +145,7 @@ router.post('/change_password', async (req, res) => {
         // if (originalPassword === true) {
         //     res.status(400).json({ msg: "You cant change your password to your previous password, use another password and try again", status: 400 });
         // } 
-        
+
         if (!originalPassword) {
             res.status(400).json({ msg: "wrong password", code: 400 })
         } else {
@@ -205,7 +192,7 @@ router.post('/reset_password', async (req, res) => {
         // }
 
         const NewPassword = await bcrypt.hash(req.body.newPassword, 13)
-        await MongoroUserModel.updateOne({ email: req.body.email }, { $set: { password: NewPassword }})
+        await MongoroUserModel.updateOne({ email: req.body.email }, { $set: { password: NewPassword } })
         res.status(200).json({
             msg: 'Password changed Successfully ',
             password: NewPassword,
@@ -313,7 +300,7 @@ router.put('/edit_pin', verify, async (req, res) => {
 })
 
 
-router.put('/image',  async (req, res) => {
+router.put('/image', async (req, res) => {
 
     try {
         if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?' })
@@ -395,12 +382,12 @@ router.put('/tier_three', verify, async (req, res) => {
     try {
         if (!req.body.id) return res.status(400).json({ msg: 'provide the id ?', status: 400 })
 
-        await MongoroUserModel.updateOne({ _id: req.body.id }, { $set: { tiers:"three" } }).then(async () => {
+        await MongoroUserModel.updateOne({ _id: req.body.id }, { $set: { tiers: "three" } }).then(async () => {
             return res.status(200).json({
                 msg: 'Tiers upgraded Successful ',
                 status: 200
             })
-            
+
         }).catch((err) => {
             res.send(err)
         })
@@ -421,22 +408,14 @@ router.put('/tier_three', verify, async (req, res) => {
 
 router.post('/verify_tag', async (req, res) => {
 
-    try {
+    const user = await MongoroUserModel.findOne({ wallet_ID: req.body.usertag });
 
-        const user = await MongoroUserModel.findOne({ wallet_ID: req.body.usertag });
-
-        if (user) {
-            res.status(400).json({ msg: "Unavailable", status: 400 });
-        }else{
-            res.status(200).json({ msg: " Available", status: 200 });
-        }
-
-    } catch (error) {
-        res.status(500).json({
-            msg: 'there is an unknown error sorry ',
-            status: 500
-        })
+    if (user) {
+        res.status(400).json({ msg: "Unavailable", status: 400 });
+    } else {
+        res.status(200).json({ msg: " Available", status: 200 });
     }
+
 
 })
 
@@ -445,20 +424,12 @@ router.get('/withtag/:tag', verify, async (req, res) => {
 
     const user = await MongoroUserModel.findOne({ wallet_ID: req.params.tag });
 
-    try {
-
-        if (user) {
-            res.status(200).json({ msg: "User fetch successfully", user , status: 200 });
-        }else{
-            res.status(400).json({ msg: "User not found", status: 400 });
-        }
-
-    } catch (error) {
-        res.status(500).json({
-            msg: 'there is an unknown error sorry ',
-            status: 500
-        })
+    if (user) {
+        res.status(200).json({ msg: "User fetch successfully", user, status: 200 });
+    } else {
+        res.status(400).json({ msg: "User not found", status: 400 });
     }
+
 
 })
 
