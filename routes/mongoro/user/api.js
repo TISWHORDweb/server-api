@@ -421,9 +421,9 @@ router.put('/tier_three', verify, async (req, res) => {
 
 router.post('/verify_tag', async (req, res) => {
 
-    const user = await MongoroUserModel.findOne({ wallet_ID: req.body.usertag });
-
     try {
+        
+        const user = await MongoroUserModel.findOne({ wallet_ID: req.body.usertag });
 
         if (user) {
             res.status(400).json({ msg: "Unavailable", status: 400 });
