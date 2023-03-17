@@ -11,8 +11,16 @@ const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_K
 
 router.post('/', async (req, res) => {
 
-    const firstName = req.body.firstName.toLowerCase()
-    const lastName = req.body.lastName.toLowerCase()
+    let firstName;
+    let lastName;
+
+    if(req.body.firstName){
+        firstName = req.body.firstName.toLowerCase()
+    }
+
+    if(req.body.lastName){
+        firstName = req.body.lastName.toLowerCase()
+    }
 
     const bvv = CryptoJS.AES.encrypt(req.body.b_id, "mongoro").toString()
     const userId = req.body.userId

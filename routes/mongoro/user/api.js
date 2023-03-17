@@ -224,7 +224,6 @@ router.post('/create_pin', verify, async (req, res) => {
         req.body.pin = CryptoJS.AES.encrypt(req.body.pin, "mongoro").toString()
 
         await MongoroUserModel.updateOne({ _id: req.body.id }, { pin: req.body.pin }).then(async () => {
-            let user = await MongoroUserModel.findOne({ _id: req.body.id })
             return res.status(200).json({
                 msg: 'Pin created Successfully ',
                 user: user,
