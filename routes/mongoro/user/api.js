@@ -82,7 +82,14 @@ router.get("/:id", verify, async (req, res) => {
         if (!req.params.id) return res.status(402).json({ msg: 'provide the id ?' })
 
         let user = await MongoroUserModel.find({ _id: req.params.id })
-        res.status(200).json(user);
+
+        if(user){
+            res.status(200).json(user);
+        }else{
+            res.status(400).json("user not found");
+        }
+        
+        
     } catch (err) {
         res.status(500).json({
             msg: 'there is an unknown error sorry ',
