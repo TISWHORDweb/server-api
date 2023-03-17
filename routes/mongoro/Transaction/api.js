@@ -81,24 +81,23 @@ router.post("/", async (req, res) => {
 
   let originalPin
   let pin
+  let resultt;
 
   if(user){
     pin = user.pin
+    resultt = user.blocked
     const bytes = CryptoJS.AES.decrypt(pin, process.env.SECRET_KEY);
     originalPin = bytes.toString(CryptoJS.enc.Utf8);
   }else{
     res.status(400).json({ msg: 'User not found', status: 400 })
   }
 
-
-  let resultt;
   let value;
 
   const users = await GlobalModel.findOne({ _id: process.env.GLOBAL_ID })
 
   if(users){
     value = users.disable_all_transfer
-    resultt = user.blocked
   }
   
 
