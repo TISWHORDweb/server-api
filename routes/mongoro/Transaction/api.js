@@ -79,8 +79,18 @@ router.post("/", async (req, res) => {
 
   const user = await MongoroUserModel.findOne({ _id: req.body.userId });
 
-  const bytes = CryptoJS.AES.decrypt(user.pin, process.env.SECRET_KEY);
-  const originalPin = bytes.toString(CryptoJS.enc.Utf8);
+  let originalPin
+  let pin
+
+  if(user){
+    pin = user.pin
+    const bytes = CryptoJS.AES.decrypt(pin, process.env.SECRET_KEY);
+    originalPin = bytes.toString(CryptoJS.enc.Utf8);
+  }else{
+    res.status(400).json({ msg: 'User not found', status: 400 })
+  }
+
+
   const users = await GlobalModel.findOne({ _id: process.env.GLOBAL_ID })
   const value = users.disable_all_transfer
   const resultt = user.blocked
