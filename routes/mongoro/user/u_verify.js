@@ -6,7 +6,7 @@ const axios = require('axios')
 const Flutterwave = require('flutterwave-node-v3');
 const MongoroUserModel = require('../../../models/mongoro/auth/mongoroUser_md')
 const BvnDefaultModel = require('../../../models/mongoro/auth/user/verification/u-verify_md')
-
+const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_KEY);
 
 
 router.post('/', async (req, res) => {
@@ -27,6 +27,7 @@ router.post('/', async (req, res) => {
             token: process.env.U_VERIFY_KEY
         }
     }
+
     const validate = await BvnDefaultModel.findOne({ check: "MON" + check + "GORO" })
 
     if (validate) {
@@ -136,6 +137,8 @@ router.post('/details', async (req, res) => {
         flw.Misc.verify_Account(details)
             .then(response => {
                 res.status(200).json(response);
+            }).catch(error=>{
+                console.log(error)
             })
 
     } catch (error) {
