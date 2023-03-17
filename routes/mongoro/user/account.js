@@ -22,13 +22,15 @@ router.post('/create', async (req, res) => {
         res.status(400).json({ msg: 'User not found', status: 400 })
     }
 
-    const bytes = CryptoJS.AES.decrypt(bvn, process.env.SECRET_KEY);
-    const b_id = bytes.toString(CryptoJS.enc.Utf8);
+   
 
     if (details.account_created === true) return res.status(404).json({ msg: 'Sorry..... You can only create account once ', status: 404 })
 
     try {
         if (verify === true) {
+
+            const bytes = CryptoJS.AES.decrypt(bvn, process.env.SECRET_KEY);
+            const b_id = bytes.toString(CryptoJS.enc.Utf8);
 
             var body = JSON.stringify({
                 "email": details.email,
