@@ -91,9 +91,16 @@ router.post("/", async (req, res) => {
   }
 
 
+  let resultt;
+  let value;
+
   const users = await GlobalModel.findOne({ _id: process.env.GLOBAL_ID })
-  const value = users.disable_all_transfer
-  const resultt = user.blocked
+
+  if(users){
+    value = users.disable_all_transfer
+    resultt = user.blocked
+  }
+  
 
   let number;
   let per;
