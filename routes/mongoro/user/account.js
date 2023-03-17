@@ -14,17 +14,17 @@ router.post('/create', async (req, res) => {
 
     let verify;
     let bvn;
+    let account_created
 
     if(details){
         verify = details.verification.bvn
         bvn = details.verification_number
+        account_created = details.account_created
     }else{
         res.status(400).json({ msg: 'User not found', status: 400 })
     }
 
-   
-
-    if (details.account_created === true) return res.status(404).json({ msg: 'Sorry..... You can only create account once ', status: 404 })
+    if (account_created === true) return res.status(404).json({ msg: 'Sorry..... You can only create account once ', status: 404 })
 
     try {
         if (verify === true) {
