@@ -106,8 +106,14 @@ router.post("/", async (req, res) => {
   let per;
 
   const allTransfer = await TierModel.findOne({ userId: req.body.userId })
-  const allTotal = allTransfer.amount
-  const type = user.tiers
+
+  let allTotal;
+  let type;
+
+  if(allTransfer){
+    allTotal = allTransfer.amount
+    type = user.tiers
+  }
 
   if (type === "one") {
     number = "100000"
