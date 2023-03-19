@@ -50,5 +50,8 @@
     "url": "https://github.com/TISWHORDweb/server-api/issues"
   },
   "homepage": "https://github.com/TISWHORDweb/server-api#readme",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "ajv": "^7.2.4"
+  }
 }

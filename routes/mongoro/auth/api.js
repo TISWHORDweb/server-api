@@ -302,4 +302,25 @@ router.put('/settings', async (req, res) => {
 
 })
 
+router.post('/sendchamp', async (req,res)=> {
+    const body = {
+        to:req.body.to,
+        route:"dnd",
+        message:req.body.message,
+        sender_name:"Sendchamp"
+    }
+
+    const url = "https://api.sendchamp.com/api/v1/sms/send"
+
+    const header = {
+        header:{
+            "Authorization": `Bearer ${process.env.SENDCHAMP}`
+        }
+    }
+
+    await axios.post(url,body,header).then((resp)=>{
+        res.send(resp)
+    })
+})
+
 module.exports = router
