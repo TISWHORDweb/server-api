@@ -13,7 +13,7 @@ const request = require('request');
 const bcrypt = require('bcryptjs')
 const GlobalModel = require('../../../models/mongoro/admin/super_admin/global/global_md')
 const platform = require('platform');
-
+const axios = require('axios')
 
 //CREATE
 router.post('/register', async (req, res) => {
@@ -95,34 +95,28 @@ router.post("/verify", async (req, res) => {
 
         let code = { email_code, sms_code }
 
+        const url = "https://api.sendchamp.com/api/v1/sms/send"
+        const header = {
+            headers: {
+                Authorization: `Bearer ${process.env.SENDCHAMP}`
+            }
+        }
+        
+        axios.post(url, {
+            "to": req.body.phone,
+            "route": "dnd",
+            "message": "Your code is " + sms_code,
+            "sender_name": "Sendchamp"
+        }, header).then(function (response) {
+            console.log(JSON.stringify(response.data));
+        })
+
         let transporter = nodemailer.createTransport({
             service: "hotmail",
             auth: {
                 user: 'sales@reeflimited.com',
                 pass: 'cmcxsbpkqvkgpwmk'
             }
-        });
-
-        var data = {
-            "to": req.body.phone,
-            "from": "Mongoro-PIN",
-            "sms": "Your code is " + sms_code,
-            "type": "plain",
-            "api_key": "TLMPIOB7Oe4V8NRRc7KnukwGgTAY9PZLqwVw2DMhrr8o0CEXh4BMmBfN6C0cNf",
-            "channel": "generic",
-        };
-        var options = {
-            'method': 'POST',
-            'url': 'https://api.ng.termii.com/api/sms/send',
-            'headers': {
-                'Content-Type': ['application/json', 'application/json']
-            },
-            body: JSON.stringify(data)
-
-        };
-        request(options, function (error, response) {
-            if (error) throw new Error(error);
-            console.log(response.body);
         });
 
         let mailOptions = {
@@ -155,24 +149,24 @@ router.post("/verify", async (req, res) => {
 router.post("/login", async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
 
-    let UserPassword ;
+    let UserPassword;
 
     const users = await GlobalModel.findOne({ _id: process.env.GLOBAL_ID })
     const value = users.disable_all_user
     const user = await MongoroUserModel.findOne({ email: req.body.email })
-    let resultt ;
+    let resultt;
     if (user) {
         resultt = user.blocked
         UserPassword = user.password
-    }else if (resultt === true) {
+    } else if (resultt === true) {
         res.status(403).json({ msg: "Sorry your account is blocked", code: 403 })
     } else if (value === true) {
         res.status(500).json({ msg: "Sorry service temporarily unavailable", code: 500 })
-    }else{
+    } else {
         res.status(400).json({ msg: "user not found", code: 400 })
     }
 
-    if(UserPassword) {
+    if (UserPassword) {
         const originalPassword = await bcrypt.compare(req.body.password, UserPassword);
 
         if (!originalPassword) {
@@ -205,7 +199,7 @@ router.post("/password_verify", async (req, res) => {
     if (!user) {
         return res.status(404).json({ msg: 'No User is registered with this email', status: 400 })
     } else {
-        
+
         const number = user.phone
 
         let transporter = nodemailer.createTransport({
@@ -302,24 +296,21 @@ router.put('/settings', async (req, res) => {
 
 })
 
-router.post('/sendchamp', async (req,res)=> {
-    const body = {
-        to:req.body.to,
-        route:"dnd",
-        message:req.body.message,
-        sender_name:"Sendchamp"
-    }
+router.post('/sendchamp', async (req, res) => {
 
     const url = "https://api.sendchamp.com/api/v1/sms/send"
-
     const header = {
-        header:{
-            "Authorization": `Bearer ${process.env.SENDCHAMP}`
+        headers: {
+            Authorization: `Bearer ${process.env.SENDCHAMP}`
         }
     }
-
-    await axios.post(url,body,header).then((resp)=>{
-        res.send(resp)
+    await axios.post(url, {
+        "to": req.body.to,
+        "route": "dnd",
+        "message": req.body.message,
+        "sender_name": "Sendchamp"
+    }, header).then(function (response) {
+        console.log(JSON.stringify(response.data));
     })
 })
 
