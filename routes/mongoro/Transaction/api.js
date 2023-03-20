@@ -262,38 +262,38 @@ router.post("/verify_transfer", async (req, res) => {
 
   const user = await MongoroUserModel.findOne({ _id: req.body.userId });
 
-  try {
-    await axios(config).then(function (response) {
-      const data = response.data;
-      const oldAmount = user.wallet_balance
-      const newAmount = oldAmount - data.data.amount
+  // try {
+  //   await axios(config).then(function (response) {
+  //     const data = response.data;
+  //     const oldAmount = user.wallet_balance
+  //     const newAmount = oldAmount - data.data.amount
 
-      if (data.data.status === "SUCCESS") {
-        TransferModel.updateOne({ flw_id: req.body.flw_id }, { $set: { status: "Success" } }).then(() => {
-          MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } })
-          return res.status(200).json({
-            msg: 'Transaction is Successful ',
-            data,
-            status: 200
-          })
-        });
-      } else if (data.data.status === "FAILED") {
-        TransferModel.updateOne({ flw_id: req.body.flw_id }, { $set: { status: "Failed" } }).then(() => {
-          return res.status(400).json({
-            msg: 'Transaction is Unsuccessful ',
-            data,
-            status: 400
-          })
-        })
-      }
-    })
+  //     if (data.data.status === "SUCCESS") {
+  //       TransferModel.updateOne({ flw_id: req.body.flw_id }, { $set: { status: "Success" } }).then(() => {
+  //         MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } })
+  //         return res.status(200).json({
+  //           msg: 'Transaction is Successful ',
+  //           data,
+  //           status: 200
+  //         })
+  //       });
+  //     } else if (data.data.status === "FAILED") {
+  //       TransferModel.updateOne({ flw_id: req.body.flw_id }, { $set: { status: "Failed" } }).then(() => {
+  //         return res.status(400).json({
+  //           msg: 'Transaction is Unsuccessful ',
+  //           data,
+  //           status: 400
+  //         })
+  //       })
+  //     }
+  //   })
 
-  } catch (error) {
-    res.status(500).json({
-      msg: 'there is an unknown error sorry ',
-      status: 500
-    })
-  }
+  // } catch (error) {
+  //   res.status(500).json({
+  //     msg: 'there is an unknown error sorry ',
+  //     status: 500
+  //   })
+  // }
 
 })
 

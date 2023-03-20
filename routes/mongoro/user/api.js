@@ -78,9 +78,7 @@ router.delete("/delete", verify, async (req, res) => {
 });
 
 router.get("/:id", verify, async (req, res) => {
-
-    if (!req.params.id) return res.status(402).json({ msg: 'provide the id ?' })
-
+    
     let user = await MongoroUserModel.find({ _id: req.params.id })
 
     if (user) {
