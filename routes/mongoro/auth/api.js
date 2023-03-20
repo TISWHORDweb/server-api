@@ -36,10 +36,10 @@ router.post('/register', async (req, res) => {
         if (!req.body.email || !req.body.usertag || !req.body.surname || !req.body.first_name || !req.body.password || !req.body.phone) return res.status(402).json({ msg: 'please check the fields ?', status: 402 })
 
         const validate = await MongoroUserModel.findOne({ wallet_ID: req.body.wallet_ID })
-        if (validate) return res.status(400).json({ msg: 'There is another user with this User Tag ', status: 400 })
+        if (validate) return res.status(400).json({ msg: 'There is another user with this Username', status: 400 })
 
         const validates = await MongoroUserModel.findOne({ email: req.body.email })
-        if (validates) return res.status(400).json({ msg: 'There is another user with this email ', status: 400 })
+        if (validates) return res.status(404).json({ msg: 'There is another user with this email ', status: 404 })
 
 
         let user = await new MongoroUserModel(req.body)
