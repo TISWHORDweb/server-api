@@ -262,6 +262,7 @@ router.post("/verify_transfer", async (req, res) => {
   try {
     await axios(config).then(function (response) {
       const data = response.data;
+      console.log(data)
       const statuss = data.data.status;
       const oldAmount = user.wallet_balance;
       const newAmount = oldAmount - data.data.amount;
