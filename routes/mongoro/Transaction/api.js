@@ -265,11 +265,11 @@ router.post("/verify_transfer", async (req, res) => {
   try {
     await axios(config).then(function (response) {
       const data = response.data;
-      console.log(data)
-      const oldAmount = user.wallet_balance
-      const newAmount = oldAmount - data.data.amount
+      const statuss = data.data.status;
+      const oldAmount = user.wallet_balance;
+      const newAmount = oldAmount - data.data.amount;
 
-      if (data.data.status === "SUCCESS") {
+      if (statuss === "SUCCESSFUL") {
         TransferModel.updateOne({ flw_id: req.body.flw_id }, { $set: { status: "Success" } }).then(() => {
           MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } })
           res.status(200).json({
@@ -278,13 +278,18 @@ router.post("/verify_transfer", async (req, res) => {
             status: 200
           })
         });
-      } else if (data.data.status === "FAILED") {
+      } else if (statuss === "FAILED") {
         TransferModel.updateOne({ flw_id: req.body.flw_id }, { $set: { status: "Failed" } }).then(() => {
           res.status(400).json({
             msg: 'Transaction is Unsuccessful ',
             data,
             status: 400
           })
+        })
+      } else {
+        res.status(500).json({
+          msg: 'There is an unknown error ',
+          status: 500
         })
       }
     })

@@ -63,7 +63,7 @@ router.post('/', async (req, res) => {
             const val = data.validations.data
             console.log(data)
             if (val.firstName.validated !== true) {
-                res.status(400).json({ msg: 'firstName does not match ', data , firstName, lastName })
+                res.status(400).json({ msg: 'firstName does not match ' })
             }
             else if (val.lastName.validated !== true) {
                 res.status(400).json({ msg: 'lastname does not match ' })
