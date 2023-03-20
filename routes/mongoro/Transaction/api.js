@@ -488,6 +488,7 @@ router.post('/wallet', verify, async (req, res) => {
           "userId": receiver,
           "narration": req.body.narration,
           "status_type": "Credit",
+          "status": "Successful",
           "transaction_ID": tid
         }
 
@@ -498,6 +499,7 @@ router.post('/wallet', verify, async (req, res) => {
           "userId": req.body.userId,
           "narration": req.body.narration,
           "status_type": "Debit",
+          "status": "Successful",
           "transaction_ID": tid
         }
 
