@@ -488,7 +488,7 @@ router.post('/wallet', verify, async (req, res) => {
           "userId": receiver,
           "narration": req.body.narration,
           "status_type": "Credit",
-          "status": "Successful",
+          "status": "successful",
           "transaction_ID": tid
         }
 
@@ -499,7 +499,7 @@ router.post('/wallet', verify, async (req, res) => {
           "userId": req.body.userId,
           "narration": req.body.narration,
           "status_type": "Debit",
-          "status": "Successful",
+          "status": "successful",
           "transaction_ID": tid
         }
 
@@ -521,7 +521,7 @@ router.post('/wallet', verify, async (req, res) => {
 
             });
           }
-
+          
           MongoroUserModel.updateOne({ wallet_ID: req.body.wallet_ID }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(async () => {
             let receiver = await new TransferModel(datas)
             await receiver.save()
