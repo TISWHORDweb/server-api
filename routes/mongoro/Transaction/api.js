@@ -158,10 +158,7 @@ router.post("/", async (req, res) => {
     } else {
       const total = +req.body.amount + +allTotal
 
-      await TierModel.updateOne({ userId: req.body.userId }, { $set: { amount: total } }).then(() => {
-        res.send({ msg: 'Added ', status: 200 });
-      })
-
+      await TierModel.updateOne({ userId: req.body.userId }, { $set: { amount: total } })
 
       if (resultt === true) {
         res.status(403).json({ msg: "Sorry your account is blocked" })

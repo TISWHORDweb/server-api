@@ -36,9 +36,9 @@ router.post('/', async (req, res) => {
 
         console.log(val)
         if (val.firstName.value !== firstName) {
-            res.send({ msg: 'firstName does not match...' })
+            res.send({ msg: 'first name does not match' })
         } else if (val.lastName.value !== lastName) {
-            res.send({ msg: 'lastname does not match...' })
+            res.send({ msg: 'last name does not match' })
         } else {
 
             MongoroUserModel.updateOne({ _id: userId }, { $set: { verification: { bvn: true }, verification_number: bvv, tiers: "one" } }).then(() => {

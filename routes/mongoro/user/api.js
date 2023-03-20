@@ -78,7 +78,7 @@ router.delete("/delete", verify, async (req, res) => {
 });
 
 router.get("/:id", verify, async (req, res) => {
-    
+
     let user = await MongoroUserModel.find({ _id: req.params.id })
 
     if (user) {
@@ -413,6 +413,17 @@ router.post('/verify_tag', async (req, res) => {
         res.status(200).json({ msg: " Available", status: 200 });
     }
 
+})
+
+router.post('/verify_email', async (req, res) => {
+
+    const user = await MongoroUserModel.findOne({ email: req.body.email });
+
+    if (user) {
+        res.status(400).json({ msg: false, status: 400 });
+    } else {
+        res.status(200).json({ msg: true, status: 200 });
+    }
 
 })
 

@@ -95,16 +95,12 @@ router.post("/verify", async (req, res) => {
 
         let code = { email_code, sms_code }
 
-        const validates = await MongoroUserModel.findOne({ email: req.body.email })
-        if (validates) return res.status(400).json({ msg: 'There is another user with this email ', status: 400 })
-
         const url = "https://api.sendchamp.com/api/v1/sms/send"
         const header = {
             headers: {
                 Authorization: `Bearer ${process.env.SENDCHAMP}`
             }
         }
-        
         axios.post(url, {
             "to": req.body.phone,
             "route": "dnd",
@@ -295,6 +291,18 @@ router.put('/settings', async (req, res) => {
             msg: 'there is an unknown error sorry ',
             status: 500
         })
+    }
+
+})
+
+router.post('/verify_email', async (req, res) => {
+
+    const user = await MongoroUserModel.findOne({ email: req.body.email });
+
+    if (user) {
+        res.status(400).json({ msg: false, status: 400 });
+    } else {
+        res.status(200).json({ msg: true, status: 200 });
     }
 
 })
