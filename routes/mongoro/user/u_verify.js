@@ -11,16 +11,8 @@ const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_K
 
 router.post('/', async (req, res) => {
 
-    let firstName;
-    let lastName;
-
-    if(req.body.firstName){
-        firstName = req.body.firstName.toLowerCase()
-    }
-
-    if(req.body.lastName){
-        firstName = req.body.lastName.toLowerCase()
-    }
+    const firstName = req.body.firstName.toUpperCase()
+    const lastName = req.body.lastName.toUpperCase()
 
     const bvv = CryptoJS.AES.encrypt(req.body.b_id, "mongoro").toString()
     const userId = req.body.userId
@@ -66,13 +58,12 @@ router.post('/', async (req, res) => {
                     "firstName": firstName
                 }
             }
-
         }, header).then(resp => {
             const data = resp.data.data
             const val = data.validations.data
             console.log(data)
             if (val.firstName.validated !== true) {
-                res.status(400).json({ msg: 'firstName does not match ' })
+                res.status(400).json({ msg: 'firstName does not match ', data , firstName, lastName })
             }
             else if (val.lastName.validated !== true) {
                 res.status(400).json({ msg: 'lastname does not match ' })
@@ -87,8 +78,8 @@ router.post('/', async (req, res) => {
 
                 let details = new BvnDefaultModel(bodys)
                 details.save()
-                
-                MongoroUserModel.updateOne({ _id: userId }, { $set: { verification: { bvn: true }, verification_number: bvv, tiers: "one" } }).then(()=>{
+
+                MongoroUserModel.updateOne({ _id: userId }, { $set: { verification: { bvn: true }, verification_number: bvv, tiers: "one" } }).then(() => {
                     res.send(details)
                 })
 
@@ -145,7 +136,7 @@ router.post('/details', async (req, res) => {
         flw.Misc.verify_Account(details)
             .then(response => {
                 res.status(200).json(response);
-            }).catch(error=>{
+            }).catch(error => {
                 console.log(error)
             })
 
