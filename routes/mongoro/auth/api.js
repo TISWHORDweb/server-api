@@ -94,6 +94,7 @@ router.post("/verify", async (req, res) => {
         sms_code = Math.floor(100 + Math.random() * 900)
 
         let code = { email_code, sms_code }
+        console.log(req.body.phone)
 
         const url = "https://api.sendchamp.com/api/v1/sms/send"
         const header = {
