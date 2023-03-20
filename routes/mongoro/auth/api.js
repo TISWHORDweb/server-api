@@ -95,6 +95,9 @@ router.post("/verify", async (req, res) => {
 
         let code = { email_code, sms_code }
 
+        const validates = await MongoroUserModel.findOne({ email: req.body.email })
+        if (validates) return res.status(400).json({ msg: 'There is another user with this email ', status: 400 })
+
         const url = "https://api.sendchamp.com/api/v1/sms/send"
         const header = {
             headers: {

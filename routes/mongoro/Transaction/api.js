@@ -26,15 +26,15 @@ router.get("/tier/all", async (req, res) => {
 
 router.delete("/tier/delete", async (req, res) => {
   try {
-      if (!req.body.id ) return res.status(402).json({ msg: 'provide the id ?' })
+    if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?' })
 
-      await TierModel.deleteOne({ _id: req.body.id })
-      res.status(200).json({msg:"Tier deleted....",status: 200});
+    await TierModel.deleteOne({ _id: req.body.id })
+    res.status(200).json({ msg: "Tier deleted....", status: 200 });
   } catch (error) {
-      res.status(500).json({
-          msg: 'there is an unknown error sorry !',
-          status: 500
-      })
+    res.status(500).json({
+      msg: 'there is an unknown error sorry !',
+      status: 500
+    })
   }
 
 });
@@ -83,12 +83,12 @@ router.post("/", async (req, res) => {
   let pin
   let resultt;
 
-  if(user){
+  if (user) {
     pin = user.pin
     resultt = user.blocked
     const bytes = CryptoJS.AES.decrypt(pin, process.env.SECRET_KEY);
     originalPin = bytes.toString(CryptoJS.enc.Utf8);
-  }else{
+  } else {
     res.status(400).json({ msg: 'User not found', status: 400 })
   }
 
@@ -96,10 +96,10 @@ router.post("/", async (req, res) => {
 
   const users = await GlobalModel.findOne({ _id: process.env.GLOBAL_ID })
 
-  if(users){
+  if (users) {
     value = users.disable_all_transfer
   }
-  
+
 
   let number;
   let per;
@@ -109,7 +109,7 @@ router.post("/", async (req, res) => {
   let allTotal;
   let type;
 
-  if(allTransfer){
+  if (allTransfer) {
     allTotal = allTransfer.amount
     type = user.tiers
   }
@@ -420,7 +420,7 @@ router.post('/wallet', verify, async (req, res) => {
 
   if (!req.body.wallet_ID || !req.body.userId) return res.status(400).json({ msg: 'please check the fields ?' })
 
-  
+
 
   const bytes = CryptoJS.AES.decrypt(users.pin, process.env.SECRET_KEY);
   const originalPin = bytes.toString(CryptoJS.enc.Utf8);
@@ -444,7 +444,7 @@ router.post('/wallet', verify, async (req, res) => {
     tier.save()
     allTotal = 0
     console.log(tier)
-  }else{
+  } else {
     const allTransfer = await TierModel.findOne({ userId: req.body.userId })
     allTotal = allTransfer.amount
   }
@@ -465,8 +465,8 @@ router.post('/wallet', verify, async (req, res) => {
     res.status(403).json({ msg: "Sorry your account is blocked" })
   } else if (resultt === true) {
     res.status(400).json({ msg: "Sorry service temporarily unavailable", code: 400 })
-    } else if (originalPin !== req.body.pin) {
-      res.status(401).json({ msg: 'Wrong pin ', status: 401 })
+  } else if (originalPin !== req.body.pin) {
+    res.status(401).json({ msg: 'Wrong pin ', status: 401 })
   }
   else {
 
@@ -490,7 +490,7 @@ router.post('/wallet', verify, async (req, res) => {
           "userId": receiver,
           "narration": req.body.narration,
           "status_type": "Credit",
-          "transaction_ID" : tid
+          "transaction_ID": tid
         }
 
         const body = {
@@ -500,7 +500,7 @@ router.post('/wallet', verify, async (req, res) => {
           "userId": req.body.userId,
           "narration": req.body.narration,
           "status_type": "Debit",
-          "transaction_ID" : tid
+          "transaction_ID": tid
         }
 
         let transaction = await new TransferModel(body)
@@ -512,14 +512,13 @@ router.post('/wallet', verify, async (req, res) => {
           if (transaction) {
             MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: senderNewAmount, wallet_updated_at: Date.now() } }).then(() => {
               console.log("updated")
-              TransferModel.updateOne({ _id: id }, { $set: { status: "succesful", sender_status: "Debit", receive_status: "Credit" } }).then(async () => {
-                let transaction = await TransferModel.findOne({ _id: id })
-                return res.status(200).json({
-                  msg: 'Transaction successful ',
-                  transaction: transaction,
-                  status: 200
-                })
+              let transaction = TransferModel.findOne({ _id: id })
+              res.status(200).json({
+                msg: 'Transaction successful ',
+                transaction: transaction,
+                status: 200
               })
+
             });
           }
 
