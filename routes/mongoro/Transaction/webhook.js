@@ -9,33 +9,33 @@ const cron = require('node-cron');
 // verify transaction from the webhook and update the database
 router.post("/webhook", async (req, res) => {
     try {
-    const secretHash = process.env.FLW_SECRET_HASH;// store your secret hash as an environmental variable
-    const signature = req.headers["verif-hash"];// grab the secret hash sent in the POST request header
+        const secretHash = process.env.FLW_SECRET_HASH;// store your secret hash as an environmental variable
+        const signature = req.headers["verif-hash"];// grab the secret hash sent in the POST request header
 
-    const tid = "00" + Math.floor(10000000000 + Math.random() * 90000000000)
+        const tid = "00" + Math.floor(10000000000 + Math.random() * 90000000000)
 
-    const data = {
-        "response": req.body
-    }
+        const data = {
+            "response": req.body
+        }
 
-    let resp = await new WebhookModel(data)
+        let resp = await new WebhookModel(data)
 
-    await resp.save()
+        await resp.save()
 
-    // verify that the POST request came from Flutterwave
-    if (!signature || signature !== secretHash) {
-        return res.status(401).end();
-    }
+        // verify that the POST request came from Flutterwave
+        if (!signature || signature !== secretHash) {
+            return res.status(401).end();
+        }
 
-    const payload = req.body
-    console.log(payload)
-    // It's a good idea to log all received events.;
-    const csEmail = payload.data.customer.email;
-    const txAmount = payload.data.amount;
-    const txReference = payload.data.tx_ref;
-    const flwId = payload.data.id;
+        const payload = req.body
+        console.log(payload)
+        // It's a good idea to log all received events.;
+        const csEmail = payload.data.customer.email;
+        const txAmount = payload.data.amount;
+        const txReference = payload.data.tx_ref;
+        const flwId = payload.data.id;
 
-    if (payload.data.status === "successful") {
+
 
         // find user on the database using the email
         const userWallet = await MongoroUserModel.findOne({ email: csEmail });
@@ -50,7 +50,6 @@ router.post("/webhook", async (req, res) => {
         }
 
         ///NOT SHOOTING
-
         const id = userWallet._id;
         const oldAmount = userWallet.wallet_balance
         const newAmount = +oldAmount + +txAmount
@@ -67,39 +66,140 @@ router.post("/webhook", async (req, res) => {
         await axios(config).then(function (response) {
             const data = response.data.data
 
-            const details = {
-                "transaction_ID": tid,
-                "service_type": payload.data.payment_type,
-                "amount": txAmount,
-                "status": data.status,
-                "email": csEmail,
-                "reference": txReference,
-                "narration": payload.data.narration,
-                "userId": id,
-                "flw_id": data.id,
-                "full_name": data.meta.originatorname,
-                "bank_name": data.meta.bankname
-            }
+            if (data.status === "successful") {
+                const details = {
+                    "transaction_ID": tid,
+                    "service_type": payload.data.payment_type,
+                    "amount": txAmount,
+                    "status": data.status,
+                    "email": csEmail,
+                    "reference": txReference,
+                    "narration": payload.data.narration,
+                    "userId": id,
+                    "flw_id": data.id,
+                    "full_name": data.meta.originatorname,
+                    "bank_name": data.meta.bankname
+                }
 
-            // save updated transaction details to the database
-            let transaction = new TransferModel(details)
-            transaction.save()
+                // save updated transaction details to the database
+                let transaction = new TransferModel(details)
+                transaction.save()
 
-            // send success response
-            res.status(201).json({
-                status: true,
-                message: "Deposit Successful",
-            });
+                // update the user's balance on the database
+                MongoroUserModel.updateOne(
+                    { email: csEmail },
+                    { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }
+                ).then(() => {
 
-        })
+                    // send success response
+                    res.status(201).json({
+                        status: true,
+                        message: "Deposit Successful",
+                    });
+                })
 
-        // update the user's balance on the database
-        await MongoroUserModel.updateOne(
-            { email: csEmail },
-            { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }
-        );
+            } else if (data.status === "failed") {
+                const details = {
+                    "transaction_ID": tid,
+                    "service_type": payload.data.payment_type,
+                    "amount": txAmount,
+                    "status": data.status,
+                    "email": csEmail,
+                    "reference": txReference,
+                    "narration": payload.data.narration,
+                    "userId": id,
+                    "flw_id": data.id,
+                    "full_name": data.meta.originatorname,
+                    "bank_name": data.meta.bankname
+                }
 
-    }
+                // save updated transaction details to the database
+                let transaction = new TransferModel(details)
+                transaction.save().then(() => {
+
+                    // send success response
+                    res.status(401).json({
+                        status: true,
+                        message: "Transaction failed",
+                    });
+                })
+
+            } else if (data.status === "pending") {
+                let Status;
+
+                var task = cron.schedule('* * * * *', () => {
+                    axios(config).then(function (response) {
+                        Status = response.data.data.status
+                    })
+                });
+                console.log(Status)
+
+                if (Status === "successful") {
+                    const details = {
+                        "transaction_ID": tid,
+                        "service_type": payload.data.payment_type,
+                        "amount": txAmount,
+                        "status": data.status,
+                        "email": csEmail,
+                        "reference": txReference,
+                        "narration": payload.data.narration,
+                        "userId": id,
+                        "flw_id": data.id,
+                        "full_name": data.meta.originatorname,
+                        "bank_name": data.meta.bankname
+                    }
+
+                    // save updated transaction details to the database
+                    let transaction = new TransferModel(details)
+                    transaction.save()
+
+                        // update the user's balance on the database
+                        MongoroUserModel.updateOne(
+                            { email: csEmail },
+                            { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }
+                        ).then(() => {
+
+                            // send success response
+                            res.status(201).json({
+                                status: true,
+                                message: "Deposit Successful",
+                            });
+                        })
+
+                        task.stop();
+
+                    } else if (Status === "failed") {
+                        const details = {
+                            "transaction_ID": tid,
+                            "service_type": payload.data.payment_type,
+                            "amount": txAmount,
+                            "status": data.status,
+                            "email": csEmail,
+                            "reference": txReference,
+                            "narration": payload.data.narration,
+                            "userId": id,
+                            "flw_id": data.id,
+                            "full_name": data.meta.originatorname,
+                            "bank_name": data.meta.bankname
+                        }
+
+                        // save updated transaction details to the database
+                        let transaction = new TransferModel(details)
+                        transaction.save().then(() => {
+
+                            // send success response
+                            res.status(401).json({
+                                status: true,
+                                message: "Transaction failed",
+                            });
+                        })
+
+                        task.stop();
+                    } else {
+                        task.start();
+                    }
+                }
+            })
 
     } catch (error) {
         res.send({
@@ -110,30 +210,22 @@ router.post("/webhook", async (req, res) => {
     }
 });
 
-function trying(){
-    function  checkDetails(){
-        var config = {
-            method: 'get',
-            url: `https://api.flutterwave.com/v3/transactions/869781344/verify`,
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${process.env.FLW_SECRET_KEY}`
-            }
-        };
-    
-        axios(config).then(function (response) {
-            const data = response.data.data
-            console.log(data)
-        })
-    }
-    
-    var task = cron.schedule('* * * * *', () =>  {
-        console.log('will execute every minute until stopped');
-      });
-    
-    //   task.start();
-      task.stop();
-}
+// function trying(){
+//     const value = 5
+//     var task = cron.schedule('* * * * *', () =>  {
+//         console.log('will execute every minute until stopped');
+//     });
+
+//     if(value === 5){
+//         task.stop();
+
+//     }else{
+//         task.start();
+//     }
+
+// }
+
+// trying()
 
 router.get('/webhook/all', paginatedResults(WebhookModel), (req, res) => {
     res.json(res.paginatedResults)
@@ -176,7 +268,7 @@ function paginatedResults(model) {
 
 
 module.exports = router
- function  checkDetails(){
+function checkDetails() {
     var config = {
         method: 'get',
         url: `https://api.flutterwave.com/v3/transactions/869781344/verify`,
@@ -192,9 +284,114 @@ module.exports = router
     })
 }
 
-var task = cron.schedule('* * * * *', () =>  {
+var task = cron.schedule('* * * * *', () => {
     console.log('will execute every minute until stopped');
-  });
+});
 
 //   task.start();
-  task.stop();
+task.stop();
+
+
+
+////ONLY SUCCESS
+//   router.post("/webhook", async (req, res) => {
+//     try {
+//     const secretHash = process.env.FLW_SECRET_HASH;// store your secret hash as an environmental variable
+//     const signature = req.headers["verif-hash"];// grab the secret hash sent in the POST request header
+
+//     const tid = "00" + Math.floor(10000000000 + Math.random() * 90000000000)
+
+//     const data = {
+//         "response": req.body
+//     }
+
+//     let resp = await new WebhookModel(data)
+
+//     await resp.save()
+
+//     // verify that the POST request came from Flutterwave
+//     if (!signature || signature !== secretHash) {
+//         return res.status(401).end();
+//     }
+
+//     const payload = req.body
+//     console.log(payload)
+//     // It's a good idea to log all received events.;
+//     const csEmail = payload.data.customer.email;
+//     const txAmount = payload.data.amount;
+//     const txReference = payload.data.tx_ref;
+//     const flwId = payload.data.id;
+
+//     if (payload.data.status === "successful") {
+
+//         // find user on the database using the email
+//         const userWallet = await MongoroUserModel.findOne({ email: csEmail });
+
+//         // verify that the user exists on the database
+//         if (!userWallet) {
+//             return {
+//                 status: false,
+//                 statusCode: 404,
+//                 message: `User ${csEmail} doesn't exist`,
+//             };
+//         }
+
+//         ///NOT SHOOTING
+//         const id = userWallet._id;
+//         const oldAmount = userWallet.wallet_balance
+//         const newAmount = +oldAmount + +txAmount
+
+//         var config = {
+//             method: 'get',
+//             url: `https://api.flutterwave.com/v3/transactions/${flwId}/verify`,
+//             headers: {
+//                 'Content-Type': 'application/json',
+//                 'Authorization': `Bearer ${process.env.FLW_SECRET_KEY}`
+//             }
+//         };
+
+//         await axios(config).then(function (response) {
+//             const data = response.data.data
+
+//             const details = {
+//                 "transaction_ID": tid,
+//                 "service_type": payload.data.payment_type,
+//                 "amount": txAmount,
+//                 "status": data.status,
+//                 "email": csEmail,
+//                 "reference": txReference,
+//                 "narration": payload.data.narration,
+//                 "userId": id,
+//                 "flw_id": data.id,
+//                 "full_name": data.meta.originatorname,
+//                 "bank_name": data.meta.bankname
+//             }
+
+//             // save updated transaction details to the database
+//             let transaction = new TransferModel(details)
+//             transaction.save()
+
+//             // send success response
+//             res.status(201).json({
+//                 status: true,
+//                 message: "Deposit Successful",
+//             });
+
+//         })
+
+//         // update the user's balance on the database
+//         await MongoroUserModel.updateOne(
+//             { email: csEmail },
+//             { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }
+//         );
+
+//     }
+
+//     } catch (error) {
+//         res.send({
+//             status: false,
+//             message: 'Unable to perform transaction. Please try again.',
+//             error,
+//         });
+//     }
+// });
