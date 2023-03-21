@@ -12,7 +12,7 @@ router.post("/webhook", async (req, res) => {
         const secretHash = process.env.FLW_SECRET_HASH;// store your secret hash as an environmental variable
         const signature = req.headers["verif-hash"];// grab the secret hash sent in the POST request header
 
-        const tid = "00" + Math.floor(10000000000 + Math.random() * 90000000000)
+        const tid = Math.floor(1000000 + Math.random() * 9000000)
 
         const data = {
             "response": req.body
