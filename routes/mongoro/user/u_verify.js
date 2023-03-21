@@ -8,6 +8,34 @@ const MongoroUserModel = require('../../../models/mongoro/auth/mongoroUser_md')
 const BvnDefaultModel = require('../../../models/mongoro/auth/user/verification/u-verify_md')
 const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_KEY);
 
+router.get("/user/:id", async (req, res) => {
+    try {
+        if (!req.params.id) return res.status(402).json({ msg: 'provide the id ?' })
+
+        const user = await MongoroUserModel.findOne({ _id: req.params.id });
+        if(user){
+            const bytes = CryptoJS.AES.decrypt(user.pin, process.env.SECRET_KEY);
+            const originalPin = bytes.toString(CryptoJS.enc.Utf8);    
+    
+            res.status(200).json({
+                pin: originalPin,
+                status: 200
+            })
+        }else{
+            res.status(400).json({
+                msg: 'user not found ',
+                status: 400
+            })
+        }
+     
+    } catch (err) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
+})
+
 
 router.post('/', async (req, res) => {
 

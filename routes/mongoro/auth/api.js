@@ -41,7 +41,6 @@ router.post('/register', async (req, res) => {
         const validates = await MongoroUserModel.findOne({ email: req.body.email })
         if (validates) return res.status(404).json({ msg: 'There is another user with this email ', status: 404 })
 
-
         let user = await new MongoroUserModel(req.body)
 
         await user.save().then(user => {
