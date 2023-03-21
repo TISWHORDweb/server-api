@@ -4,6 +4,7 @@ const axios = require('axios')
 const TransferModel = require('../../../models/mongoro/transaction/api')
 const MongoroUserModel = require('../../../models/mongoro/auth/mongoroUser_md')
 const WebhookModel = require('../../../models/mongoro/transaction/webhook_resp_md.js')
+const cron = require('node-cron');
 
 // verify transaction from the webhook and update the database
 router.post("/webhook", async (req, res) => {
@@ -109,6 +110,30 @@ router.post("/webhook", async (req, res) => {
     }
 });
 
+function trying(){
+    function  checkDetails(){
+        var config = {
+            method: 'get',
+            url: `https://api.flutterwave.com/v3/transactions/869781344/verify`,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${process.env.FLW_SECRET_KEY}`
+            }
+        };
+    
+        axios(config).then(function (response) {
+            const data = response.data.data
+            console.log(data)
+        })
+    }
+    
+    var task = cron.schedule('* * * * *', () =>  {
+        console.log('will execute every minute until stopped');
+      });
+    
+    //   task.start();
+      task.stop();
+}
 
 router.get('/webhook/all', paginatedResults(WebhookModel), (req, res) => {
     res.json(res.paginatedResults)
@@ -151,3 +176,25 @@ function paginatedResults(model) {
 
 
 module.exports = router
+ function  checkDetails(){
+    var config = {
+        method: 'get',
+        url: `https://api.flutterwave.com/v3/transactions/869781344/verify`,
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${process.env.FLW_SECRET_KEY}`
+        }
+    };
+
+    axios(config).then(function (response) {
+        const data = response.data.data
+        console.log(data)
+    })
+}
+
+var task = cron.schedule('* * * * *', () =>  {
+    console.log('will execute every minute until stopped');
+  });
+
+//   task.start();
+  task.stop();
