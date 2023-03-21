@@ -39,7 +39,7 @@ router.post('/create', async (req, res) => {
                 "phonenumber": details.phone,
                 "firstname": details.first_name,
                 "lastname": details.surname,
-                "narration": details.first_name+" "+details.surname
+                "narration": "Mongoro "+details.first_name+" "+details.surname
 
             });
             
