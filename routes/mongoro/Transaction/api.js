@@ -422,18 +422,19 @@ router.post('/wallet', verify, async (req, res) => {
 
   const check = await TierModel.findOne({ userId: req.body.userId, date: currentDate })
 
-  const tid = "00" + Math.floor(10000000000 + Math.random() * 90000000000)
+  const tid = "00" + Math.floor(100000 + Math.random() * 900000)
 
   if (!req.body.wallet_ID || !req.body.userId) return res.status(400).json({ msg: 'please check the fields ?' })
 
   const sender = await MongoroUserModel.findOne({ _id: req.body.userId });
   const senderAmount = sender.wallet_balance
+  const senderFullName = sender.surname+" "+sender.first_name
   const senderNewAmount = senderAmount - req.body.amount
 
   let user = await MongoroUserModel.findOne({ wallet_ID: req.body.wallet_ID })
   const oldAmount = user.wallet_balance
   newAmount = +oldAmount + +req.body.amount
-
+  const receiverFullName = user.surname+" "+user.first_name
   const value = sender.blocked
   console.log(value)
 
@@ -458,8 +459,8 @@ router.post('/wallet', verify, async (req, res) => {
     res.send({ msg: "Sorry your account is blocked" })
   } else if (resultt === true) {
     res.send({ msg: "Sorry service temporarily unavailable", code: 400 })
-  } else if (originalPin !== req.body.pin) {
-    res.send({ msg: 'Wrong pin ', status: 401 })
+  // } else if (originalPin !== req.body.pin) {
+  //   res.send({ msg: 'Wrong pin ', status: 401 })
   } else if (senderAmount < req.body.amount) {
     res.send({ msg: "Insufficient funds", status: 400 });
   } else if (senderAmount < 100) {
@@ -480,23 +481,27 @@ router.post('/wallet', verify, async (req, res) => {
       const datas = {
         "amount": req.body.amount,
         "wallet_ID": req.body.wallet_ID,
-        "service_type": req.body.service_type,
+        "service_type": "Deposit",
         "userId": receiver,
         "narration": req.body.narration,
         "status_type": "Credit",
         "status": "successful",
-        "transaction_ID": tid
+        "transaction_ID": tid,
+        "full_name":senderFullName,
+        "bank_name":"Mongoro"
       }
 
       const body = {
         "amount": req.body.amount,
         "wallet_ID": req.body.wallet_ID,
-        "service_type": req.body.service_type,
+        "service_type": "Transfer",
         "userId": req.body.userId,
         "narration": req.body.narration,
         "status_type": "Debit",
         "status": "successful",
-        "transaction_ID": tid
+        "transaction_ID": tid,
+        "full_name":receiverFullName,
+        "bank_name":"Mongoro"
       }
 
       let transaction = await new TransferModel(body)
@@ -539,8 +544,6 @@ router.post('/wallet', verify, async (req, res) => {
           });
         }
       })
-
-
 
     }
   }
