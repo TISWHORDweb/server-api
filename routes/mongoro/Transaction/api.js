@@ -250,54 +250,55 @@ router.post("/verify_transfer", async (req, res) => {
 
   var config = {
     method: 'get',
-    url: `https://api.flutterwave.com/v3/transfers/${req.body.flw_id}`,
+    url: `https://api.flutterwave.com/v3/transactions/${req.body.flw_id}/verify`,
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${process.env.FLW_SECRET_KEY}`
     }
   };
 
-  const user = await MongoroUserModel.findOne({ _id: req.body.userId });
+  // const user = await MongoroUserModel.findOne({ _id: req.body.userId });
 
-  try {
+  // try {
     await axios(config).then(function (response) {
-      const data = response.data;
-      console.log(data)
-      const statuss = data.data.status;
-      const oldAmount = user.wallet_balance;
-      const newAmount = oldAmount - data.data.amount;
+      const data = response.data.data
+      console.log({"full_name":data.meta.originatorname,
+      "bank_name":data.meta.bankname,"status": data.status})
+      // const statuss = data.data.status;
+      // const oldAmount = user.wallet_balance;
+      // const newAmount = oldAmount - data.data.amount;
 
-      if (statuss === "SUCCESSFUL") {
-        TransferModel.updateOne({ flw_id: req.body.flw_id }, { $set: { status: "Success" } }).then(() => {
-          MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } })
-          res.status(200).json({
-            msg: 'Transaction is Successful ',
-            data,
-            status: 200
-          })
-        });
-      } else if (statuss === "FAILED") {
-        TransferModel.updateOne({ flw_id: req.body.flw_id }, { $set: { status: "Failed" } }).then(() => {
-          res.status(400).json({
-            msg: 'Transaction is Unsuccessful ',
-            data,
-            status: 400
-          })
-        })
-      } else {
-        res.status(500).json({
-          msg: 'There is an unknown error ',
-          status: 500
-        })
-      }
+      // if (statuss === "SUCCESSFUL") {
+      //   TransferModel.updateOne({ flw_id: req.body.flw_id }, { $set: { status: "Success" } }).then(() => {
+      //     MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } })
+      //     res.status(200).json({
+      //       msg: 'Transaction is Successful ',
+      //       data,
+      //       status: 200
+      //     })
+      //   });
+      // } else if (statuss === "FAILED") {
+      //   TransferModel.updateOne({ flw_id: req.body.flw_id }, { $set: { status: "Failed" } }).then(() => {
+      //     res.status(400).json({
+      //       msg: 'Transaction is Unsuccessful ',
+      //       data,
+      //       status: 400
+      //     })
+      //   })
+      // } else {
+      //   res.status(500).json({
+      //     msg: 'There is an unknown error ',
+      //     status: 500
+      //   })
+      // }
     })
 
-  } catch (error) {
-    res.status(500).json({
-      msg: 'there is an unknown error sorry ',
-      status: 500
-    })
-  }
+  // } catch (error) {
+  //   res.status(500).json({
+  //     msg: 'there is an unknown error sorry ',
+  //     status: 500
+  //   })
+  // }
 
 })
 
