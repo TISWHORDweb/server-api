@@ -9,16 +9,17 @@ const BvnDefaultModel = require('../../../models/mongoro/auth/user/verification/
 const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_KEY);
 
 router.get("/user/:id", async (req, res) => {
+    
     try {
         if (!req.params.id) return res.status(402).json({ msg: 'provide the id ?' })
 
         const user = await MongoroUserModel.findOne({ _id: req.params.id });
         if(user){
-            const bytes = CryptoJS.AES.decrypt(user.pin, process.env.SECRET_KEY);
+            const bytes = CryptoJS.AES.decrypt(user.verification_number, process.env.SECRET_KEY);
             const originalPin = bytes.toString(CryptoJS.enc.Utf8);    
     
             res.status(200).json({
-                pin: originalPin,
+                b_number: originalPin,
                 status: 200
             })
         }else{
@@ -27,7 +28,7 @@ router.get("/user/:id", async (req, res) => {
                 status: 400
             })
         }
-     
+    
     } catch (err) {
         res.status(500).json({
             msg: 'there is an unknown error sorry !',
