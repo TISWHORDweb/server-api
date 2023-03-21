@@ -45,7 +45,7 @@ function paginatedResults(model) {
 //CREATE
 router.post('/create', async (req, res) => {
 
-    if (!req.body.beneficiary_name || !req.body.account_number || !req.body.account_bank || !req.body.userId ) return res.status(402).json({ msg: 'please check the fields ?' })
+    if (!req.body.userId ) return res.status(402).json({ msg: 'please check the fields ?' })
 
     if(req.body.usertag){
     req.body.wallet_ID = req.body.usertag
