@@ -49,16 +49,18 @@ router.post("/", async (req, res) => {
     return alph[Math.floor(Math.random() * alph.length)]
   }
 
+  req.body.amount = parseInt(req.body.amount)
+
   const word = generateRandomLetter()
   const words = generateRandomLetter()
 
-  const tid = "00" + Math.floor(10000000000 + Math.random() * 90000000000)
+  const tid = Math.floor(1000000 + Math.random() * 9000000)
   const num = "001" + Math.floor(10000 + Math.random() * 90000) + word + words
 
   const body = {
     "account_bank": req.body.account_bank,
     "account_number": req.body.account_number,
-    "amount": Number(req.body.amount),
+    "amount": req.body.amount,
     "narration": req.body.narration,
     "currency": req.body.currency,
     "reference": num,
@@ -115,16 +117,16 @@ router.post("/", async (req, res) => {
   }
 
   if (type === "one") {
-    number = "100000"
-    per = "20000"
+    number = 100000
+    per = 20000
   }
   if (type === "two") {
-    number = "1000000"
-    per = "100000"
+    number = 1000000
+    per = 100000
   }
   if (type === "three") {
-    number = "10000000"
-    per = "1000000"
+    number = 10000000
+    per = 1000000
   }
 
 
@@ -188,7 +190,7 @@ router.post("/", async (req, res) => {
                 "flw_id": data.data.id,
                 "transaction_ID": tid,
                 "service_type": "Transfer",
-                "amount": Number(req.body.amount),
+                "amount": req.body.amount,
                 "status": "Pending",
                 "full_name": data.data.full_name,
                 "account_number": data.data.account_number,
@@ -422,7 +424,7 @@ router.post('/wallet', verify, async (req, res) => {
 
   const check = await TierModel.findOne({ userId: req.body.userId, date: currentDate })
 
-  const tid = "00" + Math.floor(100000 + Math.random() * 900000)
+  const tid = Math.floor(1000000 + Math.random() * 9000000)
 
   if (!req.body.wallet_ID || !req.body.userId) return res.status(400).json({ msg: 'please check the fields ?' })
 
@@ -459,8 +461,8 @@ router.post('/wallet', verify, async (req, res) => {
     res.send({ msg: "Sorry your account is blocked" })
   } else if (resultt === true) {
     res.send({ msg: "Sorry service temporarily unavailable", code: 400 })
-  // } else if (originalPin !== req.body.pin) {
-  //   res.send({ msg: 'Wrong pin ', status: 401 })
+  } else if (originalPin !== req.body.pin) {
+    res.send({ msg: 'Wrong pin ', status: 401 })
   } else if (senderAmount < req.body.amount) {
     res.send({ msg: "Insufficient funds", status: 400 });
   } else if (senderAmount < 100) {
