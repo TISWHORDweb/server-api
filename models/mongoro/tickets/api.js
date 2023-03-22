@@ -19,6 +19,15 @@ const TicketSchema=new mongoose.Schema({
     description:{
         type:String
     },
+    image:{
+        type:String
+    },
+    name:{
+        type:String
+    },
+    email:{
+        type:String
+    },
     ID:{
         type:String
     },

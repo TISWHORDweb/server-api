@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const TicketModel = require("../../../models/mongoro/tickets/api")
 const verify = require("../../../verifyToken")
+const MongoroUserModel = require("../../../models/mongoro/auth/mongoroUser_md")
 
 router.get('/all', verify, paginatedResults(TicketModel), (req, res) => {
     res.json(res.paginatedResults)
@@ -33,7 +34,7 @@ function paginatedResults(model) {
         try {
             const results = await model.find().limit(limit).skip(startIndex).exec()
             let count = await TicketModel.count()
-            res.paginatedResults = {action, results ,TotalResult: count, Totalpages: Math.ceil(count / limit)}
+            res.paginatedResults = { action, results, TotalResult: count, Totalpages: Math.ceil(count / limit) }
             next()
         } catch (e) {
             res.status(500).json({ message: e.message })
@@ -42,23 +43,29 @@ function paginatedResults(model) {
 }
 
 //CREATE
-router.post('/create', verify,async (req, res) => {
+router.post('/create', verify, async (req, res) => {
 
-    req.body.ID = "0012"+Math.floor(1000 + Math.random() * 9000)
+    req.body.ID = "0012" + Math.floor(1000 + Math.random() * 9000)
 
-    if (!req.body.username || !req.body.option || !req.body.amount || !req.body.method || !req.body.status || !req.body.description ) return res.status(402).json({ msg: 'please check the fields ?' })
+    if (!req.body.username || !req.body.option || !req.body.amount || !req.body.method || !req.body.status || !req.body.description) return res.status(402).json({ msg: 'please check the fields ?' })
 
     try {
-        let tickets = await new TicketModel(req.body)
+        const user = await MongoroUserModel.findOne({ wallet_ID: req.body.username })
+        if (user) {
+            req.body.image = user.image
+            req.body.email = user.email
+            req.body.name = user.surname + " " + user.first_name
 
-        await tickets.save().then(tickets => {
-            return res.status(200).json({
-                msg: 'Ticket created successful ',
-                tickets: tickets,
-                status: 200
+            let tickets = await new TicketModel(req.body)
+
+            await tickets.save().then(tickets => {
+                return res.status(200).json({
+                    msg: 'Ticket created successful ',
+                    tickets: tickets,
+                    status: 200
+                })
             })
-        })
-
+        }
     } catch (error) {
         res.status(500).json({
             msg: 'there is an unknown error sorry ',
@@ -70,7 +77,7 @@ router.post('/create', verify,async (req, res) => {
 
 router.delete("/delete", verify, async (req, res) => {
     try {
-        if (!req.body.id ) return res.status(402).json({ msg: 'provide the id ?' })
+        if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?' })
 
         await TicketModel.deleteOne({ _id: req.body.id })
         res.status(200).json("Tickets deleted....");
@@ -85,7 +92,7 @@ router.delete("/delete", verify, async (req, res) => {
 
 router.get("/:id", verify, async (req, res) => {
     try {
-        if (!req.params.id ) return res.status(402).json({ msg: 'provide the id ?' })
+        if (!req.params.id) return res.status(402).json({ msg: 'provide the id ?' })
 
         let tickets = await TicketModel.find({ _id: req.params.id })
         res.status(200).json(tickets);
@@ -102,7 +109,7 @@ router.put('/edit', verify, async (req, res) => {
     let { id } = body;
 
     try {
-        if (!req.body.id ) return res.status(402).json({ msg: 'provide the id ?' })
+        if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?' })
 
         await TicketModel.updateOne({ _id: id }, body).then(async () => {
             let tickets = await TicketModel.findOne({ _id: id })
