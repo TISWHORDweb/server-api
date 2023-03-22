@@ -69,7 +69,7 @@ router.post("/webhook", async (req, res) => {
             if (data.status === "successful") {
                 const details = {
                     "transaction_ID": tid,
-                    "service_type": payload.data.payment_type,
+                    "service_type": "Deposit",
                     "amount": txAmount,
                     "status": data.status,
                     "email": csEmail,
@@ -80,7 +80,6 @@ router.post("/webhook", async (req, res) => {
                     "full_name": data.meta.originatorname,
                     "bank_name": data.meta.bankname
                 }
-
                 // save updated transaction details to the database
                 let transaction = new TransferModel(details)
                 transaction.save()
@@ -101,7 +100,7 @@ router.post("/webhook", async (req, res) => {
             } else if (data.status === "failed") {
                 const details = {
                     "transaction_ID": tid,
-                    "service_type": payload.data.payment_type,
+                    "service_type": "Deposit",
                     "amount": txAmount,
                     "status": data.status,
                     "email": csEmail,
@@ -137,7 +136,7 @@ router.post("/webhook", async (req, res) => {
                 if (Status === "successful") {
                     const details = {
                         "transaction_ID": tid,
-                        "service_type": payload.data.payment_type,
+                        "service_type": "Deposit",
                         "amount": txAmount,
                         "status": data.status,
                         "email": csEmail,
@@ -171,7 +170,7 @@ router.post("/webhook", async (req, res) => {
                     } else if (Status === "failed") {
                         const details = {
                             "transaction_ID": tid,
-                            "service_type": payload.data.payment_type,
+                            "service_type": "Deposit",
                             "amount": txAmount,
                             "status": data.status,
                             "email": csEmail,

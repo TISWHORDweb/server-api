@@ -366,6 +366,7 @@ function paginatedResults(model) {
         limit: limit
       }
     }
+
     try {
       const results = await model.find().limit(limit).skip(startIndex).exec()
       let count = await TransferModel.count()
@@ -480,7 +481,7 @@ router.post('/wallet', verify, async (req, res) => {
 
       const single = await MongoroUserModel.findOne({ wallet_ID: req.body.wallet_ID })
       const receiver = single._id
-
+      
       const datas = {
         "amount": req.body.amount,
         "wallet_ID": req.body.wallet_ID,
