@@ -369,7 +369,8 @@ function paginatedResults(model) {
     try {
       const results = await model.find().limit(limit).skip(startIndex).exec()
       let count = await TransferModel.count()
-      res.paginatedResults = { action, results, TotalResult: count, Totalpages: Math.ceil(count / limit) }
+      const data = results.reverse()
+      res.paginatedResults = { action, data, TotalResult: count, Totalpages: Math.ceil(count / limit) }
       next()
     } catch (e) {
       res.status(500).json({ message: e.message })

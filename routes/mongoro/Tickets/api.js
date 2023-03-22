@@ -31,6 +31,7 @@ function paginatedResults(model) {
                 limit: limit
             }
         }
+        
         try {
             const results = await model.find().limit(limit).skip(startIndex).exec()
             let count = await TicketModel.count()
