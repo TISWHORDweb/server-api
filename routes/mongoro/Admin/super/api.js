@@ -161,10 +161,22 @@ router.put("/disable_all_user", async (req, res) => {
     try {
         await GlobalModel.updateOne({ _id: process.env.GLOBAL_ID }, { $set: { disable_all_user: true, by: req.body.by, updated_at: Date.now() } }).then(async () => {
         })
-        res.status(200).json({msg:"user Disabled successfully"})
+        res.status(200).json({msg:"users Disabled successfully"})
     } catch (err) {
         res.status(500).json({
             msg: 'there is an unknown error sorry ',
+            status: 500
+        })
+    }
+})
+
+router.get("/global", async (req, res) => {
+    try {
+        const global = await GlobalModel.find();
+        res.status(200).json(global.reverse());
+    } catch (err) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
             status: 500
         })
     }
@@ -174,7 +186,7 @@ router.put("/enable_all_user", async (req, res) => {
     try {
         await GlobalModel.updateOne({ _id: process.env.GLOBAL_ID }, { $set: { disable_all_user: false, by: req.body.by, updated_at: Date.now() } }).then(async () => {
         })
-        res.status(200).json({msg:"user Enabled successfully"})
+        res.status(200).json({msg:"users Enabled successfully"})
     } catch (err) {
         res.status(500).json({
             msg: 'there is an unknown error sorry !',
