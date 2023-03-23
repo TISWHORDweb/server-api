@@ -44,18 +44,10 @@ router.delete("/tier/delete", async (req, res) => {
 router.post("/", async (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
 
-  const alph = 'abcdefghijklmnopqrstuvwxyz'
-  function generateRandomLetter() {
-    return alph[Math.floor(Math.random() * alph.length)]
-  }
-
   req.body.amount = parseInt(req.body.amount)
 
-  const word = generateRandomLetter()
-  const words = generateRandomLetter()
-
   const tid = Math.floor(1000000 + Math.random() * 9000000)
-  const num = "001" + Math.floor(10000 + Math.random() * 90000) + word + words
+  const ran = Math.floor(100000000000 + Math.random() * 900000000000)
 
   const body = {
     "account_bank": req.body.account_bank,
@@ -63,7 +55,7 @@ router.post("/", async (req, res) => {
     "amount": req.body.amount,
     "narration": req.body.narration,
     "currency": req.body.currency,
-    "reference": num,
+    "reference":`MGR-NGN-${ran}`,
     "callback_url": req.body.callback_url,
     "debit_currency": req.body.debit_currency
   }
