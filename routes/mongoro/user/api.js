@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const MongoroUserModel = require("../../../models/mongoro/auth/mongoroUser_md")
+const AuditModel = require("../../../models/mongoro/auth/user/audit/audit_md")
 const verify = require("../../../verifyToken")
 const bcrypt = require('bcryptjs')
 let multer = require('multer')
@@ -105,7 +106,7 @@ router.put('/edit', verify, async (req, res) => {
     let { id } = body;
 
     try {
-        if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?', status: 402 })
+        if (!req.body.id) return res.status(400).json({ msg: 'provide the id ?', status: 400 })
 
         await MongoroUserModel.updateOne({ _id: id }, body).then(async () => {
             let user = await MongoroUserModel.findOne({ _id: id })
@@ -417,28 +418,117 @@ router.post('/verify_tag', async (req, res) => {
 
 router.post('/verify_email', async (req, res) => {
 
-    const user = await MongoroUserModel.findOne({ email: req.body.email });
+    try {
+        const user = await MongoroUserModel.findOne({ email: req.body.email });
 
-    if (user) {
-        res.status(400).json({ msg: false, status: 400 });
-    } else {
-        res.status(200).json({ msg: true, status: 200 });
+        if (user) {
+            res.status(400).json({ msg: false, status: 400 });
+        } else {
+            res.status(200).json({ msg: true, status: 200 });
+        }
+    } catch (err) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
+})
+
+
+router.get('/withtag/:id', verify, async (req, res) => {
+
+    try {
+        const user = await MongoroUserModel.findOne({ wallet_ID: req.params.id });
+
+        if (user) {
+            res.status(200).json({ msg: "User fetch successfully", user, status: 200 });
+        } else {
+            res.status(400).json({ msg: "User not found", status: 400 });
+        }
+    } catch (err) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
     }
 
 })
 
 
-router.get('/withtag/:tag', verify, async (req, res) => {
+//////AUDIT
+router.post('/audit', async (req, res) => {
+    try {
+        if ( !req.body.userId ) return res.status(400).json({ msg: 'provide the id', status: 400 })
 
-    const user = await MongoroUserModel.findOne({ wallet_ID: req.params.tag });
+        if(req.body.ip){
+            req.body.ip=address.ip();
+        }
 
-    if (user) {
-        res.status(200).json({ msg: "User fetch successfully", user, status: 200 });
-    } else {
-        res.status(400).json({ msg: "User not found", status: 400 });
+        let activity = new AuditModel(req.body)
+        activity.save().then(() => {
+            return res.status(200).json({
+                msg: 'Details added Successful ',
+                status: 200
+            })
+        })
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry ',
+            status: 500
+        })
     }
+})
 
+router.get("/audit/all", async (req, res) => {
+    try {
+        const audit = await AuditModel.find();
+        res.status(200).json(audit.reverse());
+    } catch (err) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
+})
 
+router.get('/audit/:id', async (req, res) => {
+    try {
+        if (!req.params.id) return res.status(400).json({ msg: 'provide the id ', status: 400 })
+
+        let audit = await AuditModel.find({ userId: req.params.id })
+        if (audit) {
+            return res.status(200).json({
+                audit,
+                status: 200
+            })
+
+        } else {
+            return res.status(400).json({ msg: 'User not found' })
+        }
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry ',
+            status: 500
+        })
+    }
+})
+
+router.delete('/audit/delete', async (req, res) => {
+    try {
+        if (!req.body.id) return res.status(400).json({ msg: 'provide the id ', status: 402 })
+
+        await AuditModel.deleteOne({ _id: req.body.id })
+        return res.status(200).json({
+            msg: "Deleted successfully",
+            status: 200
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry ',
+            status: 500
+        })
+    }
 })
 
 module.exports = router

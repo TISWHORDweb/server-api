@@ -427,6 +427,7 @@ router.post('/wallet', verify, async (req, res) => {
   const check = await TierModel.findOne({ userId: req.body.userId, date: currentDate })
 
   const tid = Math.floor(1000000 + Math.random() * 9000000)
+  const ran = Math.floor(100000000000 + Math.random() * 900000000000)
 
   if (!req.body.wallet_ID || !req.body.userId) return res.status(400).json({ msg: 'please check the fields ?' })
 
@@ -481,7 +482,7 @@ router.post('/wallet', verify, async (req, res) => {
 
       const single = await MongoroUserModel.findOne({ wallet_ID: req.body.wallet_ID })
       const receiver = single._id
-      
+
       const datas = {
         "amount": req.body.amount,
         "wallet_ID": req.body.wallet_ID,
@@ -492,7 +493,8 @@ router.post('/wallet', verify, async (req, res) => {
         "status": "successful",
         "transaction_ID": tid,
         "full_name":senderFullName,
-        "bank_name":"Mongoro"
+        "bank_name":"Mongoro",
+        "reference":`MGR-NGN-${ran}`
       }
 
       const body = {
@@ -505,7 +507,8 @@ router.post('/wallet', verify, async (req, res) => {
         "status": "successful",
         "transaction_ID": tid,
         "full_name":receiverFullName,
-        "bank_name":"Mongoro"
+        "bank_name":"Mongoro",
+        "reference":`MGR-NGN-${ran}`
       }
 
       let transaction = await new TransferModel(body)
