@@ -277,7 +277,7 @@ router.post("/", async (req, res) => {
 
                       if (data.data.status === "SUCCESSFUL") {
                        
-                        MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: 6000, wallet_updated_at: Date.now() } }).then(()=>{
+                        MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(()=>{
                           TransferModel.updateOne({ _id: transId}, { $set: {status:"successful"}}).then(()=>{
                           console.log(transId)
                           console.log("successful")
@@ -331,7 +331,7 @@ router.post("/", async (req, res) => {
 
                       if (data.data.status === "SUCCESSFUL") {
                        
-                        MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: 6000, wallet_updated_at: Date.now() } }).then(()=>{
+                        MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(()=>{
                           TransferModel.updateOne({ _id: transId}, { $set: {status:"successful"}}).then(()=>{
                           console.log(transId)
                           console.log("successful")
