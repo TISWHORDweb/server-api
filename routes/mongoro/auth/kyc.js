@@ -68,12 +68,12 @@ router.post('/nin', async (req, res) => {
             }, header).then(resp => {
                 const data = resp.data.data
                 if (!data) {
-                    res.status(400).json({ msg: `Invalid ${req.body.type}` })
+                    return res.status(400).json({ msg: `Invalid ${req.body.type}` })
                 }
                 if (data.lastName !== lastName) {
-                    res.status(400).json({ msg: 'Credentials does not match ?' })
+                    return res.status(400).json({ msg: 'Credentials does not match ?' })
                 } else if (data.firstName !== firstName) {
-                    res.status(400).json({ msg: 'Credentials does not match ?' })
+                    return res.status(400).json({ msg: 'Credentials does not match ?' })
                 } else {
                     console.log({ msg: "All details match " })
 
@@ -91,7 +91,7 @@ router.post('/nin', async (req, res) => {
                     details.save()
                    
                     MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { verification: { nin: true }, tiers: "two" } }).then(()=>{
-                        res.send(details)
+                        return res.send(details)
                     })
 
                 }
@@ -101,7 +101,7 @@ router.post('/nin', async (req, res) => {
 
     } catch (error) {
         console.log(error)
-        res.status(500).json({
+        return res.status(500).json({
             msg: 'There is an unknown error sorry.... Please contact our support !',
             status: 500
         })
