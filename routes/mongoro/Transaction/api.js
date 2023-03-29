@@ -85,7 +85,7 @@ router.post("/", async (req, res) => {
     const bytes = CryptoJS.AES.decrypt(pin, process.env.SECRET_KEY);
     originalPin = bytes.toString(CryptoJS.enc.Utf8);
   } else {
-    res.status(400).json({ msg: 'User not found', status: 400 })
+    return res.status(400).json({ msg: 'User not found', status: 400 })
   }
 
   let value;
@@ -146,31 +146,31 @@ router.post("/", async (req, res) => {
     tier.save()
   } else {
     if (req.body.amount > per) {
-      res.send({ msg: `You can only send ${per} at once any amount greater than that is not accepted, Upgrade your account to have access, Thanks`, status: 400 });
+      return res.send({ msg: `You can only send ${per} at once any amount greater than that is not accepted, Upgrade your account to have access, Thanks`, status: 400 });
     } else if (allTotal > number) {
-      res.send({ msg: "You have reach your daily transaction limit, Upgrade your account to have access" })
+      return res.send({ msg: "You have reach your daily transaction limit, Upgrade your account to have access" })
     } else {
       const total = +req.body.amount + +allTotal
 
       await TierModel.updateOne({ userId: req.body.userId }, { $set: { amount: total } })
 
       if (resultt === true) {
-        res.status(403).json({ msg: "Sorry your account is blocked" })
+        return res.status(400).json({ msg: "Sorry your account is blocked" })
       } else if (value === true) {
-        res.status(400).json({ msg: "Sorry service temporarily unavailable", code: 400 })
+        return res.status(400).json({ msg: "Sorry service temporarily unavailable", code: 400 })
       } else if (originalPin !== req.body.pin) {
-        res.status(401).json({ msg: "Wrong password", status: 401 });
+        return res.status(400).json({ msg: "Wrong password", status: 400 });
       } else {
         const oldAmount = user.wallet_balance
 
         console.log(oldAmount)
 
         if (oldAmount < req.body.amount) {
-          res.status(401).json({ msg: "Insufficient funds", status: 401 });
+          return res.status(400).json({ msg: "Insufficient funds", status: 400 });
         } else if (oldAmount < 100) {
-          res.status(401).json({ msg: "you dont have enough money", status: 401 });
+          return res.status(400).json({ msg: "you dont have enough money", status: 400 });
         } else if (req.body.amount < 100) {
-          res.status(401).json({ msg: "you cant send any have money lower than 100", status: 401 });
+          return res.status(400).json({ msg: "you cant send any have money lower than 100", status: 400 });
         } else {
 
           await axios(config).then(function (response) {
@@ -215,7 +215,7 @@ router.post("/", async (req, res) => {
                   transaction.save()
                   MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(()=>{
                     return res.status(200).json({
-                      msg: 'Transaction is Successfuls ',
+                      msg: 'Transaction is Successful',
                       data,
                       status: 200
                     })
@@ -240,18 +240,20 @@ router.post("/", async (req, res) => {
                   transaction.save().then(() => {
 
                     // send failed response
-                    return res.status(401).json({
-                      status: true,
+                    return res.status(400).json({
+                      status: 400,
                       message: "Transaction failed",
                     });
                   })
+                  
                 } else if (data.data.status === "PENDING") {
                   console.log("PENDING")
-                   res.send({
-                    msg: 'Transaction is inprogress ',
+                  res.send({
+                    msg: 'Transaction in progress ',
                     data,
                     status: 200
                   })
+
                   var task = cron.schedule('* * * * *', () => {
                     axios(configs).then(function (response) {
                       const data = response.data
@@ -302,7 +304,7 @@ router.post("/", async (req, res) => {
                 } else if (data.data.status === "NEW") {
                   console.log("NEW")
                   res.send({
-                    msg: 'Transaction is inprogress ',
+                    msg: 'Transaction in progress ',
                     data,
                     status: 200
                   })
