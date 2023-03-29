@@ -105,7 +105,7 @@ router.post("/verify", async (req, res) => {
             "to": req.body.phone,
             "route": "dnd",
             "message": "Your code is " + sms_code,
-            "sender_name": "Sendchamp"
+            "sender_name": "MONGORO-PIN"
         }, header).then(function (response) {
             console.log(JSON.stringify(response.data));
         })
