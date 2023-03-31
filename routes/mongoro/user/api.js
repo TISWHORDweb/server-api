@@ -7,6 +7,7 @@ const bcrypt = require('bcryptjs')
 let multer = require('multer')
 let fs = require('fs')
 let path = require('path');
+const address = require('address');
 const CryptoJS = require("crypto-js")
 
 //Configure Storage
@@ -459,10 +460,12 @@ router.get('/withtag/:id', verify, async (req, res) => {
 router.post('/audit', async (req, res) => {
     try {
         if ( !req.body.userId ) return res.status(400).json({ msg: 'provide the id', status: 400 })
-
-        if(req.body.ip){
-            req.body.ip=address.ip();
-        }
+     
+        const user = await MongoroUserModel.findOne({ _id: req.body.userId });
+        req.body.name = user.surname+" "+user.first_name
+        req.body.email = user.email
+        req.body.image = user.image
+        req.body.ip=address.ip();
 
         let activity = new AuditModel(req.body)
         activity.save().then(() => {

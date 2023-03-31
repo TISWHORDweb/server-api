@@ -16,6 +16,15 @@ const AuditSchema=new mongoose.Schema({
     },
     message:{
         type:String
+    },
+    name:{
+        type:String
+    },
+    email:{
+        type:String
+    },
+    image:{
+        type:String
     }
 })
 
