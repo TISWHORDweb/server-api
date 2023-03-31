@@ -37,7 +37,7 @@ router.post("/login", async (req, res) => {
                 auth: {
                     user: 'sales@reeflimited.com',
                     pass: 'cmcxsbpkqvkgpwmk'
-                }
+                }             
             });
     
             let mailOptions = {

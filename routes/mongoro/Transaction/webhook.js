@@ -124,81 +124,82 @@ router.post("/webhook", async (req, res) => {
                 })
 
             } else if (data.status === "pending") {
-                let Status;
 
                 var task = cron.schedule('* * * * *', () => {
                     axios(config).then(function (response) {
-                        Status = response.data.data.status
-                    })
-                });
-                console.log(Status)
+                        const data = response.data
 
-                if (Status === "successful") {
-                    const details = {
-                        "transaction_ID": tid,
-                        "service_type": "Deposit",
-                        "amount": txAmount,
-                        "status": data.status,
-                        "email": csEmail,
-                        "reference": txReference,
-                        "narration": payload.data.narration,
-                        "userId": id,
-                        "flw_id": data.id,
-                        "full_name": data.meta.originatorname,
-                        "bank_name": data.meta.bankname
-                    }
+                        if (data.data.status  === "successful") {
+                            const details = {
+                                "transaction_ID": tid,
+                                "service_type": "Deposit",
+                                "amount": txAmount,
+                                "status": data.status,
+                                "email": csEmail,
+                                "reference": txReference,
+                                "narration": payload.data.narration,
+                                "userId": id,
+                                "flw_id": data.id,
+                                "full_name": data.meta.originatorname,
+                                "bank_name": data.meta.bankname
+                            }
 
-                    // save updated transaction details to the database
-                    let transaction = new TransferModel(details)
-                    transaction.save()
+                            // save updated transaction details to the database
+                            let transaction = new TransferModel(details)
+                            transaction.save()
 
-                        // update the user's balance on the database
-                        MongoroUserModel.updateOne(
-                            { email: csEmail },
-                            { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }
-                        ).then(() => {
+                            // update the user's balance on the database
+                            MongoroUserModel.updateOne(
+                                { email: csEmail },
+                                { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }
+                            ).then(() => {
 
-                            // send success response
-                            res.status(201).json({
-                                status: true,
-                                message: "Deposit Successful",
-                            });
-                        })
+                                // send success response
+                                res.status(201).json({
+                                    status: true,
+                                    message: "Deposit Successful",
+                                });
+                            })
+                            console.log("successful")
+                            task.stop();
 
-                        task.stop();
+                        } else if (data.data.status === "failed") {
+                            const details = {
+                                "transaction_ID": tid,
+                                "service_type": "Deposit",
+                                "amount": txAmount,
+                                "status": data.status,
+                                "email": csEmail,
+                                "reference": txReference,
+                                "narration": payload.data.narration,
+                                "userId": id,
+                                "flw_id": data.id,
+                                "full_name": data.meta.originatorname,
+                                "bank_name": data.meta.bankname
+                            }
 
-                    } else if (Status === "failed") {
-                        const details = {
-                            "transaction_ID": tid,
-                            "service_type": "Deposit",
-                            "amount": txAmount,
-                            "status": data.status,
-                            "email": csEmail,
-                            "reference": txReference,
-                            "narration": payload.data.narration,
-                            "userId": id,
-                            "flw_id": data.id,
-                            "full_name": data.meta.originatorname,
-                            "bank_name": data.meta.bankname
+                            // save updated transaction details to the database
+                            let transaction = new TransferModel(details)
+                            transaction.save().then(() => {
+
+                                // send success response
+                                res.status(401).json({
+                                    status: true,
+                                    message: "Transaction failed",
+                                });
+                            })
+
+                            console.log("failed")
+                            task.stop();
                         }
+                    })
+                    console.log("pending")
 
-                        // save updated transaction details to the database
-                        let transaction = new TransferModel(details)
-                        transaction.save().then(() => {
+                });
 
-                            // send success response
-                            res.status(401).json({
-                                status: true,
-                                message: "Transaction failed",
-                            });
-                        })
-
-                        task.stop();
-                    } else {
-                        task.start();
-                    }
-                }
-            })
+                task.start();
+            }
+        })
 
     } catch (error) {
         res.send({
