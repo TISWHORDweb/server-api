@@ -182,9 +182,10 @@ router.post("/invite", async (req, res) => {
     } else if (admin) {
         res.status(401).json({ msg: "sorry..... This email address is already Invited", status: 401 });
     } else {
-        let category = await new OtherModel(req.body)
-        await category.save()
-
+        const num = Math.floor(1000000 + Math.random() * 9000000)
+        let other = await new OtherModel(req.body)
+        await other.save()
+        req.body.code = num
         let transporter = nodemailer.createTransport({
             service: "hotmail",
             auth: {
@@ -197,7 +198,62 @@ router.post("/invite", async (req, res) => {
             from: 'sales@reeflimited.com',
             to: req.body.email,
             subject: 'Invitation',
-            html: `<center><p>You are invited to be an Admin from Mongoro, Input your email and create password </p></center>`
+            html: `<!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Mongoro</title>
+                <script src="https://kit.fontawesome.com/13437b109b.js" crossorigin="anonymous"></script>
+                <link rel="preconnect" href="https://fonts.googleapis.com">
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+                <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+            </head>
+            <body>
+                <div class="wrapper" style='width:100%; table-layout: fixed; background: #fff; padding-bottom:60px; font-family: "Plus Jakarta Sans", sans-serif;'>
+                    <table class="main" width="100%">
+                        
+                        <tr>
+                            <td>
+                                <table width=100% class=sub-main>
+                                    <tr>
+                                        <td>
+                                            <table width=100%>
+                                                <tr>
+                                                    <td>
+                                                        <h3 class="header" style='color: #161616'>Welcome to Mongoro 🚀 </h3>
+                                                        <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
+                                                                Thanks for joining Mongoro. To access the admin dashboard, please verify your account by entering the code below and proceed to change your password.
+                                                            <br>
+                                                            <p style='margin:3rem 0; color: #161616; line-height: 1.5rem; font-size: 45px; text-align: center;'>
+                                                                <span><b>${num}</b></span>
+                                                            </p>
+                                                            <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
+                                                                <span>Thanks,</span>
+                                                            </p>
+                                                            <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
+                                                                <span><b>Support Team, Mongoro Team</b></span>
+                                                            </p>
+                                                            <hr 
+                                                                style='border: none; border-bottom: 0.6px solid #FFF7E6'
+                                                            />
+                                                            <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'>+234 09169451169</p>
+                                                            <p style='color: #666666; text-align: center; font-size: 14px;'>sales@mongoro.com</p>
+                                                            <p style='color: #666666; text-align: center; font-size: 14px;'>Space 27, Novare Mall, Wuse Zone 5, Abuja</p>
+                                                            <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'> Having trouble viewing this email? Click here to view in your browser.</p>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </body>
+            </html>`
         };
 
         transporter.sendMail(mailOptions, function (error, info) {

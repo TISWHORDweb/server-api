@@ -560,7 +560,7 @@ router.post('/wallet', verify, async (req, res) => {
         "transaction_ID": tid,
         "full_name": senderFullName,
         "bank_name": "Mongoro",
-        "reference": `MGR-NGN-${ran}`
+        "reference": `MGR_NGN_${ran}`
       }
 
       const body = {

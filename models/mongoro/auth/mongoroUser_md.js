@@ -104,21 +104,13 @@ const mongoroUserSchema=new mongoose.Schema({
             type:Boolean,
             default: false
         },
-        nin:{
+        indemnity:{
             type:Boolean,
             default: false
         },
-        passport:{
-            type:Boolean,
-            default: false
-        },
-        pvc:{
-            type:Boolean,
-            default: false
-        },
-        driver_license:{
-            type:Boolean,
-            default: false
+        id_doc:{
+            type:Number,
+            default: 0
         },
     },
     widget:{

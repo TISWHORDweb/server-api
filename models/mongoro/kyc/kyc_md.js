@@ -4,15 +4,6 @@ const kycSchema=new mongoose.Schema({
     type:{
         type:String
     },
-    auth_id: {
-        type: String,
-    },
-    check: {
-        type: String,
-    },
-    data: {
-        type: {},
-    },
     userId:{
         type:String
     },

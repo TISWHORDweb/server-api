@@ -24,7 +24,7 @@ router.get("/all", async (req, res) => {
 router.get("/of/:category", async (req, res) => {
     try {
 
-        const admin = await OtherModel.find({ category: req.params.category });
+        const admin = await OtherModel.find({ category: req.params.category }); 
 
         res.status(200).json(admin);
     } catch (err) {
