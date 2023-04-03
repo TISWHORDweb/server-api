@@ -59,14 +59,30 @@ router.post('/create', verify, async (req, res) => {
 
             let tickets = await new TicketModel(req.body)
 
-            await tickets.save().then(tickets => {
-                return res.status(200).json({
-                    msg: 'Ticket created successful ',
-                    tickets: tickets,
-                    status: 200
-                })
+        await tickets.save().then(tickets => {
+            return res.status(200).json({
+                msg: 'Ticket created successful ',
+                tickets: tickets,
+                status: 200
             })
-        }
+        })
+        // const user = await MongoroUserModel.findOne({ wallet_ID: req.body.username })
+        // if (user) {
+        //     req.body.image = user.image
+        //     req.body.email = user.email
+        //     req.body.name = user.surname + " " + user.first_name
+
+        //     let tickets = await new TicketModel(req.body)
+
+        //     await tickets.save().then(tickets => {
+        //         return res.status(200).json({
+        //             msg: 'Ticket created successful ',
+        //             tickets: tickets,
+        //             status: 200
+    
+        //         })
+        //     })
+        // }
     } catch (error) {
         res.status(500).json({
             msg: 'there is an unknown error sorry ',
