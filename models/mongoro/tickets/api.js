@@ -19,16 +19,16 @@ const TicketSchema=new mongoose.Schema({
     description:{
         type:String
     },
-    subject:{
+    image:{
         type:String
     },
     name:{
         type:String
     },
-    identifier:{
+    email:{
         type:String
     },
-    ticketID:{
+    ID:{
         type:String
     },
     time_created:{type:Number, default:()=>Date.now()}		
