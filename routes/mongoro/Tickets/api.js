@@ -31,7 +31,7 @@ function paginatedResults(model) {
                 limit: limit
             }
         }
-
+        
         try {
             const results = await model.find().limit(limit).skip(startIndex).exec()
             let count = await TicketModel.count()
@@ -46,13 +46,18 @@ function paginatedResults(model) {
 //CREATE
 router.post('/create', verify, async (req, res) => {
 
-    req.body.ticketID = "0001" + Math.floor(1000 + Math.random() * 9000)
+    req.body.ID = "0012" + Math.floor(1000 + Math.random() * 9000)
 
-    if ( !req.body.subject || !req.body.name) return res.status(400).json({ msg: 'please check the fields' })
+    if ( !req.body.subject || !req.body.name) return res.status(402).json({ msg: 'please check the fields' })
 
     try {
+        const user = await MongoroUserModel.findOne({ wallet_ID: req.body.username })
+        if (user) {
+            req.body.image = user.image
+            req.body.email = user.email
+            req.body.name = user.surname + " " + user.first_name
 
-        let tickets = await new TicketModel(req.body)
+            let tickets = await new TicketModel(req.body)
 
         await tickets.save().then(tickets => {
             return res.status(200).json({
@@ -61,10 +66,6 @@ router.post('/create', verify, async (req, res) => {
                 status: 200
             })
         })
-
-        // const nuum = Math.floor(Math.random()*0)+1
-        // console.log(nuum)
-
         // const user = await MongoroUserModel.findOne({ wallet_ID: req.body.username })
         // if (user) {
         //     req.body.image = user.image
@@ -82,7 +83,7 @@ router.post('/create', verify, async (req, res) => {
         //         })
         //     })
         // }
-
+        
     } catch (error) {
         res.status(500).json({
             msg: 'there is an unknown error sorry ',
