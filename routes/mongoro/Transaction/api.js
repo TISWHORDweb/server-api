@@ -168,7 +168,7 @@ router.post("/", async (req, res) => {
         if (oldAmount < req.body.amount) {
           return res.status(400).json({ msg: "Insufficient funds", status: 404 });
         } else if (req.body.amount < 100) {
-          return res.status(400).json({ msg: "You cant send any have money lower than 100", status: 401 });
+          return res.status(400).json({ msg: "You cant send any money lower than 100", status: 401 });
         } else {
 
           await axios(config).then(function (response) {
