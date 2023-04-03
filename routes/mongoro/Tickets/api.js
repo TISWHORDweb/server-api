@@ -48,7 +48,7 @@ router.post('/create', verify, async (req, res) => {
 
     req.body.ticketID = "0001" + Math.floor(1000 + Math.random() * 9000)
 
-    if ( !req.body.subject || !req.body.identifier || !req.body.name) return res.status(402).json({ msg: 'please check the fields' })
+    if ( !req.body.subject || !req.body.name) return res.status(402).json({ msg: 'please check the fields' })
 
     try {
 
