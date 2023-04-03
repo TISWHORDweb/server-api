@@ -14,6 +14,19 @@ const cron = require('node-cron');
 
 const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_KEY);
 
+router.get("/insight/:id", async (req, res) => {
+  try {
+    const user = await TransferModel.findOne({ _id: req.body.userId });
+    console.log(user)
+  } catch (err) {
+    res.status(500).json({
+      msg: 'there is an unknown error sorry ',
+      status: 500
+    })
+  }
+})
+
+
 router.get("/tier/all", async (req, res) => {
   try {
     const tier = await TierModel.find();
