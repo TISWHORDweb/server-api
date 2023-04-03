@@ -148,29 +148,27 @@ router.post("/", async (req, res) => {
     if (req.body.amount > per) {
       return res.send({ msg: `You can only send ${per} at once any amount greater than that is not accepted, Upgrade your account to have access, Thanks`, status: 400 });
     } else if (allTotal > number) {
-      return res.send({ msg: "You have reach your daily transaction limit, Upgrade your account to have access" })
+      return res.send({ msg: "You have reach your daily transaction limit, Upgrade your account to have access", status: 400})
     } else {
       const total = +req.body.amount + +allTotal
 
       await TierModel.updateOne({ userId: req.body.userId }, { $set: { amount: total } })
 
       if (resultt === true) {
-        return res.status(400).json({ msg: "Sorry your account is blocked" })
+        return res.status(400).json({ msg: "Sorry your account is blocked", status: 400 })
       } else if (value === true) {
         return res.status(400).json({ msg: "Sorry service temporarily unavailable", code: 400 })
       } else if (originalPin !== req.body.pin) {
-        return res.status(400).json({ msg: "Wrong password", status: 400 });
+        return res.status(400).json({ msg: "Wrong PIN", status: 400 });
       } else {
         const oldAmount = user.wallet_balance
 
         console.log(oldAmount)
 
         if (oldAmount < req.body.amount) {
-          return res.status(400).json({ msg: "Insufficient funds", status: 400 });
-        } else if (oldAmount < 100) {
-          return res.status(400).json({ msg: "you dont have enough money", status: 400 });
+          return res.status(400).json({ msg: "Insufficient funds", status: 404 });
         } else if (req.body.amount < 100) {
-          return res.status(400).json({ msg: "you cant send any have money lower than 100", status: 400 });
+          return res.status(400).json({ msg: "You cant send any have money lower than 100", status: 401 });
         } else {
 
           await axios(config).then(function (response) {
