@@ -27,15 +27,6 @@ exports.firebaseNotification = (payload) => {
         });
 }
 
-
-
-// admin
-//     .messaging().sendToDevice(reqToken, payload, options)
-//     .then((response) => {
-//         console.log("Successfully sent message:", response.results);
-//         return response
-//     })
-//     .catch((error) => {
-//         console.log("Error sending message:", error);
-//         return error
-//     });
+exports.ticketID = () => {
+    return "0012" + Math.floor(1000 + Math.random() * 9000)
+}
