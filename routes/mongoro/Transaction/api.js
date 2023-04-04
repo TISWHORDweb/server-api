@@ -16,8 +16,14 @@ const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_K
 
 router.get("/insight/:id", async (req, res) => {
   try {
-    const user = await TransferModel.findOne({ _id: req.body.userId });
-    console.log(user)
+    const lastTransaction = await TransferModel.find({ userId: req.params.id, service_type: "Transfer", status: "successful" }).limit(1).sort({$natural:-1})
+    const lastDeposit = await TransferModel.find({ userId: req.params.id, service_type: "Deposit", status: "successful" }).limit(1).sort({$natural:-1})
+
+    return res.status(200).json({
+      msg: 'User insight',
+      data:{lastDeposit,lastTransaction},
+      status: 200
+    })
   } catch (err) {
     res.status(500).json({
       msg: 'there is an unknown error sorry ',
