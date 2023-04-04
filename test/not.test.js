@@ -12,8 +12,7 @@ let payload = {
         title: "Credit Alert",
         body: `Dear User, you have been credit $100,000,000 from Sage`,
     },
-    token: token,
 };
 
 //Send Notification
-firebaseNotification(payload);
+firebaseNotification(token,payload);
