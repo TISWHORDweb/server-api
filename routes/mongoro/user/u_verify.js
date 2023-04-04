@@ -57,17 +57,18 @@ router.post('/', async (req, res) => {
         }
     }
 
+    console.log(firstName,lastName)
     const validate = await BvnDefaultModel.findOne({ check: "MON" + check + "GORO" })
 
     if (validate) {
         const checking = validate.data.data
         const val = checking.validations.data
-
+        console.log(validate)
         console.log(val)
-        if (val.firstName.value !== firstName) {
-            res.send({ msg: 'first name does not match' })
-        } else if (val.lastName.value !== lastName) {
-            res.send({ msg: 'last name does not match' })
+        if (val.firstName.validated !== true) {
+            return res.status(400).json({ msg: 'first name does not match ' })
+        } else if (val.lastName.validated !== true) {
+            return res.status(400).json({ msg: 'last name does not match ' })
         } else {
 
             MongoroUserModel.updateOne({ _id: userId }, { $set: { verification: { bvn: true }, verification_number: bvv, tiers: "one" } }).then(() => {
@@ -92,7 +93,7 @@ router.post('/', async (req, res) => {
             const val = data.validations.data
             console.log(data)
             if (val.firstName.validated !== true) {
-                res.status(400).json({ msg: 'firstName does not match ' })
+                return res.status(400).json({ msg: 'firstName does not match ' })
             }
             else if (val.lastName.validated !== true) {
                 res.status(400).json({ msg: 'lastname does not match ' })
