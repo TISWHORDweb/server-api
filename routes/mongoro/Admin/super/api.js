@@ -275,8 +275,6 @@ router.post('/password', async (req, res) => {
 
 })
 
-
-
 router.get('/token', async (req, res) => {
 
     let secret = speakeasy.generateSecret({
