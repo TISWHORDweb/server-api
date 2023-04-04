@@ -63,7 +63,6 @@ router.post('/', async (req, res) => {
     if (validate) {
         const checking = validate.data.data
         const val = checking.validations.data
-        console.log(validate)
         console.log(val)
         if (val.firstName.validated !== true) {
             return res.status(400).json({ msg: 'first name does not match ' })
