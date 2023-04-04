@@ -1,12 +1,11 @@
 const admin = require("firebase-admin");
 
 //download sdk from firebase
-const serviceAccount = require("./mind-interest-firebase-adminsdk-ppx15-554cdb8cab.json");
+const serviceAccount = require("./mongoro-8bd64-firebase-adminsdk-l2lth-604221ad6e.json");
 
 //get db url too from firebase
 admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: "https://mindinteresttestapp-default-rtdb.firebaseio.com",
+    credential: admin.credential.cert(serviceAccount)
 });
 
 
@@ -15,7 +14,6 @@ exports.firebaseNotification = (payload) => {
         priority: "high",
         timeToLive: 60 * 60 * 24,
     };
-
     admin
         .messaging()
         .send(payload)
