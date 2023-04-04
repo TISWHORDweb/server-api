@@ -133,6 +133,31 @@ router.put('/edit', verify, async (req, res) => {
 
 })
 
+router.put('/close', verify, async (req, res) => {
+    let body = JSON.parse(JSON.stringify(req.body));
+    let { id } = body;
+
+    try {
+        if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?' })
+
+        await TicketModel.updateOne({ _id: id }, {status: 'Closed ticket'}).then(async () => {
+            let tickets = await TicketModel.findOne({ _id: id })
+            return res.status(200).json({
+                msg: 'Ticket Edited Successfully ',
+                tickets: tickets,
+                status: 200
+            })
+        }).catch((err) => {
+            res.send(err)
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry ',
+            status: 500
+        })
+    }
+})
 
 
 

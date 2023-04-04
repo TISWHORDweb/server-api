@@ -1,7 +1,7 @@
 const admin = require("firebase-admin");
 
 //download sdk from firebase
-const serviceAccount = require("./mongoro-8bd64-firebase-adminsdk-l2lth-604221ad6e.json");
+const serviceAccount = require("./mongoro-8bd64-firebase-adminsdk-l2lth-b9799fe295.json");
 
 //get db url too from firebase
 admin.initializeApp({
@@ -25,4 +25,8 @@ exports.firebaseNotification = (payload) => {
             console.log("Error sending message:", error);
             return error
         });
+}
+
+exports.ticketID = () => {
+    return "0012" + Math.floor(1000 + Math.random() * 9000)
 }
