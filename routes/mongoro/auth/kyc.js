@@ -21,7 +21,11 @@ router.post('/', async (req, res) => {
         })
 
         await MongoroUserModel.updateOne({ _id: req.body.userId }, {  id_doc: 1  }).then(() => {
-            return res.send(details)
+            return res.status(200).json({
+                msg: 'KYC uploaded successfully',
+                data: details,
+                status: 200
+            })
         })
 
     } catch (error) {
