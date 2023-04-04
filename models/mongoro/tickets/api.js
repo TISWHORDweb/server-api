@@ -15,7 +15,7 @@ const TicketSchema=new mongoose.Schema({
     },
     status:{
         type:String,
-        default:"Open ticket"
+        default:"Open"
     },
     description:{
         type:String

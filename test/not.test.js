@@ -9,10 +9,10 @@ let payload = {
         message_kind: "type"
     },
     notification: {
-        title: "Credit Alert",
-        body: `Dear User, you have been credit $100,000,000 from Sage`,
+        title: "Hi",
+        body: `Welcome to Mongoro`,
     },
 };
 
 //Send Notification
-firebaseNotification(token,payload);
+firebaseNotification(token, payload.notification.title, payload.notification.body, payload.data);

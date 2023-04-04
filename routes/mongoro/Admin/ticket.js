@@ -61,7 +61,7 @@ router.post('/create', verify, async (req, res) => {
 
             await tickets.save().then(tickets => {
                 return res.status(200).json({
-                    msg: 'Ticket created successful ',
+                    msg: 'Ticket created successfully ',
                     tickets: tickets,
                     status: 200
                 })
@@ -137,7 +137,7 @@ router.put('/close', verify, async (req, res) => {
     try {
         if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?' })
 
-        await TicketModel.updateOne({ _id: id }, {status: 'Closed ticket'}).then(async () => {
+        await TicketModel.updateOne({ _id: id }, {status: 'Closed'}).then(async () => {
             let tickets = await TicketModel.findOne({ _id: id })
             return res.status(200).json({
                 msg: 'Ticket Edited Successfully ',

@@ -9,14 +9,24 @@ admin.initializeApp({
 });
 
 
-exports.firebaseNotification = (token, payload) => {
+exports.firebaseNotification = (token, title, body, data) => {
+
+    let payload = {
+        data,
+        notification: {
+            title,
+            body,
+            "content-available": "1"
+        }
+    };
+
     const options = {
         priority: "high",
         timeToLive: 60 * 60 * 24,
     };
     admin
         .messaging()
-        .sendToDevice(token,payload,options)
+        .sendToDevice(token, payload, options)
         .then((response) => {
             console.log("Successfully sent message:", response);
             return response
