@@ -11,7 +11,8 @@ const mongoroMpos = require('./routes/mongoro/mpos/pos')
 const mongoroAccount = require('./routes/mongoro/user/account')
 const mongoroSuperAdmin = require('./routes/mongoro/Admin/super/api')
 const mongoroTransaction = require('./routes/mongoro/Transaction/api')
-const mongoroTickets = require('./routes/mongoro/Tickets/api')
+const mongoroUserTickets = require('./routes/mongoro/user/ticket')
+const mongoroAdminTickets = require('./routes/mongoro/Admin/ticket')
 const mongoroAdminMessage = require('./routes/mongoro/Admin/other/chat/chat')
 const mongoroUserMessage = require('./routes/mongoro/user/chat')
 const mongoroU_verify = require('./routes/mongoro/user/u_verify')
@@ -55,7 +56,8 @@ app.use("/mongoro/pos", mongoroMpos)
 app.use("/mongoro/login_activity", mongoroActivity)
 app.use("/mongoro/transaction", mongoroTransaction)
 app.use("/mongoro/admin/super", mongoroSuperAdmin)
-app.use("/mongoro/tickets", mongoroTickets)
+app.use("/mongoro/user/ticket", mongoroUserTickets)
+app.use("/mongoro/admin/ticket", mongoroAdminTickets)
 app.use("/mongoro/usermessage", mongoroUserMessage)
 app.use("/mongoro/adminmessage", mongoroAdminMessage)
 app.use("/mongoro/super_admin/category", mongoroSuperAdminCategory)
@@ -79,7 +81,7 @@ mongoose .connect("mongodb+srv://mongoro:mongoro@mongoro.dbwd7pc.mongodb.net/?re
     })
     .catch((err) => console.log(err));
 
-const port = process.env.PORT || 3000; 
+const port = process.env.PORT || 3001; 
 app.listen(port, () => {
     console.log('Server is running on port '+port);
 })
