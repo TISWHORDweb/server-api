@@ -1,7 +1,7 @@
 const admin = require("firebase-admin");
 
 //download sdk from firebase
-const serviceAccount = require("./mongoro-8bd64-firebase-adminsdk-l2lth-604221ad6e.json");
+const serviceAccount = require("./mongoro-8bd64-firebase-adminsdk-l2lth-b9799fe295.json");
 
 //get db url too from firebase
 admin.initializeApp({
@@ -26,3 +26,16 @@ exports.firebaseNotification = (payload) => {
             return error
         });
 }
+
+
+
+// admin
+//     .messaging().sendToDevice(reqToken, payload, options)
+//     .then((response) => {
+//         console.log("Successfully sent message:", response.results);
+//         return response
+//     })
+//     .catch((error) => {
+//         console.log("Error sending message:", error);
+//         return error
+//     });
