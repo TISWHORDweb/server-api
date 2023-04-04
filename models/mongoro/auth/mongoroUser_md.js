@@ -107,11 +107,11 @@ const mongoroUserSchema=new mongoose.Schema({
         indemnity:{
             type:Boolean,
             default: false
-        },
-        id_doc:{
-            type:Number,
-            default: 0
-        },
+        }
+    },
+    id_doc:{
+        type:Number,
+        default: 0
     },
     widget:{
         message:{

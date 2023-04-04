@@ -122,7 +122,62 @@ router.post("/verify", async (req, res) => {
             from: 'sales@reeflimited.com',
             to: req.body.email,
             subject: 'Verification code',
-            html: `<p> Your code is <h1> ${email_code}</h1></p>`
+            html: `<!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Mongoro</title>
+                <script src="https://kit.fontawesome.com/13437b109b.js" crossorigin="anonymous"></script>
+                <link rel="preconnect" href="https://fonts.googleapis.com">
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+                <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+            </head>
+            <body>
+                <div class="wrapper" style='width:100%; table-layout: fixed; background: #fff; padding-bottom:60px; font-family: "Plus Jakarta Sans", sans-serif;'>
+                    <table class="main" width="100%">
+                        
+                        <tr>
+                            <td>
+                                <table width=100% class=sub-main>
+                                    <tr>
+                                        <td>
+                                            <table width=100%>
+                                                <tr>
+                                                    <td>
+                                                        <h3 class="header" style='color: #161616'>Welcome to Mongoro 🚀 </h3>
+                                                        <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
+                                                                Thanks for joining Mongoro. To access the dashboard, please verify your account by entering the code below and proceed to login.
+                                                            <br>
+                                                            <p style='margin:3rem 0; color: #161616; line-height: 1.5rem; font-size: 45px; text-align: center;'>
+                                                                <span><b>${email_code}</b></span>
+                                                            </p>
+                                                            <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
+                                                                <span>Thanks,</span>
+                                                            </p>
+                                                            <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
+                                                                <span><b>Support Team, Mongoro Team</b></span>
+                                                            </p>
+                                                            <hr 
+                                                                style='border: none; border-bottom: 0.6px solid #FFF7E6'
+                                                            />
+                                                            <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'>+234 09169451169</p>
+                                                            <p style='color: #666666; text-align: center; font-size: 14px;'>sales@mongoro.com</p>
+                                                            <p style='color: #666666; text-align: center; font-size: 14px;'>Space 27, Novare Mall, Wuse Zone 5, Abuja</p>
+                                                            <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'> Having trouble viewing this email? Click here to view in your browser.</p>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </body>
+            </html>`
         };
         transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
@@ -178,6 +233,85 @@ router.post("/login", async (req, res) => {
             );
 
             const ip = address.ip();
+            const timeElapsed = Date.now();
+            const today = new Date(timeElapsed);
+            const when = today.toUTCString();
+
+            let transporter = nodemailer.createTransport({
+                service: "hotmail",
+                auth: {
+                    user: 'sales@reeflimited.com',
+                    pass: 'cmcxsbpkqvkgpwmk'
+                }
+            });
+    
+            let mailOptions = {
+                from: 'sales@reeflimited.com',
+                to: req.body.email,
+                subject: 'Verification code',
+                html: `<!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Mongoro</title>
+                    <script src="https://kit.fontawesome.com/13437b109b.js" crossorigin="anonymous"></script>
+                    <link rel="preconnect" href="https://fonts.googleapis.com">
+                    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+                    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+                </head>
+                <body>
+                    <div class="wrapper" style='width:100%; table-layout: fixed; background: #fff; padding-bottom:60px; font-family: "Plus Jakarta Sans", sans-serif;'>
+                        <table class="main" width="100%">
+                            
+                            <tr>
+                                <td>
+                                    <table width=100% class=sub-main>
+                                        <tr>
+                                            <td>
+                                                <table width=100%>
+                                                    <tr>
+                                                        <td>
+                                                            <h3 class="header" style='color: #161616'>Dear ${user.surname+" "+user.first_name}, </h3>
+                                                            <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
+                                                            
+                                                                We noticed a recently sign in to your account with the IP address ${ip}, at ${when}. If this login has not originated from you, kindly send an email to support@mongoro.com, or reach us via in-app support.
+                                                            
+                                                                <br>
+                                                                <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
+                                                                    <span>Regards</span>
+                                                                </p>
+                                                                <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
+                                                                    <span><b>Support Team, Mongoro Team</b></span>
+                                                                </p>
+                                                                <hr 
+                                                                    style='border: none; border-bottom: 0.6px solid #FFF7E6'
+                                                                />
+                                                                <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'>+234 09169451169</p>
+                                                                <p style='color: #666666; text-align: center; font-size: 14px;'>sales@mongoro.com</p>
+                                                                <p style='color: #666666; text-align: center; font-size: 14px;'>Space 27, Novare Mall, Wuse Zone 5, Abuja</p>
+                                                                <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'> Having trouble viewing this email? Click here to view in your browser.</p>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </body>
+                </html>`
+            };
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log('Email sent: ' + info.response);
+                }
+            });
 
             await MongoroUserModel.updateOne({ _id: user._id }, { $set: { ip: ip, active: true } }).then(() => {
                 res.status(200).json({ msg: 'logged in successfuly ', user: user, token: accessToken, ip_address: ip, status: 200 });
