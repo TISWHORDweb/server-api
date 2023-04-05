@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const BeneficiaryModel = require("../../../models/mongoro/transaction/beneficiary")
 const verify = require("../../../verifyToken")
+const MongoroUserModel = require('../../../models/mongoro/auth/mongoroUser_md')
 
 
 router.get('/all', paginatedResults(BeneficiaryModel), (req, res) => {
@@ -48,6 +49,9 @@ router.post('/mongoro/create', async (req, res) => {
 
     if (!req.body.userId || !req.body.usertag) return res.status(402).json({ msg: 'please check the fields ' })
 
+    const Username = await MongoroUserModel.findOne({wallet_ID: req.body.usertag})
+    const image = Username.image
+    req.body.image = image
     req.body.wallet_ID = req.body.usertag
     req.body.b_type = "mongoro"
 
