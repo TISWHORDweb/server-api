@@ -103,6 +103,7 @@ router.post("/inactive/:id", async (req, res) => {
 
 
 router.put('/edit', verify, async (req, res) => {
+    req.body.user_updated_at = Date.now()
     let body = JSON.parse(JSON.stringify(req.body));
     let { id } = body;
 

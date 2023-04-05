@@ -176,7 +176,8 @@ const mongoroUserSchema=new mongoose.Schema({
             default: false
         },
     },
-    time_created:{type:Number, default:()=>Date.now()}		
+    time_created:{type:Number, default:()=>Date.now()},	
+    user_updated_at:{type:Number, default:()=>Date.now()}	
 })
 
 

@@ -407,7 +407,8 @@ router.put('/settings', async (req, res) => {
                 gender: req.body.gender,
                 date_of_birth: req.body.date_of_birth,
                 occupation: req.body.occupation,
-                setup_complete: true
+                setup_complete: true,
+                user_updated_at: Date.now()
             }
         }).then(async () => {
             return res.status(200).json({
