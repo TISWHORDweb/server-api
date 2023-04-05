@@ -103,11 +103,11 @@ const mongoroUserSchema=new mongoose.Schema({
         bvn:{
             type:Boolean,
             default: false
-        },
-        indemnity:{
-            type:Boolean,
-            default: false
         }
+    },
+    indemnity:{
+        type:Boolean,
+        default: false
     },
     id_doc:{
         type:Number,
