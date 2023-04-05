@@ -9,32 +9,33 @@ admin.initializeApp({
 });
 
 
-exports.firebaseNotification = (token, title, body, data) => {
+exports.firebaseNotification = async (token, title, body, data) => {
+    try {
 
-    let payload = {
-        data,
-        notification: {
-            title,
-            body,
-            "content-available": "1"
-        }
-    };
 
-    const options = {
-        priority: "high",
-        timeToLive: 60 * 60 * 24,
-    };
-    admin
-        .messaging()
-        .sendToDevice(token, payload, options)
-        .then((response) => {
-            console.log("Successfully sent message:", response);
-            return response
-        })
-        .catch((error) => {
-            console.log("Error sending message:", error);
-            return error
-        });
+        let payload = {
+            data,
+            notification: {
+                title,
+                body
+            },
+        };
+
+        let options = {
+            priority: "high",
+            timeToLive: 60 * 60 * 24 * 7
+        };
+
+        let sent = await admin
+            .messaging()
+            .sendToDevice(token, payload, options)
+        console.log("Successfully sent message:", sent);
+        return sent
+    } catch (e) {
+        console.log("Error sending message:", e);
+        return e
+    }
+
 }
 
 exports.ticketID = () => {
