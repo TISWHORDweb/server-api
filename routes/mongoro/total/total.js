@@ -25,7 +25,7 @@ router.get("/totals", async (req, res) => {
     //--------------------------------Deposits------------------------------
 
     //TODAY"S DEPOSIT
-    const dailyDeposit = TransferModel.aggregate([
+    const dailyDeposit = await TransferModel.aggregate([
         {
             $match: {
                 date: {
@@ -48,7 +48,7 @@ router.get("/totals", async (req, res) => {
     ])
 
     //THIS WEEK"S DEPOSIT
-    const weeklyDeposit = TransferModel.aggregate([
+    const weeklyDeposit = await TransferModel.aggregate([
         {
             $match: {
                 date: {
@@ -71,7 +71,7 @@ router.get("/totals", async (req, res) => {
     ])
 
     //THIS MONTH"S DEPOSITS
-    const monthlyDeposit = TransferModel.aggregate([
+    const monthlyDeposit = await TransferModel.aggregate([
         {
             $match: {
                 date: {
@@ -96,7 +96,7 @@ router.get("/totals", async (req, res) => {
     //--------------------------------Withdrawals------------------------------
 
     //TODAY"S WITHDRAWALS
-    const dailyWithdrawal = WithdrawModel.aggregate([
+    const dailyWithdrawal = await WithdrawModel.aggregate([
         {
             $match: {
                 date: {
@@ -118,8 +118,8 @@ router.get("/totals", async (req, res) => {
         }
     ])
 
-    //THIS WEEK"S DEPOSIT
-    const weeklyWithdrawal = TransferModel.aggregate([
+    //THIS WEEK"S WITHDRAWALS
+    const weeklyWithdrawal = await WithdrawModel.aggregate([
         {
             $match: {
                 date: {
@@ -141,8 +141,8 @@ router.get("/totals", async (req, res) => {
         }
     ])
 
-    //THIS MONTH"S DEPOSITS
-    const monthlyWithdrawal = TransferModel.aggregate([
+    //THIS MONTH"S WITHDRAWALS
+    const monthlyWithdrawal = await WithdrawModel.aggregate([
         {
             $match: {
                 date: {
