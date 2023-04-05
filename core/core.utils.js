@@ -17,7 +17,8 @@ exports.firebaseNotification = async (token, title, body, data) => {
             data,
             notification: {
                 title,
-                body
+                body,
+                color: '#6d0be5'
             },
         };
 
@@ -29,6 +30,39 @@ exports.firebaseNotification = async (token, title, body, data) => {
         let sent = await admin
             .messaging()
             .sendToDevice(token, payload, options)
+        console.log("Successfully sent message:", sent);
+        return sent
+    } catch (e) {
+        console.log("Error sending message:", e);
+        return e
+    }
+
+}
+
+exports.notify = async (token, title, body, data) => {
+    try {
+
+
+        let message = {
+            token,
+            data,
+            notification: {
+                title,
+                body
+            },
+            android: {
+                priority: "high",
+                notification: {
+                    channelId: 'channelId',
+                    priority: 'max'
+                },
+            },
+        };
+
+
+        let sent = await admin
+            .messaging()
+            .send(message)
         console.log("Successfully sent message:", sent);
         return sent
     } catch (e) {
