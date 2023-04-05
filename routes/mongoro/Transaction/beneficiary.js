@@ -34,7 +34,7 @@ function paginatedResults(model) {
         try {
             const results = await model.find().limit(limit).skip(startIndex).exec()
             let count = await BeneficiaryModel.count()
-            res.paginatedResults = {action, results ,TotalResult: count, Totalpages: Math.ceil(count / limit)}
+            res.paginatedResults = { action, results, TotalResult: count, Totalpages: Math.ceil(count / limit) }
             next()
         } catch (e) {
             res.status(500).json({ message: e.message })
@@ -42,42 +42,53 @@ function paginatedResults(model) {
     }
 }
 
+
 //CREATE
-router.post('/create', async (req, res) => {
+router.post('/mongoro/create', async (req, res) => {
 
-    if (!req.body.userId ) return res.status(402).json({ msg: 'please check the fields ?' })
+    if (!req.body.userId || !req.body.usertag) return res.status(402).json({ msg: 'please check the fields ' })
 
-    if(req.body.usertag){
     req.body.wallet_ID = req.body.usertag
-    }
-    // try {
-        // const validate = await Mpos.findOne({ business_name: req.body.business_name })
-        // if (validate) return res.status(404).json({ msg: 'This Business name is already picked !',status: 404 })
+    req.body.b_type = "mongoro"
 
-        let user = await new BeneficiaryModel(req.body)
 
-        await user.save().then(user => {
-            return res.status(200).json({
-                msg: 'Beneficiary created successful ',
-                user: user,
-                status: 200
-            })
+    let user = await new BeneficiaryModel(req.body)
+
+    await user.save().then(user => {
+        return res.status(200).json({
+            msg: 'Beneficiary created successful ',
+            user: user,
+            status: 200
         })
+    })
 
-    // } catch (error) {
-    //     res.status(500).json({
-    //         msg: 'there is an unknown error sorry !',
-    //         status: 500
-    //     })
-    // }
+})
+
+//CREATE
+router.post('/bank/create', async (req, res) => {
+
+    if (!req.body.userId ) return res.status(400).json({ msg: 'please check the fields ' })
+
+    req.body.b_type = "bank"
+
+    let user = await new BeneficiaryModel(req.body)
+
+    await user.save().then(user => {
+        return res.status(200).json({
+            msg: 'Beneficiary created successful ',
+            user: user,
+            status: 200
+        })
+    })
+
 })
 
 router.delete("/delete", async (req, res) => {
     try {
-        if (!req.body.id ) return res.status(402).json({ msg: 'provide the id ?' })
+        if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?' })
 
         await BeneficiaryModel.deleteOne({ _id: req.body.id })
-        res.status(200).json({msg:"Request deleted....",status: 200});
+        res.status(200).json({ msg: "Request deleted....", status: 200 });
     } catch (error) {
         res.status(500).json({
             msg: 'there is an unknown error sorry !',
@@ -87,11 +98,11 @@ router.delete("/delete", async (req, res) => {
 
 });
 
-router.get("/user/:id",  async (req, res) => {
+router.get("/bank/:id", async (req, res) => {
     try {
-        if (!req.params.id ) return res.status(402).json({ msg: 'provide the id ?',status: 402 })
+        if (!req.params.id) return res.status(402).json({ msg: 'provide the id ?', status: 402 })
 
-        let beneficiary = await BeneficiaryModel.find({ userId: req.params.id })
+        let beneficiary = await BeneficiaryModel.find({ userId: req.params.id, b_type:"bank" })
         res.status(200).json(beneficiary);
     } catch (err) {
         res.status(500).json({
@@ -101,9 +112,23 @@ router.get("/user/:id",  async (req, res) => {
     }
 })
 
-router.get("/:id",  async (req, res) => {
+router.get("/mongoro/:id", async (req, res) => {
     try {
-        if (!req.params.id ) return res.status(402).json({ msg: 'provide the id ?',status: 402 })
+        if (!req.params.id) return res.status(402).json({ msg: 'provide the id ?', status: 402 })
+
+        let beneficiary = await BeneficiaryModel.find({ userId: req.params.id, b_type: "mongoro" })
+        res.status(200).json(beneficiary);
+    } catch (err) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
+})
+
+router.get("/:id", async (req, res) => {
+    try {
+        if (!req.params.id) return res.status(402).json({ msg: 'provide the id ?', status: 402 })
 
         let beneficiary = await BeneficiaryModel.find({ _id: req.params.id })
         res.status(200).json(beneficiary);
@@ -115,7 +140,7 @@ router.get("/:id",  async (req, res) => {
     }
 })
 
-router.put('/edit',  async (req, res) => {
+router.put('/edit', async (req, res) => {
     let body = JSON.parse(JSON.stringify(req.body));
     let { id } = body;
 
@@ -123,7 +148,7 @@ router.put('/edit',  async (req, res) => {
     // if (validate) return res.status(404).json({ msg: 'This Business name is already picked !',status: 404 })
 
     try {
-        if (!req.body.id ) return res.status(402).json({ msg: 'provide the id ?',status: 402 })
+        if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?', status: 402 })
 
         await BeneficiaryModel.updateOne({ _id: id }, body).then(async () => {
             let user = await BeneficiaryModel.findOne({ _id: id })
