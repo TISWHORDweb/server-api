@@ -14,10 +14,12 @@ const NotificationSchema=new mongoose.Schema({
         type:String
     },
     status:{
-        type:String,
+        type:Number,
         default: 0,
     },
-
+    userId:{
+        type:Number,
+    },
 })
 
 
