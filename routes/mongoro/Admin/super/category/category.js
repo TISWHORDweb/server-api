@@ -163,9 +163,11 @@ router.delete("/delete", async (req, res) => {
 //INVITE    
 router.post("/invite", async (req, res) => {
 
-    const supers = await SuperModel.findOne({ email: req.body.super_email })
+    const supers = await SuperModel.findOne({ _id: req.body.superId })
 
     const user = await MongoroUserModel.findOne({ email: req.body.email });
+
+    const Supermail = await SuperModel.findOne({ email: req.body.email });
 
     const admin = await OtherModel.findOne({ email: req.body.email });
 
@@ -177,8 +179,10 @@ router.post("/invite", async (req, res) => {
             msg: 'you dont have access to Invite Admin',
             status: 400
         })
-    // } else if (user) {
-    //     res.status(401).json({ msg: "sorry..... This email address alreday exist as a user, Can't be used to register as Admin", status: 401 });
+    } else if (user) {
+        res.status(400).json({ msg: "sorry..... This email address alreday exist as a user, Can't be used to register as Admin", status: 400 });
+    } else if (Supermail) {
+        res.status(401).json({ msg: "sorry..... You cant invite super admin", status: 401 });
     } else if (admin) {
         res.status(401).json({ msg: "sorry..... This email address is already Invited", status: 401 });
     } else {

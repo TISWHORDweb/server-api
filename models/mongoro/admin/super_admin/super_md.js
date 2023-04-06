@@ -4,7 +4,7 @@ const SuperSchema=new mongoose.Schema({
     email:{
         type:String
     },
-    password:{
+    code:{
         type:String
     },
     token:{
