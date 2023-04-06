@@ -87,7 +87,7 @@ router.post('/create', async (req, res) => {
                                                                 Thanks for joining Mongoro. To access your dashboard, please verify your account by signing in with the button below.
                                                             <br>
                                                             <p style='margin:3rem 0; color: #161616; line-height: 1.5rem; font-size: 45px; text-align: center;'>
-                                                            <span><b>${code}</b></span>
+                                                            <span><b>${codes}</b></span>
                                                             </p>
                                                             
                                                             <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
