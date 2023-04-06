@@ -157,7 +157,7 @@ function paginatedResults(model) {
             }
         }
         try {
-            const results = await model.find().limit(limit).skip(startIndex).exec()
+            const results = await model.find().sort({_id:-1}).limit(limit).skip(startIndex).exec()
             let count = await MongoroWaitlistModel.count()
             res.paginatedResults = {action, results ,TotalResult: count, Totalpages: Math.ceil(count / limit)}
             next()

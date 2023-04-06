@@ -114,7 +114,7 @@ router.post("/", async (req, res) => {
 })
 
 
-router.get('/all', verify, paginatedResults(WithdrawModel), (req, res) => {
+router.get('/all', paginatedResults(WithdrawModel), (req, res) => {
     res.json(res.paginatedResults)
 })
 
@@ -142,9 +142,10 @@ function paginatedResults(model) {
             }
         }
         try {
-            const results = await model.find().limit(limit).skip(startIndex).exec()
+            const results = await model.find().sort({_id:-1}).limit(limit).skip(startIndex).exec()
             let count = await WithdrawModel.count()
-            res.paginatedResults = { action, results, TotalResult: count, Totalpages: Math.ceil(count / limit) }
+            const result = results.reverse()
+            res.paginatedResults = { action, result, TotalResult: count, Totalpages: Math.ceil(count / limit) }
             next()
         } catch (e) {
             res.status(500).json({ message: e.message })
