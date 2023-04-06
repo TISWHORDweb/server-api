@@ -33,7 +33,7 @@ function paginatedResults(model) {
         }
 
         try {
-            const results = await (await model.find().limit(limit).skip(startIndex).exec()).reverse()
+            const results = await (await model.find().sort({_id:-1}).limit(limit).skip(startIndex).exec()).reverse()
             let count = await NotificationModel.count()
             res.paginatedResults = {action, results, TotalResult: count, Totalpages: Math.ceil(count / limit)}
             next()

@@ -16,12 +16,12 @@ const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_K
 
 router.get("/insight/:id", async (req, res) => {
   try {
-    const lastTransaction = await TransferModel.find({ userId: req.params.id, service_type: "Transfer", status: "successful" }).limit(1).sort({$natural:-1})
-    const lastDeposit = await TransferModel.find({ userId: req.params.id, service_type: "Deposit", status: "successful" }).limit(1).sort({$natural:-1})
+    const lastTransaction = await TransferModel.find({ userId: req.params.id, service_type: "Transfer", status: "successful" }).limit(1).sort({ $natural: -1 })
+    const lastDeposit = await TransferModel.find({ userId: req.params.id, service_type: "Deposit", status: "successful" }).limit(1).sort({ $natural: -1 })
 
     return res.status(200).json({
       msg: 'User insight',
-      data:{lastDeposit,lastTransaction},
+      data: { lastDeposit, lastTransaction },
       status: 200
     })
   } catch (err) {
@@ -60,6 +60,10 @@ router.delete("/tier/delete", async (req, res) => {
 
 });
 
+//ISSUE COLUMNS
+//0 MEANS NO ISSUES, DEFAULT (VALUE = 0 )
+//1 MEANS MANUAL VERIFY
+//2 MEANS ISSUES
 
 //Treansaction
 router.post("/", async (req, res) => {
@@ -167,7 +171,7 @@ router.post("/", async (req, res) => {
     if (req.body.amount > per) {
       return res.send({ msg: `You can only send ${per} at once any amount greater than that is not accepted, Upgrade your account to have access, Thanks`, status: 400 });
     } else if (allTotal > number) {
-      return res.send({ msg: "You have reach your daily transaction limit, Upgrade your account to have access", status: 400})
+      return res.send({ msg: "You have reach your daily transaction limit, Upgrade your account to have access", status: 400 })
     } else {
       const total = +req.body.amount + +allTotal
 
@@ -245,7 +249,19 @@ router.post("/", async (req, res) => {
 
                   let transaction = new TransferModel(details)
                   transaction.save()
-                  MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(()=>{
+
+                  const transactionId = transaction._id
+
+                  axios(configs).then(function (response) {
+                    const data = response.data
+                    if (data.data.status === "FAILED") {
+                      TransferModel.updateOne({ _id: transactionId }, { $set: { issue: 1 } }).then(() => {
+                        console.log("Changed successful to failed transaction")
+                      })
+                    }
+                  })
+
+                  MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(() => {
                     return res.status(200).json({
                       msg: 'Transaction is Successful',
                       data,
@@ -264,11 +280,11 @@ router.post("/", async (req, res) => {
                       message: "Transaction failed",
                     });
                   })
-                  
+
                 } else if (data.data.status === "PENDING") {
                   console.log("PENDING")
 
-                  MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(()=>{
+                  MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(() => {
                     return res.status(200).json({
                       msg: 'Transaction is progress',
                       data,
@@ -295,25 +311,38 @@ router.post("/", async (req, res) => {
 
                   const transId = transaction._id
 
+                  TransferModel.updateOne({ _id: transId }, { $set: { issue: 2 } }).then(() => {
+                    console.log("Changed successful to failed transaction")
+                  })
+
                   var task = cron.schedule('* * * * *', () => {
                     axios(configs).then(function (response) {
                       const data = response.data
 
                       if (data.data.status === "SUCCESSFUL") {
-                       
-                        MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(()=>{
-                          TransferModel.updateOne({ _id: transId}, { $set: {status:"successful"}}).then(()=>{
-                          console.log(transId)
-                          console.log("successful")
+
+                        axios(configs).then(function (response) {
+                          const data = response.data
+                          if (data.data.status === "FAILED") {
+                            TransferModel.updateOne({ _id: transId }, { $set: { issue: 1 } }).then(() => {
+                              console.log("Changed successful to failed transaction")
+                            })
+                          }
                         })
+
+                        MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(() => {
+                          TransferModel.updateOne({ _id: transId }, { $set: { status: "successful", issue: 0  } }).then(() => {
+                            console.log(transId)
+                            console.log("successful")
+                          })
                         })
                         task.stop();
                       } else if (data.data.status === "FAILED") {
-                        MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: oldAmount, wallet_updated_at: Date.now() } }).then(()=>{
-                          TransferModel.updateOne({ _id: transId}, { $set: {status:"failed"}}).then(()=>{
-                          console.log(transId)
-                          console.log("failed")
-                        })
+                        MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: oldAmount, wallet_updated_at: Date.now() } }).then(() => {
+                          TransferModel.updateOne({ _id: transId }, { $set: { status: "failed", issue: 0 } }).then(() => {
+                            console.log(transId)
+                            console.log("failed")
+                          })
                         })
                         task.stop();
                       }
@@ -326,8 +355,8 @@ router.post("/", async (req, res) => {
 
                 } else if (data.data.status === "NEW") {
                   console.log("NEW")
-                  
-                  MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(()=>{
+
+                  MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(() => {
                     return res.status(200).json({
                       msg: 'Transaction is progress',
                       data,
@@ -354,26 +383,39 @@ router.post("/", async (req, res) => {
 
                   const transId = transaction._id
 
+                  TransferModel.updateOne({ _id: transId }, { $set: { issue: 2 } }).then(() => {
+                    console.log("Changed successful to failed transaction")
+                  })
+
                   var task = cron.schedule('* * * * *', () => {
                     axios(configs).then(function (response) {
                       const data = response.data
                       console.log(data)
 
                       if (data.data.status === "SUCCESSFUL") {
-                       
-                        MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(()=>{
-                          TransferModel.updateOne({ _id: transId}, { $set: {status:"successful"}}).then(()=>{
-                          console.log(transId)
-                          console.log("successful")
+
+                        axios(configs).then(function (response) {
+                          const data = response.data
+                          if (data.data.status === "FAILED") {
+                            TransferModel.updateOne({ _id: transId }, { $set: { issue: 1 } }).then(() => {
+                              console.log("Changed successful to failed transaction")
+                            })
+                          }
                         })
+
+                        MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(() => {
+                          TransferModel.updateOne({ _id: transId }, { $set: { status: "successful", issue: 0 } }).then(() => {
+                            console.log(transId)
+                            console.log("successful")
+                          })
                         })
                         task.stop();
                       } else if (data.data.status === "FAILED") {
-                        MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: oldAmount, wallet_updated_at: Date.now() } }).then(()=>{
-                          TransferModel.updateOne({ _id: transId}, { $set: {status:"failed"}}).then(()=>{
-                          console.log(transId)
-                          console.log("failed")
-                        })
+                        MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: oldAmount, wallet_updated_at: Date.now() } }).then(() => {
+                          TransferModel.updateOne({ _id: transId }, { $set: { status: "failed", issue: 0 } }).then(() => {
+                            console.log(transId)
+                            console.log("failed")
+                          })
                         })
                         task.stop();
                       }
@@ -466,7 +508,7 @@ function paginatedResults(model) {
     }
 
     try {
-      const results = await model.find().sort({_id:-1}).limit(limit).skip(startIndex).exec()
+      const results = await model.find().sort({ _id: -1 }).limit(limit).skip(startIndex).exec()
       let count = await TransferModel.count()
       res.paginatedResults = { action, results, TotalResult: count, Totalpages: Math.ceil(count / limit) }
       next()
@@ -506,10 +548,94 @@ function paginatedResult(model) {
     }
 
     try {
-      const result = await model.find({service_type:"Transfer"})
-      const results = await model.find({service_type:"Transfer"}).sort({_id:-1}).limit(limit).skip(startIndex).exec()
+      const result = await model.find({ service_type: "Transfer" })
+      const results = await model.find({ service_type: "Transfer" }).sort({ _id: -1 }).limit(limit).skip(startIndex).exec()
       let count = await result.length
       res.paginatedResult = { action, results, TotalResult: count, Totalpages: Math.ceil(count / limit) }
+      next()
+    } catch (e) {
+      res.status(500).json({ message: e.message })
+    }
+  }
+}
+
+
+//ALL MANUAL WITHDRAW
+router.get('/withdraw/manual/all', paginatedResullt(TransferModel), (req, res) => {
+  res.json(res.paginatedResullt)
+})
+
+function paginatedResullt(model) {
+  return async (req, res, next) => {
+    const page = parseInt(req.query.page)
+    const limit = parseInt(req.query.limit)
+
+    const startIndex = (page - 1) * limit
+    const endIndex = page * limit
+
+    const action = {}
+
+    if (endIndex < await model.countDocuments().exec()) {
+      action.next = {
+        page: page + 1,
+        limit: limit
+      }
+    }
+
+    if (startIndex > 0) {
+      action.previous = {
+        page: page - 1,
+        limit: limit
+      }
+    }
+
+    try {
+      const result = await model.find({ service_type: "Transfer", issue: 1 })
+      const results = await model.find({ service_type: "Transfer", issue: 1 }).sort({ _id: -1 }).limit(limit).skip(startIndex).exec()
+      let count = await result.length
+      res.paginatedResullt = { action, results, TotalResult: count, Totalpages: Math.ceil(count / limit) }
+      next()
+    } catch (e) {
+      res.status(500).json({ message: e.message })
+    }
+  }
+}
+
+
+//ALL ISSUE WITHDRAW
+router.get('/withdraw/issue/all', paginatedResullts(TransferModel), (req, res) => {
+  res.json(res.paginatedResullts)
+})
+
+function paginatedResullts(model) {
+  return async (req, res, next) => {
+    const page = parseInt(req.query.page)
+    const limit = parseInt(req.query.limit)
+
+    const startIndex = (page - 1) * limit
+    const endIndex = page * limit
+
+    const action = {}
+
+    if (endIndex < await model.countDocuments().exec()) {
+      action.next = {
+        page: page + 1,
+        limit: limit
+      }
+    }
+
+    if (startIndex > 0) {
+      action.previous = {
+        page: page - 1,
+        limit: limit
+      }
+    }
+
+    try {
+      const result = await model.find({ service_type: "Transfer", issue: 2 })
+      const results = await model.find({ service_type: "Transfer", issue: 2 }).sort({ _id: -1 }).limit(limit).skip(startIndex).exec()
+      let count = await result.length
+      res.paginatedResullts = { action, results, TotalResult: count, Totalpages: Math.ceil(count / limit) }
       next()
     } catch (e) {
       res.status(500).json({ message: e.message })
@@ -548,8 +674,8 @@ function paginatedResultt(model) {
     }
 
     try {
-      const result = await model.find({service_type:"Deposit"})
-      const results = await model.find({service_type:"Deposit"}).sort({_id:-1}).limit(limit).skip(startIndex).exec()
+      const result = await model.find({ service_type: "Deposit" })
+      const results = await model.find({ service_type: "Deposit" }).sort({ _id: -1 }).limit(limit).skip(startIndex).exec()
       let count = await result.length
       res.paginatedResultt = { action, results, TotalResult: count, Totalpages: Math.ceil(count / limit) }
       next()
@@ -590,8 +716,8 @@ function paginatedResultss(model) {
     }
 
     try {
-      const result = await model.find({service_type:"Bills"})
-      const results = await model.find({service_type:"Bills"}).sort({_id:-1}).limit(limit).skip(startIndex).exec()
+      const result = await model.find({ service_type: "Bills" })
+      const results = await model.find({ service_type: "Bills" }).sort({ _id: -1 }).limit(limit).skip(startIndex).exec()
       let count = await result.length
       res.paginatedResultss = { action, results, TotalResult: count, Totalpages: Math.ceil(count / limit) }
       next()
@@ -848,6 +974,8 @@ router.post("/bills", async (req, res) => {
 
   const tid = "00" + Math.floor(1000000 + Math.random() * 9000000)
 
+  req.body.amount = parseInt(req.body.amount)
+
   const users = await MongoroUserModel.find({ _id: req.body.userId });
   const bytes = CryptoJS.AES.decrypt(users[0].pin, process.env.SECRET_KEY);
   const originalPin = bytes.toString(CryptoJS.enc.Utf8);
@@ -880,17 +1008,17 @@ router.post("/bills", async (req, res) => {
     const resultt = user[0].blocked
 
     if (resultt === true) {
-      res.status(403).json({ msg: "Sorry your account is blocked" })
+      res.status(400).json({ msg: "Sorry your account is blocked" })
     } else if (value === true) {
       res.status(400).json({ msg: "Sorry service temporarily unavailable", code: 400 })
     } else if (originalPin !== req.body.pin) {
-      res.status(401).json({ msg: 'Wrong pin ', status: 401 })
+      res.status(400).json({ msg: 'Wrong pin ', status: 400 })
     } else if (oldAmount < req.body.amount) {
-      res.status(401).json({ msg: "Insufficient funds", status: 401 });
+      res.status(400).json({ msg: "Insufficient funds", status: 400 });
     } else if (oldAmount < 100) {
-      res.status(401).json({ msg: "you dont have enough money", status: 401 });
+      res.status(400).json({ msg: "you dont have enough money", status: 400 });
     } else if (req.body.amount < 100) {
-      res.status(401).json({ msg: "you cant send any have money lower than 100", status: 401 });
+      res.status(400).json({ msg: "you cant send any have money lower than 100", status: 400 });
     } else {
 
 
@@ -956,70 +1084,70 @@ router.post("/bills", async (req, res) => {
 
 
 ////OTP 
-router.post("/otp", async (req, res) => {
+// router.post("/otp", async (req, res) => {
 
-  var data = JSON.stringify({
-    "length": 7,
-    "customer": {
-      "name": "Emmanuel",
-      "email": "e.batimehin@gmail.com",
-      "phone": "2348120963057"
-    },
-    "sender": "Mongoro",
-    "send": true,
-    "medium": [
-      "email",
-      "sms"
-    ],
-    "expiry": 5
-  });
+//   var data = JSON.stringify({
+//     "length": 7,
+//     "customer": {
+//       "name": "Emmanuel",
+//       "email": "e.batimehin@gmail.com",
+//       "phone": "2348120963057"
+//     },
+//     "sender": "Mongoro",
+//     "send": true,
+//     "medium": [
+//       "email",
+//       "sms"
+//     ],
+//     "expiry": 5
+//   });
 
-  var config = {
-    method: 'post',
-    url: 'https://api.flutterwave.com/v3/otps',
-    headers: {
-      'Authorization': `Bearer ${process.env.FLW_SECRET_KEY}`,
-      'Content-Type': 'application/json'
-    },
-    data: data
-  };
+//   var config = {
+//     method: 'post',
+//     url: 'https://api.flutterwave.com/v3/otps',
+//     headers: {
+//       'Authorization': `Bearer ${process.env.FLW_SECRET_KEY}`,
+//       'Content-Type': 'application/json'
+//     },
+//     data: data
+//   };
 
-  axios(config)
-    .then(function (response) {
-      console.log(JSON.stringify(response.data));
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
-
-
-})
+//   axios(config)
+//     .then(function (response) {
+//       console.log(JSON.stringify(response.data));
+//     })
+//     .catch(function (error) {
+//       console.log(error);
+//     });
 
 
-router.post("/verify_otp", async (req, res) => {
-
-  var data = JSON.stringify({
-    "otp": "481208"
-  });
-
-  var config = {
-    method: 'post',
-    url: `https://api.flutterwave.com/v3/otps/${req.params.reference}/validate`,
-    headers: {
-      'Authorization': `Bearer ${process.env.FLW_SECRET_KEY}`,
-      'Content-Type': 'application/json'
-    },
-    data: data
-  };
-
-  axios(config)
-    .then(function (response) {
-      console.log(JSON.stringify(response.data));
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+// })
 
 
-})
+// router.post("/verify_otp", async (req, res) => {
+
+//   var data = JSON.stringify({
+//     "otp": "481208"
+//   });
+
+//   var config = {
+//     method: 'post',
+//     url: `https://api.flutterwave.com/v3/otps/${req.params.reference}/validate`,
+//     headers: {
+//       'Authorization': `Bearer ${process.env.FLW_SECRET_KEY}`,
+//       'Content-Type': 'application/json'
+//     },
+//     data: data
+//   };
+
+//   axios(config)
+//     .then(function (response) {
+//       console.log(JSON.stringify(response.data));
+//     })
+//     .catch(function (error) {
+//       console.log(error);
+//     });
+
+
+// })
 

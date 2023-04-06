@@ -60,7 +60,10 @@ const TransferSchema=new mongoose.Schema({
         type:Boolean,
         default: false,
     },
-
+    issue:{
+        type:Number,
+        default: 0
+    },
 })
 
 
