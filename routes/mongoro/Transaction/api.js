@@ -138,8 +138,8 @@ router.post("/", async (req, res) => {
   }
 
   if (type === "two") {
-    number = 1000000
-    per = 100000
+    number = 5000000
+    per = 1000000
   }
   if (type === "three") {
     number = 10000000
