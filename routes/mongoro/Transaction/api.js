@@ -105,7 +105,7 @@ router.post("/", async (req, res) => {
   if (user) {
     pin = user.pin
     resultt = user.blocked
-    const bytes = CryptoJS.AES.decrypt(pin, process.env.SECRET_KEY);
+    const bytes = CryptoJS.AES.decrypt(pin, process.env.SECRET_KEY); 
     originalPin = bytes.toString(CryptoJS.enc.Utf8);
   } else {
     return res.status(400).json({ msg: 'User not found', status: 400 })

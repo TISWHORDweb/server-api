@@ -49,7 +49,7 @@ router.post('/mongoro/create', async (req, res) => {
 
     if (!req.body.userId || !req.body.usertag) return res.status(402).json({ msg: 'please check the fields ' })
 
-    const Username = await MongoroUserModel.findOne({_id: req.body.userId})
+    const Username = await MongoroUserModel.findOne({wallet_ID: req.body.usertag})
     const image = Username.image
     req.body.image = image
     req.body.wallet_ID = req.body.usertag
