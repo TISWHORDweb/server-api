@@ -37,11 +37,6 @@ router.get("/totals", async (req, res) => {
         {
             $group: {
                 _id: null,
-                "dailyDeposit": {
-                    '$sum': {
-                        '$convert': {'input': '$amount', 'to': 'int'}
-                    }
-                },
                 total: {$sum: "$amount"}
             }
         }
@@ -60,11 +55,6 @@ router.get("/totals", async (req, res) => {
         {
             $group: {
                 _id: null,
-                "weeklyDeposit": {
-                    '$sum': {
-                        '$convert': {'input': '$amount', 'to': 'int'}
-                    }
-                },
                 total: {$sum: "$amount"}
             }
         }
@@ -83,11 +73,6 @@ router.get("/totals", async (req, res) => {
         {
             $group: {
                 _id: null,
-                "monthlyDeposit": {
-                    '$sum': {
-                        '$convert': {'input': '$amount', 'to': 'int'}
-                    }
-                },
                 total: {$sum: "$amount"}
             }
         }
@@ -108,11 +93,6 @@ router.get("/totals", async (req, res) => {
         {
             $group: {
                 _id: null,
-                "dailyWithdrawal": {
-                    '$sum': {
-                        '$convert': {'input': '$amount', 'to': 'int'}
-                    }
-                },
                 total: {$sum: "$amount"}
             }
         }
@@ -131,11 +111,6 @@ router.get("/totals", async (req, res) => {
         {
             $group: {
                 _id: null,
-                "weeklyWithdrawal": {
-                    '$sum': {
-                        '$convert': {'input': '$amount', 'to': 'int'}
-                    }
-                },
                 total: {$sum: "$amount"}
             }
         }
@@ -154,11 +129,6 @@ router.get("/totals", async (req, res) => {
         {
             $group: {
                 _id: null,
-                "monthlyWithdrawal": {
-                    '$sum': {
-                        '$convert': {'input': '$amount', 'to': 'int'}
-                    }
-                },
                 total: {$sum: "$amount"}
             }
         }

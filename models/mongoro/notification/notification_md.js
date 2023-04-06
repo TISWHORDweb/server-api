@@ -18,7 +18,7 @@ const NotificationSchema=new mongoose.Schema({
         default: 0,
     },
     userId:{
-        type:Number,
+        type:String,
     },
 })
 
