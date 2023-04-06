@@ -12,32 +12,51 @@ router.get("/totals", async (req, res) => {
     /*
     Totals based on dates
      */
+    const oneDayAgoTimeStamp = Date.now() - (24 * 60 * 60 * 1000);
+    const oneWeekAgoTimeStamp = Date.now() - (7 * 24 * 60 * 60 * 1000);
+    const oneMonthAgoTimeStamp = Date.now() - (30 * 24 * 60 * 60 * 1000);
 
-    const currentDate = new Date();
-
-    const startOfWeek = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - currentDate.getDay());
-    const endOfWeek = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - currentDate.getDay() + 7);
-
-    const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-    const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
 
     //--------------------------------Deposits------------------------------
+
+    const totalDeposit = await TransferModel.aggregate([
+        {
+            $match: {
+                service_type: "Deposit",
+            }
+        },
+
+        {
+            $group: {
+                _id: null,
+                "total": {
+                    '$sum': {
+                        '$convert': {'input': '$amount', 'to': 'int'}
+                    }
+                }
+            }
+        }
+    ])
 
     //TODAY"S DEPOSIT
     const dailyDeposit = await TransferModel.aggregate([
         {
             $match: {
-                date: {
-                    $gte: new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()),
-                    $lt: new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1)
-                },
-                service_type: "Deposit"
+                service_type: "Deposit",
+                Date: {
+                    $gte: oneDayAgoTimeStamp
+                }
             }
         },
+
         {
             $group: {
                 _id: null,
-                total: {$sum: "$amount"}
+                "total": {
+                    '$sum': {
+                        '$convert': {'input': '$amount', 'to': 'int'}
+                    }
+                }
             }
         }
     ])
@@ -46,9 +65,8 @@ router.get("/totals", async (req, res) => {
     const weeklyDeposit = await TransferModel.aggregate([
         {
             $match: {
-                date: {
-                    $gte: startOfWeek,
-                    $lt: endOfWeek
+                Date: {
+                    $gte: oneWeekAgoTimeStamp
                 },
                 service_type: "Deposit"
             }
@@ -56,7 +74,11 @@ router.get("/totals", async (req, res) => {
         {
             $group: {
                 _id: null,
-                total: {$sum: "$amount"}
+                "Total": {
+                    '$sum': {
+                        '$convert': {'input': '$amount', 'to': 'int'}
+                    }
+                }
             }
         }
     ])
@@ -65,9 +87,8 @@ router.get("/totals", async (req, res) => {
     const monthlyDeposit = await TransferModel.aggregate([
         {
             $match: {
-                date: {
-                    $gte: startOfMonth,
-                    $lt: endOfMonth
+                Date: {
+                    $gte: oneMonthAgoTimeStamp
                 },
                 service_type: "Deposit"
             }
@@ -75,81 +96,194 @@ router.get("/totals", async (req, res) => {
         {
             $group: {
                 _id: null,
-                total: {$sum: "$amount"}
+                "Total": {
+                    '$sum': {
+                        '$convert': {'input': '$amount', 'to': 'int'}
+                    }
+                }
             }
         }
     ])
 
     //--------------------------------Withdrawals------------------------------
 
+    const totalWithdrawal = await TransferModel.aggregate([
+        {
+            $match: {
+                service_type: "Transfer",
+            }
+        },
+
+        {
+            $group: {
+                _id: null,
+                "total": {
+                    '$sum': {
+                        '$convert': {'input': '$amount', 'to': 'int'}
+                    }
+                }
+            }
+        }
+    ])
+
     //TODAY"S WITHDRAWALS
-    // const dailyWithdrawal = await WithdrawModel.aggregate([
-    //     {
-    //         $match: {
-    //             date: {
-    //                 $gte: new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()),
-    //                 $lt: new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1)
-    //             }
-    //         }
-    //     },
-    //     {
-    //         $group: {
-    //             _id: null,
-    //             "dailyWithdrawal": {
-    //                 '$sum': {
-    //                     '$convert': {'input': '$amount', 'to': 'int'}
-    //                 }
-    //             },
-    //             total: {$sum: "$amount"}
-    //         }
-    //     }
-    // ])
+    const dailyWithdrawal = await TransferModel.aggregate([
+        {
+            $match: {
+                service_type: "Transfer",
+                Date: {
+                    $gte: oneDayAgoTimeStamp
+                }
+            }
+        },
 
-    //THIS WEEK"S WITHDRAWALS
-    // const weeklyWithdrawal = await WithdrawModel.aggregate([
-    //     {
-    //         $match: {
-    //             date: {
-    //                 $gte: startOfWeek,
-    //                 $lt: endOfWeek
-    //             }
-    //         }
-    //     },
-    //     {
-    //         $group: {
-    //             _id: null,
-    //             "weeklyWithdrawal": {
-    //                 '$sum': {
-    //                     '$convert': {'input': '$amount', 'to': 'int'}
-    //                 }
-    //             },
-    //             total: {$sum: "$amount"}
-    //         }
-    //     }
-    // ])
+        {
+            $group: {
+                _id: null,
+                "total": {
+                    '$sum': {
+                        '$convert': {'input': '$amount', 'to': 'int'}
+                    }
+                }
+            }
+        }
+    ])
 
-    //THIS MONTH"S WITHDRAWALS
-    // const monthlyWithdrawal = await WithdrawModel.aggregate([
-    //     {
-    //         $match: {
-    //             date: {
-    //                 $gte: startOfMonth,
-    //                 $lt: endOfMonth
-    //             }
-    //         }
-    //     },
-    //     {
-    //         $group: {
-    //             _id: null,
-    //             "monthlyWithdrawal": {
-    //                 '$sum': {
-    //                     '$convert': {'input': '$amount', 'to': 'int'}
-    //                 }
-    //             },
-    //             total: {$sum: "$amount"}
-    //         }
-    //     }
-    // ])
+    // THIS WEEK"S WITHDRAWALS
+    const weeklyWithdrawal = await TransferModel.aggregate([
+        {
+            $match: {
+                service_type: "Transfer",
+                Date: {
+                    $gte: oneWeekAgoTimeStamp
+                }
+            }
+        },
+
+        {
+            $group: {
+                _id: null,
+                "total": {
+                    '$sum': {
+                        '$convert': {'input': '$amount', 'to': 'int'}
+                    }
+                }
+            }
+        }
+    ])
+
+    // THIS MONTH"S WITHDRAWALS
+    const monthlyWithdrawal = await TransferModel.aggregate([
+        {
+            $match: {
+                service_type: "Transfer",
+                Date: {
+                    $gte: oneMonthAgoTimeStamp
+                }
+            }
+        },
+
+        {
+            $group: {
+                _id: null,
+                "total": {
+                    '$sum': {
+                        '$convert': {'input': '$amount', 'to': 'int'}
+                    }
+                }
+            }
+        }
+    ])
+
+    //--------------------------------Bills------------------------------
+
+    const totalBill = await TransferModel.aggregate([
+        {
+            $match: {
+                service_type: "Bills",
+            }
+        },
+
+        {
+            $group: {
+                _id: null,
+                "total": {
+                    '$sum': {
+                        '$convert': {'input': '$amount', 'to': 'int'}
+                    }
+                }
+            }
+        }
+    ])
+
+    //TODAY"S BILLS
+    const dailyBill = await TransferModel.aggregate([
+        {
+            $match: {
+                service_type: "Bills",
+                Date: {
+                    $gte: oneDayAgoTimeStamp
+                }
+            }
+        },
+
+        {
+            $group: {
+                _id: null,
+                "total": {
+                    '$sum': {
+                        '$convert': {'input': '$amount', 'to': 'int'}
+                    }
+                }
+            }
+        }
+    ])
+
+    // THIS WEEK"S BILLS
+    const weeklyBill = await TransferModel.aggregate([
+        {
+            $match: {
+                service_type: "Bills",
+                Date: {
+                    $gte: oneWeekAgoTimeStamp
+                }
+            }
+        },
+
+        {
+            $group: {
+                _id: null,
+                "total": {
+                    '$sum': {
+                        '$convert': {'input': '$amount', 'to': 'int'}
+                    }
+                }
+            }
+        }
+    ])
+
+    // THIS MONTH"S BILLS
+    const monthlyBill = await TransferModel.aggregate([
+        {
+            $match: {
+                service_type: "Bills",
+                Date: {
+                    $gte: oneMonthAgoTimeStamp
+                }
+            }
+        },
+
+        {
+            $group: {
+                _id: null,
+                "total": {
+                    '$sum': {
+                        '$convert': {'input': '$amount', 'to': 'int'}
+                    }
+                }
+            }
+        }
+    ])
 
     /*
     END Totals based on dates
@@ -160,13 +294,16 @@ router.get("/totals", async (req, res) => {
 
     //TOTAL TRANSACTION
     const transaction = await TransferModel.aggregate([{
+        $match: {
+            service_type: "Transfer"
+        }
+    }, {
         $group: {
             _id: null,
             "TotalTransaction": {
                 '$sum': {
                     '$convert': {'input': '$amount', 'to': 'int'}
-                },
-                service_type: "Transfer"
+                }
             }
         }
     }])
@@ -178,8 +315,7 @@ router.get("/totals", async (req, res) => {
             "TotalSaving": {
                 '$sum': {
                     '$convert': {'input': '$wallet_balance', 'to': 'int'}
-                },
-                service_type: "Transfer"
+                }
             }
         }
     }])
@@ -197,12 +333,18 @@ router.get("/totals", async (req, res) => {
     res.status(200).json({
         Total_user: count,
         transaction,
+        totalDeposit,
         dailyDeposit,
         weeklyDeposit,
         monthlyDeposit,
-        // dailyWithdrawal,
-        // weeklyWithdrawal,
-        // monthlyWithdrawal,
+        totalWithdrawal,
+        dailyWithdrawal,
+        weeklyWithdrawal,
+        monthlyWithdrawal,
+        totalBill,
+        dailyBill,
+        weeklyBill,
+        monthlyBill,
         saving,
         TotalActive: active.length,
         TotalInactive: inactive.length,
