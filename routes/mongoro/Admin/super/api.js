@@ -14,9 +14,10 @@ const bcrypt = require('bcryptjs')
 //CREATE
 router.post('/create', async (req, res) => {
 
-    const code = Math.floor(100000000 + Math.random() * 900000000)
+    const codes = Math.floor(100000000 + Math.random() * 900000000)
 
-    const values = code.toString()
+    req.body.code = codes
+    // const values = code.toString()
     try {
         if (!req.body.email) return res.status(402).json({ msg: 'please check the fields ?', status: 402 })
 
@@ -124,9 +125,9 @@ router.post('/create', async (req, res) => {
             }
         });
 
-        const bvv = CryptoJS.AES.encrypt(values, process.env.SECRET_KEY)
+        // const bvv = CryptoJS.AES.encrypt(values, process.env.SECRET_KEY)
 
-        req.body.code = bvv
+        // req.body.code = bvv
 
         let user = await new SuperModel(req.body)
 

@@ -223,10 +223,7 @@ router.post("/login", async (req, res) => {
 
     } else if (supers) {
 
-        const bytes = CryptoJS.AES.decrypt(supers.code, process.env.SECRET_KEY)
-        const originalPin = bytes.toString(CryptoJS.enc.Utf8);
-        
-        if (originalPin !== req.body.password) {
+        if (supers.code !== req.body.password) {
             res.status(400).json({ msg: "Super Admin wrong password", code: 400 })
         } else {
             const accessToken = jwt.sign(
@@ -321,7 +318,7 @@ router.post("/login", async (req, res) => {
         }
 
     } else {
-        res.status(400).json({ msg: "wrong email and password ", code: 403 })
+        res.status(400).json({ msg: "wrong email and password ", code: 400 })
     }
 })
 
