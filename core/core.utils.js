@@ -75,26 +75,25 @@ exports.pushNotification = async (token, title, body, data) => {
 
 exports.notify = async (username, title, body, data) => {
     try {
-        // registration_token
+        // let token = 'dy42NkNoS-eqhGS50UDPSd:APA91bHbAgJWBHSV9wix5b5F8CPqjgChMG3yqPhYpjPXzth6PIfWmV-6-nSYK4PVTJDfQZP1rL6fY3X3afWT-EcfBuBb_B-i1LJ28-ZYiv_tU97MCVrePXuQf7xwBnRxE8EKCN540DLK'
 
         const user = await MongoroUserModel.findOne({Wallet_ID: username})
-
         if (user) {
 
             let note = {
-                userId: user.Wallet_ID,
-                to: user.Wallet_ID,
+                userId: username,
+                to: user.email,
                 title,
                 body
             }
 
             let notification = await new NotificationModel(note)
-
+            // console.log(user.registration_token);
             let not = await notification.save()
-            console.log(not)
 
-            let sent = await pushNotification(user.registration_token, title, body, data)
-            console.log("Successfully sent message:", sent);
+            let sent = await this.pushNotification(user.registration_token, title, body, data)
+            // let sent = await this.pushNotification(token, title, body, data)
+            console.log("Successfully sent message:", not);
         }
     } catch (e) {
         console.log("Error sending message:", e);

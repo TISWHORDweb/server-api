@@ -18,4 +18,4 @@ let notification = {
 
 //Send Notification
 // firebaseNotification(token, notification.title, notification.body, data).then(r => log(r));
-notify('@Jaysage', notification.title, notification.body, data).then(r => console.log(r));
+notify('@voo', notification.title, notification.body, data).then(r => console.log(r));

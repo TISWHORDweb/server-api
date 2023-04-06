@@ -1,5 +1,5 @@
 const express = require("express")
-const app =express()
+const app = express()
 const cors = require('cors')
 const bodyParser = require('body-parser')
 const mongoroWaitlistRoute = require('./routes/mongoro/waitlist/api')
@@ -20,6 +20,7 @@ const mongoroSuperAdminCategory = require('./routes/mongoro/Admin/super/category
 const mongoroAppmessage = require('./routes/mongoro/Admin/other/broadcast/appmessage')
 const mongoroStatement = require('./routes/mongoro/Transaction/statement')
 const mongoroWebhook = require('./routes/mongoro/Transaction/webhook')
+const mongoroNotification = require('./routes/mongoro/Notifications/api')
 
 const mongoroState = require('./routes/state')
 const mongoroAdmin = require('./routes/mongoro/Admin/admin')
@@ -28,18 +29,18 @@ const mongoroOther = require('./routes/mongoro/Admin/other/other_admin')
 const mongoroTotal = require('./routes/mongoro/total/total')
 const mongoroActivity = require('./routes/mongoro/user/loginActivity')
 const mongoroBenefiaciary = require('./routes/mongoro/Transaction/beneficiary')
-const mongoose=require('mongoose')
+const mongoose = require('mongoose')
 
 // const dotenv = require("dotenv")
 // dotenv.config()
 
 // app.use(cors({"origin":"*"}))
-app.use(cors({"origin":"*"}))
+app.use(cors({"origin": "*"}))
 
 // app.use(function(req, res, next) {
 //     res.header("Access-Control-Allow-Origin", '*');
 //     res.header("mode","no-cors")
- 
+
 // })
 
 app.use(bodyParser.json())
@@ -70,18 +71,19 @@ app.use("/mongoro/admin", mongoroAdmin)
 app.use("/mongoro/state", mongoroState)
 app.use("/mongoro/statement", mongoroStatement)
 app.use("/mongoro/beneficiary", mongoroBenefiaciary)
+app.use("/mongoro/notification", mongoroNotification)
 
 
 mongoose.set("strictQuery", true);
-mongoose .connect("mongodb+srv://mongoro:mongoro@mongoro.dbwd7pc.mongodb.net/?retryWrites=true&w=majority")
+mongoose.connect("mongodb+srv://mongoro:mongoro@mongoro.dbwd7pc.mongodb.net/?retryWrites=true&w=majority")
     // .connect(process.env.MONGO_URL)
     .then(() => {
         console.log("Database Connected")
     })
     .catch((err) => console.log(err));
 
-const port = process.env.PORT || 3001; 
+const port = process.env.PORT || 3001;
 app.listen(port, () => {
-    console.log('Server is running on port '+port);
+    console.log('Server is running on port ' + port);
 })
 
