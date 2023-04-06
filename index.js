@@ -21,6 +21,7 @@ const mongoroAppmessage = require('./routes/mongoro/Admin/other/broadcast/appmes
 const mongoroStatement = require('./routes/mongoro/Transaction/statement')
 const mongoroWebhook = require('./routes/mongoro/Transaction/webhook')
 const mongoroNotification = require('./routes/mongoro/Notifications/api')
+const mongoroRange = require('./routes/mongoro/range/range')
 
 const mongoroState = require('./routes/state')
 const mongoroAdmin = require('./routes/mongoro/Admin/admin')

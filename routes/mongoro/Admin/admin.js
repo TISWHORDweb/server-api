@@ -135,6 +135,8 @@ router.post("/login", async (req, res) => {
                     { expiresIn: "5h" }
                 );
 
+                const timeElapsed = Date.now();
+                const today = new Date(timeElapsed);
                 const when = today.toUTCString();
                 const ip = address.ip();
 
@@ -233,6 +235,8 @@ router.post("/login", async (req, res) => {
             );
 
             const ip = address.ip();
+            const timeElapsed = Date.now();
+            const today = new Date(timeElapsed);
             const when = today.toUTCString();
 
 

@@ -5,17 +5,16 @@ const Flutterwave = require('flutterwave-node-v3');
 const TransferModel = require('../../../models/mongoro/transaction/api')
 
 
-router.get("/get/:id/:from/:to", async (req, res) => {
+router.get("/get/withdraw/:from/:to", async (req, res) => {
     try {
 
-    const statement = await TransferModel.find({ $and: [{ userId: req.params.id }, { "Date": { $gte: req.params.from } }, { "Date": { $lte: req.params.to } }] })
+    const statement = await TransferModel.find({ $and: [{ service_type: "Transfer" }, { "Date": { $gte: req.params.from } }, { "Date": { $lte: req.params.to } }] })
 
     res.status(200).json({
-        msg: 'Account Statement fetch Successfully ',
+        msg: 'Withdraw data fetch Successfully ',
         status: 200,
         statement: statement
     })
-
 
     } catch (err) {
         res.status(500).json({
