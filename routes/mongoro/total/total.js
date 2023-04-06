@@ -30,7 +30,8 @@ router.get("/totals", async (req, res) => {
                 date: {
                     $gte: new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()),
                     $lt: new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1)
-                }
+                },
+                service_type: "Deposit"
             }
         },
         {
@@ -48,7 +49,8 @@ router.get("/totals", async (req, res) => {
                 date: {
                     $gte: startOfWeek,
                     $lt: endOfWeek
-                }
+                },
+                service_type: "Deposit"
             }
         },
         {
@@ -66,7 +68,8 @@ router.get("/totals", async (req, res) => {
                 date: {
                     $gte: startOfMonth,
                     $lt: endOfMonth
-                }
+                },
+                service_type: "Deposit"
             }
         },
         {
@@ -162,7 +165,8 @@ router.get("/totals", async (req, res) => {
             "TotalTransaction": {
                 '$sum': {
                     '$convert': {'input': '$amount', 'to': 'int'}
-                }
+                },
+                service_type: "Transfer"
             }
         }
     }])
@@ -174,7 +178,8 @@ router.get("/totals", async (req, res) => {
             "TotalSaving": {
                 '$sum': {
                     '$convert': {'input': '$wallet_balance', 'to': 'int'}
-                }
+                },
+                service_type: "Transfer"
             }
         }
     }])
@@ -234,7 +239,8 @@ router.get("/transaction", async (req, res) => {
                     '$sum': {
                         '$convert': {'input': '$amount', 'to': 'int'}
                     }
-                }
+                },
+                service_type: "Transfer"
             }
         }])
 
