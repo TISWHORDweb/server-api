@@ -436,7 +436,7 @@ router.get("/banktransfers", async (req, res) => {
 
 })
 
-
+//ALL TRANSACTION
 router.get('/all', paginatedResults(TransferModel), (req, res) => {
   res.json(res.paginatedResults)
 })
@@ -469,6 +469,131 @@ function paginatedResults(model) {
       const results = await model.find().sort({_id:-1}).limit(limit).skip(startIndex).exec()
       let count = await TransferModel.count()
       res.paginatedResults = { action, results, TotalResult: count, Totalpages: Math.ceil(count / limit) }
+      next()
+    } catch (e) {
+      res.status(500).json({ message: e.message })
+    }
+  }
+}
+
+//ALL WITHDRAW
+router.get('/withdraw/all', paginatedResult(TransferModel), (req, res) => {
+  res.json(res.paginatedResult)
+})
+
+function paginatedResult(model) {
+  return async (req, res, next) => {
+    const page = parseInt(req.query.page)
+    const limit = parseInt(req.query.limit)
+
+    const startIndex = (page - 1) * limit
+    const endIndex = page * limit
+
+    const action = {}
+
+    if (endIndex < await model.countDocuments().exec()) {
+      action.next = {
+        page: page + 1,
+        limit: limit
+      }
+    }
+
+    if (startIndex > 0) {
+      action.previous = {
+        page: page - 1,
+        limit: limit
+      }
+    }
+
+    try {
+      const result = await model.find({service_type:"Transfer"})
+      const results = await model.find({service_type:"Transfer"}).sort({_id:-1}).limit(limit).skip(startIndex).exec()
+      let count = await result.length
+      res.paginatedResult = { action, results, TotalResult: count, Totalpages: Math.ceil(count / limit) }
+      next()
+    } catch (e) {
+      res.status(500).json({ message: e.message })
+    }
+  }
+}
+
+
+//ALL DEPOSIT
+router.get('/deposit/all', paginatedResultt(TransferModel), (req, res) => {
+  res.json(res.paginatedResultt)
+})
+
+function paginatedResultt(model) {
+  return async (req, res, next) => {
+    const page = parseInt(req.query.page)
+    const limit = parseInt(req.query.limit)
+
+    const startIndex = (page - 1) * limit
+    const endIndex = page * limit
+
+    const action = {}
+
+    if (endIndex < await model.countDocuments().exec()) {
+      action.next = {
+        page: page + 1,
+        limit: limit
+      }
+    }
+
+    if (startIndex > 0) {
+      action.previous = {
+        page: page - 1,
+        limit: limit
+      }
+    }
+
+    try {
+      const result = await model.find({service_type:"Deposit"})
+      const results = await model.find({service_type:"Deposit"}).sort({_id:-1}).limit(limit).skip(startIndex).exec()
+      let count = await result.length
+      res.paginatedResultt = { action, results, TotalResult: count, Totalpages: Math.ceil(count / limit) }
+      next()
+    } catch (e) {
+      res.status(500).json({ message: e.message })
+    }
+  }
+}
+
+
+//ALL BILLS
+router.get('/bills/all', paginatedResultss(TransferModel), (req, res) => {
+  res.json(res.paginatedResultss)
+})
+
+function paginatedResultss(model) {
+  return async (req, res, next) => {
+    const page = parseInt(req.query.page)
+    const limit = parseInt(req.query.limit)
+
+    const startIndex = (page - 1) * limit
+    const endIndex = page * limit
+
+    const action = {}
+
+    if (endIndex < await model.countDocuments().exec()) {
+      action.next = {
+        page: page + 1,
+        limit: limit
+      }
+    }
+
+    if (startIndex > 0) {
+      action.previous = {
+        page: page - 1,
+        limit: limit
+      }
+    }
+
+    try {
+      const result = await model.find({service_type:"Bills"})
+      const results = await model.find({service_type:"Bills"}).sort({_id:-1}).limit(limit).skip(startIndex).exec()
+      let count = await result.length
+      res.paginatedResultss = { action, results, TotalResult: count, Totalpages: Math.ceil(count / limit) }
       next()
     } catch (e) {
       res.status(500).json({ message: e.message })
@@ -784,7 +909,7 @@ router.post("/bills", async (req, res) => {
         if (data) {
           const details = {
             "transaction_ID": tid,
-            "service_type": req.body.service_type,
+            "service_type": "Bills",
             "amount": req.body.amount,
             "status": data.status,
             "flw_id": data.data.id,

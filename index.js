@@ -20,7 +20,7 @@ const mongoroSuperAdminCategory = require('./routes/mongoro/Admin/super/category
 const mongoroAppmessage = require('./routes/mongoro/Admin/other/broadcast/appmessage')
 const mongoroStatement = require('./routes/mongoro/Transaction/statement')
 const mongoroWebhook = require('./routes/mongoro/Transaction/webhook')
-const mongoroWithdraw = require('./routes/mongoro/Transaction/withdraw')
+
 const mongoroState = require('./routes/state')
 const mongoroAdmin = require('./routes/mongoro/Admin/admin')
 const mongoroBank = require('./routes/mongoro/user/bank')
@@ -68,7 +68,6 @@ app.use("/mongoro", mongoroWebhook)
 app.use("/mongoro/bank", mongoroBank)
 app.use("/mongoro/admin", mongoroAdmin)
 app.use("/mongoro/state", mongoroState)
-app.use("/mongoro/withdraw", mongoroWithdraw)
 app.use("/mongoro/statement", mongoroStatement)
 app.use("/mongoro/beneficiary", mongoroBenefiaciary)
 
