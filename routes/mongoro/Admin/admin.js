@@ -10,6 +10,7 @@ const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs')
 const OtherModel = require('../../../models/mongoro/admin/other/otherAdmi_md')
 const AdminAuditModel = require("../../../models/mongoro/admin/audit/audit_md")
+const CryptoJS = require('crypto-js');
 
 
 router.post("/login", async (req, res) => {
@@ -17,7 +18,7 @@ router.post("/login", async (req, res) => {
 
     const supers = await SuperModel.findOne({ email: req.body.email })
 
-    const admin = await OtherModel.findOne({ email: req.body.email })
+    let admin = await OtherModel.findOne({ email: req.body.email })
 
     // if (!user) {
     //     res.status(400).json({ msg: "user not found", code: 400 })
@@ -144,9 +145,10 @@ router.post("/login", async (req, res) => {
 
     } else if (supers) {
 
-        const originalPassword = await bcrypt.compare(req.body.password, supers.password);
-
-        if (!originalPassword) {
+        const bytes = CryptoJS.AES.decrypt(supers.code, process.env.SECRET_KEY)
+        const originalPin = bytes.toString(CryptoJS.enc.Utf8);
+        
+        if (originalPin !== req.body.password) {
             res.status(400).json({ msg: "Super Admin wrong password", code: 400 })
         } else {
             const accessToken = jwt.sign(

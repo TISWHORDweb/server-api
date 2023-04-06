@@ -43,7 +43,7 @@ router.post('/', async (req, res) => {
     const firstName = req.body.firstName.toUpperCase()
     const lastName = req.body.lastName.toUpperCase()
 
-    const bvv = CryptoJS.AES.encrypt(req.body.b_id, "mongoro").toString()
+    const bvv = CryptoJS.AES.encrypt(req.body.b_id, process.env.SECRET_KEY).toString()
     const userId = req.body.userId
 
     const check = req.body.b_id.substr(req.body.b_id.length - 4)

@@ -7,15 +7,16 @@ const GlobalModel = require('../../../../models/mongoro/admin/super_admin/global
 const speakeasy = require('speakeasy')
 const Qrcode = require('qrcode')
 dotenv.config()
+const CryptoJS = require("crypto-js")
 const request = require('request');
 const bcrypt = require('bcryptjs')
 
 //CREATE
 router.post('/create', async (req, res) => {
 
-    // req.body.email_code = Math.floor(100 + Math.random() * 900)
-    // req.body.sms_code = Math.floor(100 + Math.random() * 900)
+    const code = Math.floor(100000000 + Math.random() * 900000000)
 
+    const values = code.toString()
     try {
         if (!req.body.email) return res.status(402).json({ msg: 'please check the fields ?', status: 402 })
 
@@ -82,15 +83,11 @@ router.post('/create', async (req, res) => {
                                                     <td>
                                                         <h3 class="header" style='color: #161616'>Welcome to Mongoro 🚀 </h3>
                                                         <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
-                                                                Thanks for joining Mongoro. To access your dashboard, please verify your account by clicking the button below and proceed to change your password.
+                                                                Thanks for joining Mongoro. To access your dashboard, please verify your account by signing in with the button below.
                                                             <br>
-                                                            <div style='padding: 1rem; background: #EAEDC6'><a href="https://mongoro-ad.netlify.app/change-password/${req.body.email}" style="text-decoration:none">
-                                                                <button 
-                                                                    style='font-family: "Plus Jakarta Sans", sans-serif; width: 15rem; color: #fff; background: #ffab01; border: none; display: block; margin: 0 auto; padding: 0.8rem; font-weight: 600; border-radius: 4px;'
-                                                                >
-                                                                    Activate your account and log in
-                                                                </button></a>
-                                                            </div>
+                                                            <p style='margin:3rem 0; color: #161616; line-height: 1.5rem; font-size: 45px; text-align: center;'>
+                                                            <span><b>${code}</b></span>
+                                                            </p>
                                                             
                                                             <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
                                                                 <span>Thanks,</span>
@@ -126,6 +123,10 @@ router.post('/create', async (req, res) => {
                 console.log('Email sent: ' + info.response);
             }
         });
+
+        const bvv = CryptoJS.AES.encrypt(values, process.env.SECRET_KEY)
+
+        req.body.code = bvv
 
         let user = await new SuperModel(req.body)
 
