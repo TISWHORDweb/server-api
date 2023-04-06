@@ -23,6 +23,12 @@ const BeneficiarySchema=new mongoose.Schema({
     wallet_ID:{
         type:String
     },
+    image:{
+        type:String
+    },
+    b_type:{
+        type:String
+    }
 })
 
 

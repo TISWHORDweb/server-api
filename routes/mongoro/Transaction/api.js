@@ -212,21 +212,36 @@ router.post("/", async (req, res) => {
                 const data = response.data
                 console.log(data)
 
+                const details = {
+                  "flw_id": data.data.id,
+                  "transaction_ID": tid,
+                  "service_type": "Transfer",
+                  "amount": req.body.amount,
+                  "status": "successful",
+                  "full_name": data.data.full_name,
+                  "account_number": data.data.account_number,
+                  "bank_name": data.data.bank_name,
+                  "userId": req.body.userId,
+                  "reference": data.data.reference,
+                  "sender_status": "Debit"
+                }
+
+                const detail = {
+                  "flw_id": data.data.id,
+                  "transaction_ID": tid,
+                  "service_type": "Transfer",
+                  "amount": req.body.amount,
+                  "status": "failed",
+                  "full_name": data.data.full_name,
+                  "account_number": data.data.account_number,
+                  "bank_name": data.data.bank_name,
+                  "userId": req.body.userId,
+                  "reference": data.data.reference,
+                  "sender_status": "Debit"
+                }
+
                 if (data.data.status === "SUCCESSFUL") {
                   console.log("SUCCESSFUL")
-                  const details = {
-                    "flw_id": data.data.id,
-                    "transaction_ID": tid,
-                    "service_type": "Transfer",
-                    "amount": req.body.amount,
-                    "status": "successful",
-                    "full_name": data.data.full_name,
-                    "account_number": data.data.account_number,
-                    "bank_name": data.data.bank_name,
-                    "userId": req.body.userId,
-                    "reference": data.data.reference,
-                    "sender_status": "Debit"
-                  }
 
                   let transaction = new TransferModel(details)
                   transaction.save()
@@ -239,21 +254,8 @@ router.post("/", async (req, res) => {
                   })
                 } else if (data.data.status === "FAILED") {
                   console.log("FAILED")
-                  const details = {
-                    "flw_id": data.data.id,
-                    "transaction_ID": tid,
-                    "service_type": "Transfer",
-                    "amount": req.body.amount,
-                    "status": "failed",
-                    "full_name": data.data.full_name,
-                    "account_number": data.data.account_number,
-                    "bank_name": data.data.bank_name,
-                    "userId": req.body.userId,
-                    "reference": data.data.reference,
-                    "sender_status": "Debit"
-                  }
 
-                  let transaction = new TransferModel(details)
+                  let transaction = new TransferModel(detail)
                   transaction.save().then(() => {
 
                     // send failed response
@@ -265,34 +267,37 @@ router.post("/", async (req, res) => {
                   
                 } else if (data.data.status === "PENDING") {
                   console.log("PENDING")
-                  res.send({
-                    msg: 'Transaction in progress ',
-                    data,
-                    status: 200
+
+                  MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(()=>{
+                    return res.status(200).json({
+                      msg: 'Transaction is progress',
+                      data,
+                      status: 200
+                    })
                   })
+
+                  const details = {
+                    "flw_id": data.data.id,
+                    "transaction_ID": tid,
+                    "service_type": "Transfer",
+                    "amount": req.body.amount,
+                    "status": "pending",
+                    "full_name": data.data.full_name,
+                    "account_number": data.data.account_number,
+                    "bank_name": data.data.bank_name,
+                    "userId": req.body.userId,
+                    "reference": data.data.reference,
+                    "sender_status": "Debit"
+                  }
+
+                  let transaction = new TransferModel(details)
+                  transaction.save()
+
+                  const transId = transaction._id
 
                   var task = cron.schedule('* * * * *', () => {
                     axios(configs).then(function (response) {
                       const data = response.data
-
-                      const details = {
-                        "flw_id": data.data.id,
-                        "transaction_ID": 4566676645,
-                        "service_type": "Transfer",
-                        "amount": req.body.amount,
-                        "status": "pending",
-                        "full_name": data.data.full_name,
-                        "account_number": data.data.account_number,
-                        "bank_name": data.data.bank_name,
-                        "userId": req.body.userId,
-                        "reference": data.data.reference,
-                        "sender_status": "Debit"
-                      }
-
-                      let transaction = new TransferModel(details)
-                      transaction.save()
-
-                      const transId = transaction._id
 
                       if (data.data.status === "SUCCESSFUL") {
                        
@@ -304,9 +309,11 @@ router.post("/", async (req, res) => {
                         })
                         task.stop();
                       } else if (data.data.status === "FAILED") {
-                        TransferModel.updateOne({ _id: transId}, { $set: {status:"failed"}}).then(()=>{
-                          // send failed response
+                        MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: oldAmount, wallet_updated_at: Date.now() } }).then(()=>{
+                          TransferModel.updateOne({ _id: transId}, { $set: {status:"failed"}}).then(()=>{
+                          console.log(transId)
                           console.log("failed")
+                        })
                         })
                         task.stop();
                       }
@@ -317,36 +324,40 @@ router.post("/", async (req, res) => {
 
                   task.start();
 
-
                 } else if (data.data.status === "NEW") {
                   console.log("NEW")
-                  res.send({
-                    msg: 'Transaction in progress ',
-                    data,
-                    status: 200
+                  
+                  MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }).then(()=>{
+                    return res.status(200).json({
+                      msg: 'Transaction is progress',
+                      data,
+                      status: 200
+                    })
                   })
+
+                  const details = {
+                    "flw_id": data.data.id,
+                    "transaction_ID": tid,
+                    "service_type": "Transfer",
+                    "amount": req.body.amount,
+                    "status": "pending",
+                    "full_name": data.data.full_name,
+                    "account_number": data.data.account_number,
+                    "bank_name": data.data.bank_name,
+                    "userId": req.body.userId,
+                    "reference": data.data.reference,
+                    "sender_status": "Debit"
+                  }
+
+                  let transaction = new TransferModel(details)
+                  transaction.save()
+
+                  const transId = transaction._id
+
                   var task = cron.schedule('* * * * *', () => {
                     axios(configs).then(function (response) {
                       const data = response.data
-
-                      const details = {
-                        "flw_id": data.data.id,
-                        "transaction_ID": 4566676645,
-                        "service_type": "Transfer",
-                        "amount": req.body.amount,
-                        "status": "pending",
-                        "full_name": data.data.full_name,
-                        "account_number": data.data.account_number,
-                        "bank_name": data.data.bank_name,
-                        "userId": req.body.userId,
-                        "reference": data.data.reference,
-                        "sender_status": "Debit"
-                      }
-
-                      let transaction = new TransferModel(details)
-                      transaction.save()
-
-                      const transId = transaction._id
+                      console.log(data)
 
                       if (data.data.status === "SUCCESSFUL") {
                        
@@ -358,9 +369,11 @@ router.post("/", async (req, res) => {
                         })
                         task.stop();
                       } else if (data.data.status === "FAILED") {
-                        TransferModel.updateOne({ _id: transId}, { $set: {status:"failed"}}).then(()=>{
-                          // send failed response
+                        MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { wallet_balance: oldAmount, wallet_updated_at: Date.now() } }).then(()=>{
+                          TransferModel.updateOne({ _id: transId}, { $set: {status:"failed"}}).then(()=>{
+                          console.log(transId)
                           console.log("failed")
+                        })
                         })
                         task.stop();
                       }

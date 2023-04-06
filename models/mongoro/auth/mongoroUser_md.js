@@ -143,6 +143,9 @@ const mongoroUserSchema=new mongoose.Schema({
     real_bank_name:{
         type:String
     },
+    registration_token:{
+        type:String
+    },
     verification_number:{
         type:String
     },
