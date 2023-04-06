@@ -9,7 +9,7 @@ const jwt = require("jsonwebtoken")
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs')
 const OtherModel = require('../../../models/mongoro/admin/other/otherAdmi_md')
-
+const AdminAuditModel = require("../../../models/mongoro/admin/audit/audit_md")
 
 
 router.post("/login", async (req, res) => {
@@ -35,13 +35,13 @@ router.post("/login", async (req, res) => {
             let transporter = nodemailer.createTransport({
                 service: "hotmail",
                 auth: {
-                    user: 'sales@reeflimited.com',
+                    user: 'support@mongoro.com',
                     pass: 'cmcxsbpkqvkgpwmk'
                 }             
             });
     
             let mailOptions = {
-                from: 'sales@reeflimited.com',
+                from: 'support@mongoro.com',
                 to: req.body.email,
                 subject: '2FA Authentication',
                 html: `<!DOCTYPE html>
@@ -119,7 +119,7 @@ router.post("/login", async (req, res) => {
             const ip = address.ip();
 
             await OtherModel.updateOne({ email: req.body.email }, { $set: { code: num } })
-            res.send({ msg: "your account is not verified", category: "Admin", email:req.body.email, isverified: admin.isverified, token: accessToken, ip_address: ip,   })
+            res.send({ msg: "your account is not verified check your mail and follow the process", category: "Admin", email:req.body.email, isverified: admin.isverified, token: accessToken, ip_address: ip,   })
 
         } else {
 
@@ -166,6 +166,152 @@ router.post("/login", async (req, res) => {
         res.status(400).json({ msg: "wrong email and password ", code: 403 })
     }
 })
+
+
+//////AUDIT
+router.post('/audit', async (req, res) => {
+    try {
+        if ( !req.body.adminId ) return res.status(400).json({ msg: 'provide the id', status: 400 })
+     
+        const admin = await OtherModel.findOne({ _id: req.body.adminId });
+        if(admin){
+            req.body.email = admin.email
+            req.body.category = admin.category
+            req.body.ip=address.ip();
+    
+            let activity = new AdminAuditModel(req.body)
+            activity.save().then(() => {
+                return res.status(200).json({
+                    msg: 'Details added Successful ',
+                    status: 200
+                })
+            })
+        }else{
+            res.status(400).json({ msg: 'User not found, status: 400' })
+        }
+    
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry ',
+            status: 500
+        })
+    }
+})
+
+router.get('/audit/all', paginatedResults(AdminAuditModel), (req, res) => {
+    res.json(res.paginatedResults)
+})
+  
+  function paginatedResults(model) {
+    return async (req, res, next) => {
+      const page = parseInt(req.query.page)
+      const limit = parseInt(req.query.limit)
+  
+      const startIndex = (page - 1) * limit
+      const endIndex = page * limit
+  
+      const action = {}
+  
+      if (endIndex < await model.countDocuments().exec()) {
+        action.next = {
+          page: page + 1,
+          limit: limit
+        }
+      }
+  
+      if (startIndex > 0) {
+        action.previous = {
+          page: page - 1,
+          limit: limit
+        }
+      }
+  
+      try {
+        const results = await model.find().sort({ _id: -1 }).limit(limit).skip(startIndex).exec()
+        let count = await AdminAuditModel.count()
+        res.paginatedResults = { action, results, TotalResult: count, Totalpages: Math.ceil(count / limit) }
+        next()
+      } catch (e) {
+        res.status(500).json({ message: e.message })
+      }
+    }
+}
+
+
+// router.get("/audit/all", async (req, res) => {
+//     try {
+//         const audit = await AdminAuditModel.find();
+//         res.status(200).json(audit.reverse());
+//     } catch (err) {
+//         res.status(500).json({
+//             msg: 'there is an unknown error sorry !',
+//             status: 500
+//         })
+//     }
+// })
+
+router.get('/audit/:id', async (req, res) => {
+    try {
+        if (!req.params.id) return res.status(400).json({ msg: 'provide the id ', status: 400 })
+
+        let audit = await AdminAuditModel.findOne({ _id: req.params.id })
+        if (audit) {
+            return res.status(200).json({
+                audit,
+                status: 200
+            })
+
+        } else {
+            return res.status(400).json({ msg: 'User not found' })
+        }
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry ',
+            status: 500
+        })
+    }
+})
+
+router.get('/audit/admin/:id', async (req, res) => {
+    try {
+        if (!req.params.id) return res.status(400).json({ msg: 'provide the id ', status: 400 })
+
+        let audit = await AdminAuditModel.find({ adminId: req.params.id })
+        if (audit) {
+            return res.status(200).json({
+                audit,
+                status: 200
+            })
+
+        } else {
+            return res.status(400).json({ msg: 'User not found' })
+        }
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry ',
+            status: 500
+        })
+    }
+})
+
+router.delete('/audit/delete', async (req, res) => {
+    try {
+        if (!req.body.id) return res.status(400).json({ msg: 'provide the id ', status: 402 })
+
+        await AdminAuditModel.deleteOne({ _id: req.body.id })
+        return res.status(200).json({
+            msg: "Deleted successfully",
+            status: 200
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry ',
+            status: 500
+        })
+    }
+})
+
 
 
 module.exports = router

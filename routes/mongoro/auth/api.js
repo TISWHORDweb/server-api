@@ -113,13 +113,13 @@ router.post("/verify", async (req, res) => {
         let transporter = nodemailer.createTransport({
             service: "hotmail",
             auth: {
-                user: 'sales@reeflimited.com',
+                user: 'support@mongoro.com',
                 pass: 'cmcxsbpkqvkgpwmk'
             }
         });
 
         let mailOptions = {
-            from: 'sales@reeflimited.com',
+            from: 'support@mongoro.com',
             to: req.body.email,
             subject: 'Verification code',
             html: `<!DOCTYPE html>
@@ -240,15 +240,15 @@ router.post("/login", async (req, res) => {
             let transporter = nodemailer.createTransport({
                 service: "hotmail",
                 auth: {
-                    user: 'sales@reeflimited.com',
+                    user: 'support@mongoro.com',
                     pass: 'cmcxsbpkqvkgpwmk'
                 }
             });
     
             let mailOptions = {
-                from: 'sales@reeflimited.com',
+                from: 'support@mongoro.com',
                 to: req.body.email,
-                subject: 'Verification code',
+                subject: 'New login detected',
                 html: `<!DOCTYPE html>
                 <html lang="en">
                 <head>
@@ -338,13 +338,13 @@ router.post("/password_verify", async (req, res) => {
         let transporter = nodemailer.createTransport({
             service: "hotmail",
             auth: {
-                user: 'sales@reeflimited.com',
+                user: 'support@mongoro.com',
                 pass: 'cmcxsbpkqvkgpwmk'
             }
         });
 
         let mailOptions = {
-            from: 'sales@reeflimited.com',
+            from: 'support@mongoro.com',
             to: req.body.email,
             subject: 'Verification code',
             html: `Your code is ${email_code}`

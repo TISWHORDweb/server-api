@@ -47,13 +47,13 @@ router.post('/create', async (req, res) => {
         let transporter = nodemailer.createTransport({
             service: "hotmail",
             auth: {
-                user: 'sales@reeflimited.com',
+                user: 'support@mongoro.com',
                 pass: 'cmcxsbpkqvkgpwmk'
             }
         });
 
         let mailOptions = {
-            from: 'sales@reeflimited.com',
+            from: 'support@mongoro.com',
             to: req.body.email,
             subject: '2FA Authentication',
             html: `<!DOCTYPE html>

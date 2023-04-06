@@ -12,18 +12,17 @@ router.post('/create', async (req, res) => {
 
         const validate = await ReefWaitlistModel.findOne({ email: req.body.email })
         if (validate) return res.status(404).json({ msg: 'There is another user with this email !',status: 401 })
-
        
         let transporter = nodemailer.createTransport({
             service: "hotmail",
             auth: {
-                user: 'sales@reeflimited.com',
+                user: 'support@mongoro.com',
                 pass: 'cmcxsbpkqvkgpwmk'
             }
         });
 
         let mailOptions = {
-            from: 'sales@reeflimited.com',
+            from: 'support@mongoro.com',
             to: req.body.email,
             subject: 'Welcome Onboard',
             html: `<!DOCTYPE html>
