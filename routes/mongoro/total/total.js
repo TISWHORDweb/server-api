@@ -36,11 +36,6 @@ router.get("/totals", async (req, res) => {
         {
             $group: {
                 _id: null,
-                "dailyDeposit": {
-                    '$sum': {
-                        '$convert': {'input': '$amount', 'to': 'int'}
-                    }
-                },
                 total: {$sum: "$amount"}
             }
         }
@@ -59,11 +54,6 @@ router.get("/totals", async (req, res) => {
         {
             $group: {
                 _id: null,
-                "weeklyDeposit": {
-                    '$sum': {
-                        '$convert': {'input': '$amount', 'to': 'int'}
-                    }
-                },
                 total: {$sum: "$amount"}
             }
         }
@@ -82,7 +72,27 @@ router.get("/totals", async (req, res) => {
         {
             $group: {
                 _id: null,
-                "monthlyDeposit": {
+                total: {$sum: "$amount"}
+            }
+        }
+    ])
+
+    //--------------------------------Withdrawals------------------------------
+
+    //TODAY"S WITHDRAWALS
+    const dailyWithdrawal = await WithdrawModel.aggregate([
+        {
+            $match: {
+                date: {
+                    $gte: new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()),
+                    $lt: new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1)
+                }
+            }
+        },
+        {
+            $group: {
+                _id: null,
+                "dailyWithdrawal": {
                     '$sum': {
                         '$convert': {'input': '$amount', 'to': 'int'}
                     }
@@ -92,76 +102,51 @@ router.get("/totals", async (req, res) => {
         }
     ])
 
-    //--------------------------------Withdrawals------------------------------
-
-    //TODAY"S WITHDRAWALS
-    // const dailyWithdrawal = await WithdrawModel.aggregate([
-    //     {
-    //         $match: {
-    //             date: {
-    //                 $gte: new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()),
-    //                 $lt: new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1)
-    //             }
-    //         }
-    //     },
-    //     {
-    //         $group: {
-    //             _id: null,
-    //             "dailyWithdrawal": {
-    //                 '$sum': {
-    //                     '$convert': {'input': '$amount', 'to': 'int'}
-    //                 }
-    //             },
-    //             total: {$sum: "$amount"}
-    //         }
-    //     }
-    // ])
-
     //THIS WEEK"S WITHDRAWALS
-    // const weeklyWithdrawal = await WithdrawModel.aggregate([
-    //     {
-    //         $match: {
-    //             date: {
-    //                 $gte: startOfWeek,
-    //                 $lt: endOfWeek
-    //             }
-    //         }
-    //     },
-    //     {
-    //         $group: {
-    //             _id: null,
-    //             "weeklyWithdrawal": {
-    //                 '$sum': {
-    //                     '$convert': {'input': '$amount', 'to': 'int'}
-    //                 }
-    //             },
-    //             total: {$sum: "$amount"}
-    //         }
-    //     }
-    // ])
+    const weeklyWithdrawal = await WithdrawModel.aggregate([
+        {
+            $match: {
+                date: {
+                    $gte: startOfWeek,
+                    $lt: endOfWeek
+                }
+            }
+        },
+        {
+            $group: {
+                _id: null,
+                "weeklyWithdrawal": {
+                    '$sum': {
+                        '$convert': {'input': '$amount', 'to': 'int'}
+                    }
+                },
+                total: {$sum: "$amount"}
+            }
+        }
+    ])
 
     //THIS MONTH"S WITHDRAWALS
-    // const monthlyWithdrawal = await WithdrawModel.aggregate([
-    //     {
-    //         $match: {
-    //             date: {
-    //                 $gte: startOfMonth,
-    //                 $lt: endOfMonth
-    //             }
-    //         }
-    //     },
-    //     {
-    //         $group: {
-    //             _id: null,
-    //             "monthlyWithdrawal": {
-    //                 '$sum': {
-    //                     '$convert': {'input': '$amount', 'to': 'int'}
-    //                 }
-    //             },
-    //             total: {$sum: "$amount"}
-    //         }
-    //     }
-    // ])
+    const monthlyWithdrawal = await WithdrawModel.aggregate([
+        {
+            $match: {
+                date: {
+                    $gte: startOfMonth,
+                    $lt: endOfMonth
+                }
+            }
+        },
+        {
+            $group: {
+                _id: null,
+                "monthlyWithdrawal": {
+                    '$sum': {
+                        '$convert': {'input': '$amount', 'to': 'int'}
+                    }
+                },
+                total: {$sum: "$amount"}
+            }
+        }
+    ])
 
     /*
     END Totals based on dates

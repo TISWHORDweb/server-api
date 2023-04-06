@@ -1,4 +1,6 @@
 const admin = require("firebase-admin");
+const MongoroUserModel = require("../models/mongoro/auth/mongoroUser_md")
+const NotificationModel = require("../models/mongoro/notification/notification_md")
 
 //download sdk from firebase
 const serviceAccount = require("./mongoro-8bd64-firebase-adminsdk-l2lth-b9799fe295.json");
@@ -7,7 +9,6 @@ const serviceAccount = require("./mongoro-8bd64-firebase-adminsdk-l2lth-b9799fe2
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
 });
-
 
 exports.firebaseNotification = async (token, title, body, data) => {
     try {
@@ -39,7 +40,7 @@ exports.firebaseNotification = async (token, title, body, data) => {
 
 }
 
-exports.notify = async (token, title, body, data) => {
+exports.pushNotification = async (token, title, body, data) => {
     try {
 
 
@@ -65,6 +66,36 @@ exports.notify = async (token, title, body, data) => {
             .send(message)
         console.log("Successfully sent message:", sent);
         return sent
+    } catch (e) {
+        console.log("Error sending message:", e);
+        return e
+    }
+
+}
+
+exports.notify = async (username, title, body, data) => {
+    try {
+        // registration_token
+
+        const user = await MongoroUserModel.findOne({Wallet_ID: username})
+
+        if (user) {
+
+            let note = {
+                userId: user.Wallet_ID,
+                to: user.Wallet_ID,
+                title,
+                body
+            }
+
+            let notification = await new NotificationModel(note)
+
+            let not = await notification.save()
+            console.log(not)
+
+            let sent = await pushNotification(user.registration_token, title, body, data)
+            console.log("Successfully sent message:", sent);
+        }
     } catch (e) {
         console.log("Error sending message:", e);
         return e
