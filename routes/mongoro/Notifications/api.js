@@ -154,7 +154,7 @@ router.post('/test', async (req, res) => {
     let data = 'channelId'
 
     try {
-        let notification = notify('id', note.title, note.body, data)
+        let notification = notify('641878bd28219c7ab77416d0', note.title, note.body, data)
         return res.status(200).json({
             msg: 'Notification created successful ',
             notification: notification,

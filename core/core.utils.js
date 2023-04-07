@@ -55,19 +55,20 @@ exports.pushNotification = async (token, title, body, campaignId) => {
                     title: title,
                     body: body,
                     sound: "default",
-                    priority: 'max'
+                    priority: 'max',
+                    channelId: 'channelId'
                 }
             },
             apns: {
                 payload: {
                     aps: {
                         sound: "default",
-                        "content-available": 1
+                        content_available: true
                     }
                 },
                 headers: {
-                    "apns-priority": "5"
-                }
+                    'apns-priority': '10',
+                },
             }
         }
 
@@ -87,7 +88,9 @@ exports.pushNotification = async (token, title, body, campaignId) => {
 exports.notify = async (id, title, body, campaignId) => {
     try {
         // let token = 'dy42NkNoS-eqhGS50UDPSd:APA91bHbAgJWBHSV9wix5b5F8CPqjgChMG3yqPhYpjPXzth6PIfWmV-6-nSYK4PVTJDfQZP1rL6fY3X3afWT-EcfBuBb_B-i1LJ28-ZYiv_tU97MCVrePXuQf7xwBnRxE8EKCN540DLK'
-        let token = "e4kG3Si6A0RwtRtlyQBsgb:APA91bFjFUcJ_fayAAE_WSp13WdGyUKqEcWea8IiBRbs9pM29W9xiikv48PhN9RGLFQZpAPgg8jbbYH3hr3ABxDyxyDLTtzZBpfK9SDgo2wzq1SbBpRyCh7YXTqQF_OALqGWx3oLRAME"
+        // let token = "fKRkopyISvCZg1oF5taVZI:APA91bGVg9plb_LUgZMOpA4SWiWlavOJAeN_dacilH1eeQnPNPTckLd8BnsqvKNSV37FROC_gP6KkvMR1cHJ5luV2c6QRnMEo7113FGYRv4T8TXzmt2vaZdyL3Xdf1vkMqWzoEJB1F3O"
+
+        let token = 'c1WvzQkXWEiMr5z9yj4R4E:APA91bEJsSeS7tghRdypBg_RniWEFMqNZ2XxWiElXT1AbG69vDRCGkvcekvLvjEJXJkdwB_BmJiFtKIQ_1Sjr-F-G-qYu26xDXfiW2Q3dJ4O6fPFIYkyhGsKQsJnkpimgppaJzaxW6f1'
         const user = await MongoroUserModel.findOne({_id: id})
         if (user) {
 
@@ -98,13 +101,13 @@ exports.notify = async (id, title, body, campaignId) => {
                 body
             }
 
-            let notification = await new NotificationModel(note)
+            // let notification = await new NotificationModel(note)
             // console.log(user.registration_token);
-            let not = await notification.save()
+            // let not = await notification.save()
 
             // let sent = await this.pushNotification(user.registration_token, title, body, campaignId)
             let sent = await this.pushNotification(token, title, body, campaignId)
-            console.log("Successfully sent message:", {not, sent});
+            console.log("Successfully sent message:", {note, sent});
         }
     } catch (e) {
         console.log("Error sending message:", e);
