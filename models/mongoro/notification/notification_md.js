@@ -1,28 +1,32 @@
 const mongoose = require('mongoose')
 
-const NotificationSchema=new mongoose.Schema({
-    to:{
-        type:String
+const NotificationSchema = new mongoose.Schema({
+    to: {
+        type: String
     },
-    from:{
-        type:String
+    from: {
+        type: String
     },
-    body:{
-        type:String
+    body: {
+        type: String
     },
-    title:{
-        type:String
+    title: {
+        type: String
     },
-    status:{
-        type:Number,
+    status: {
+        type: Number,
         default: 0,
     },
-    userId:{
-        type:String,
+    userId: {
+        type: String,
+    },
+    date: {
+        type: Number,
+        default: Date.now()
     },
 })
 
 
-const NotificationModel=mongoose.model("notification", NotificationSchema)
+const NotificationModel = mongoose.model("notification", NotificationSchema)
 
-module.exports=NotificationModel
+module.exports = NotificationModel

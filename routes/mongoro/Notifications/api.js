@@ -46,11 +46,11 @@ function paginatedResults(model) {
 
 
 //Get All Belonging to User
-router.get('/all/:username',  async (req, res) => {
+router.get('/all/:id',  async (req, res) => {
     try {
-        if (!req.params.username) return res.status(402).json({msg: "provide the username ?"})
+        if (!req.params.id) return res.status(402).json({msg: "provide the id ?"})
 
-        let notifications = await NotificationModel.find({userId: req.params.username})
+        let notifications = await NotificationModel.find({userId: req.params.id})
         res.status(200).json({notifications: notifications?.reverse(), total: notifications?.length});
     } catch (err) {
         res.status(500).json({
@@ -62,11 +62,11 @@ router.get('/all/:username',  async (req, res) => {
 })
 
 //Get Read Notifications
-router.get('/read/:username',verify, async (req, res) => {
+router.get('/read/:id',verify, async (req, res) => {
     try {
-        if (!req.params.username) return res.status(402).json({msg: "provide the username ?"})
+        if (!req.params.id) return res.status(402).json({msg: "provide the id ?"})
 
-        let notifications = await NotificationModel.find({userId: req.params.username, status: 1})
+        let notifications = await NotificationModel.find({userId: req.params.id, status: 1})
         res.status(200).json({notification: notifications?.reverse(), total: notifications?.length});
     } catch (err) {
         res.status(500).json({
@@ -78,11 +78,11 @@ router.get('/read/:username',verify, async (req, res) => {
 })
 
 //Get Unread Notifications
-router.get('/unread/:username', verify, async (req, res) => {
+router.get('/unread/:id', verify, async (req, res) => {
     try {
-        if (!req.params.username) return res.status(402).json({msg: "provide the username!"})
+        if (!req.params.id) return res.status(402).json({msg: "provide the id!"})
 
-        let notifications = await NotificationModel.find({userId: req.params.username, status: 0})
+        let notifications = await NotificationModel.find({userId: req.params.id, status: 0})
         res.status(200).json({notifications: notifications?.reverse(), total: notifications?.length});
     } catch (err) {
         res.status(500).json({
@@ -151,12 +151,10 @@ router.post('/test', async (req, res) => {
         body: `Welcome to Mongoro`
     };
 
-    let data = {
-        message_kind: "type"
-    }
+    let data = 'channelId'
 
     try {
-        let notification = notify('@voo', note.title, note.body, data)
+        let notification = notify('id', note.title, note.body, data)
         return res.status(200).json({
             msg: 'Notification created successful ',
             notification: notification,
