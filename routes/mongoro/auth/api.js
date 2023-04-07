@@ -33,23 +33,25 @@ router.post('/register', async (req, res) => {
     }
 
     try {
-        if (!req.body.email || !req.body.usertag || !req.body.surname || !req.body.first_name || !req.body.password || !req.body.phone) return res.status(402).json({ msg: 'please check the fields ?', status: 402 })
+        if (!req.body.email || !req.body.usertag || !req.body.surname || !req.body.first_name || !req.body.password || !req.body.phone) return res.status(402).json({
+            msg: 'please check the fields ?',
+            status: 402
+        })
 
-        const validate = await MongoroUserModel.findOne({ wallet_ID: req.body.wallet_ID })
-        if (validate) return res.status(400).json({ msg: 'There is another user with this Username', status: 400 })
+        const validate = await MongoroUserModel.findOne({wallet_ID: req.body.wallet_ID})
+        if (validate) return res.status(400).json({msg: 'There is another user with this Username', status: 400})
 
-        const validates = await MongoroUserModel.findOne({ email: req.body.email })
-        if (validates) return res.status(404).json({ msg: 'There is another user with this email ', status: 404 })
+        const validates = await MongoroUserModel.findOne({email: req.body.email})
+        if (validates) return res.status(404).json({msg: 'There is another user with this email ', status: 404})
 
         let user = await new MongoroUserModel(req.body)
 
         await user.save().then(user => {
 
             const accessToken = jwt.sign(
-                { id: user._id },
+                {id: user._id},
                 process.env.SECRET_KEY,
-                { expiresIn: "5h" }
-
+                {expiresIn: "5h"}
             );
             return res.status(200).json({
                 msg: 'Congratulation you just Created your Mongoro Account ',
@@ -72,7 +74,7 @@ router.post('/register', async (req, res) => {
 router.put("/verified", async (req, res) => {
     try {
 
-        await MongoroUserModel.updateOne({ email: req.body.email }, { $set: { isverified: true } })
+        await MongoroUserModel.updateOne({email: req.body.email}, {$set: {isverified: true}})
 
         return res.status(200).json({
             msg: 'Congratulation your Account is verified',
@@ -92,7 +94,7 @@ router.post("/verify", async (req, res) => {
         email_code = Math.floor(100 + Math.random() * 900)
         sms_code = Math.floor(100 + Math.random() * 900)
 
-        let code = { email_code, sms_code }
+        let code = {email_code, sms_code}
         console.log(req.body.phone)
 
         const url = "https://api.sendchamp.com/api/v1/sms/send"
@@ -205,31 +207,35 @@ router.post("/login", async (req, res) => {
 
     let UserPassword;
 
-    const users = await GlobalModel.findOne({ _id: process.env.GLOBAL_ID })
+    const users = await GlobalModel.findOne({_id: process.env.GLOBAL_ID})
     const value = users.disable_all_user
-    const user = await MongoroUserModel.findOne({ email: req.body.email })
+    const user = await MongoroUserModel.findOne({email: req.body.email})
     let resultt;
     if (user) {
         resultt = user.blocked
         UserPassword = user.password
+
+        //update user if regToken is passed
+        if (!!req.body.registration_token) await user.update({registration_token: req.body.registration_token})
+
     } else if (resultt === true) {
-        res.status(403).json({ msg: "Sorry your account is blocked", code: 403 })
+        res.status(403).json({msg: "Sorry your account is blocked", code: 403})
     } else if (value === true) {
-        res.status(500).json({ msg: "Sorry service temporarily unavailable", code: 500 })
+        res.status(500).json({msg: "Sorry service temporarily unavailable", code: 500})
     } else {
-        res.status(400).json({ msg: "user not found", code: 400 })
+        res.status(400).json({msg: "user not found", code: 400})
     }
 
     if (UserPassword) {
         const originalPassword = await bcrypt.compare(req.body.password, UserPassword);
 
         if (!originalPassword) {
-            res.status(400).json({ msg: "wrong password", code: 400 })
+            res.status(400).json({msg: "wrong password", code: 400})
         } else {
             const accessToken = jwt.sign(
-                { id: user._id, isverified: user.isverified },
+                {id: user._id, isverified: user.isverified},
                 process.env.SECRET_KEY,
-                { expiresIn: "5h" }
+                {expiresIn: "5h"}
             );
 
             const ip = address.ip();
@@ -244,7 +250,7 @@ router.post("/login", async (req, res) => {
                     pass: 'cmcxsbpkqvkgpwmk'
                 }
             });
-    
+
             let mailOptions = {
                 from: 'support@mongoro.com',
                 to: req.body.email,
@@ -273,7 +279,7 @@ router.post("/login", async (req, res) => {
                                                 <table width=100%>
                                                     <tr>
                                                         <td>
-                                                            <h3 class="header" style='color: #161616'>Dear ${user.surname+" "+user.first_name}, </h3>
+                                                            <h3 class="header" style='color: #161616'>Dear ${user.surname + " " + user.first_name}, </h3>
                                                             <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
                                                             
                                                                 We noticed a recently sign in to your account with the IP address ${ip}, at ${when}. If this login has not originated from you, kindly send an email to support@mongoro.com, or reach us via in-app support.
@@ -313,8 +319,14 @@ router.post("/login", async (req, res) => {
                 }
             });
 
-            await MongoroUserModel.updateOne({ _id: user._id }, { $set: { ip: ip, active: true } }).then(() => {
-                res.status(200).json({ msg: 'logged in successfuly ', user: user, token: accessToken, ip_address: ip, status: 200 });
+            await MongoroUserModel.updateOne({_id: user._id}, {$set: {ip: ip, active: true}}).then(() => {
+                res.status(200).json({
+                    msg: 'logged in successfuly ',
+                    user: user,
+                    token: accessToken,
+                    ip_address: ip,
+                    status: 200
+                });
             })
         }
     }
@@ -325,12 +337,12 @@ router.post("/password_verify", async (req, res) => {
 
     const email_code = Math.floor(100 + Math.random() * 900)
     const sms_code = Math.floor(100 + Math.random() * 900)
-    let code = { email_code, sms_code }
+    let code = {email_code, sms_code}
 
-    const user = await MongoroUserModel.findOne({ email: req.body.email });
+    const user = await MongoroUserModel.findOne({email: req.body.email});
 
     if (!user) {
-        return res.status(404).json({ msg: 'No User is registered with this email', status: 400 })
+        return res.status(404).json({msg: 'No User is registered with this email', status: 400})
     } else {
 
         const number = user.phone
@@ -396,9 +408,9 @@ router.put('/settings', async (req, res) => {
 
 
     try {
-        if (!req.body.address || !req.body.country || !req.body.state || !req.body.city || !req.body.gender || !req.body.occupation) return res.status(402).json({ msg: 'please check the fields ?' })
+        if (!req.body.address || !req.body.country || !req.body.state || !req.body.city || !req.body.gender || !req.body.occupation) return res.status(402).json({msg: 'please check the fields ?'})
 
-        await MongoroUserModel.updateOne({ _id: id }, {
+        await MongoroUserModel.updateOne({_id: id}, {
             $set: {
                 address: req.body.address,
                 state: req.body.state,
@@ -432,12 +444,12 @@ router.put('/settings', async (req, res) => {
 
 router.post('/verify_email', async (req, res) => {
 
-    const user = await MongoroUserModel.findOne({ email: req.body.email });
+    const user = await MongoroUserModel.findOne({email: req.body.email});
 
     if (user) {
-        res.status(400).json({ msg: false, status: 400 });
+        res.status(400).json({msg: false, status: 400});
     } else {
-        res.status(200).json({ msg: true, status: 200 });
+        res.status(200).json({msg: true, status: 200});
     }
 
 })
