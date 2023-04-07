@@ -72,6 +72,7 @@ app.use("/mongoro/admin", mongoroAdmin)
 app.use("/mongoro/state", mongoroState)
 app.use("/mongoro/statement", mongoroStatement)
 app.use("/mongoro/beneficiary", mongoroBenefiaciary)
+app.use("/mongoro/range", mongoroRange)
 app.use("/mongoro/notification", mongoroNotification)
 
 
