@@ -46,11 +46,24 @@ function paginatedResults(model) {
 
 
 //Get All Belonging to User
-router.get('/all/:id',  async (req, res) => {
+router.get('/all/:id', async (req, res) => {
     try {
         if (!req.params.id) return res.status(402).json({msg: "provide the id ?"})
 
-        let notifications = await NotificationModel.find({userId: req.params.id})
+        // let notifications = await NotificationModel.find({userId: req.params.id})
+        const notifications = await NotificationModel.aggregate([
+            {
+                $match: {userId: req.params.id}
+            },
+            {
+                $group: {
+                    _id: {
+                        $dateToString: {format: "%Y-%m-%d", date: "$timestamp"}
+                    },
+                    notifications: {$push: "$$ROOT"}
+                }
+            }
+        ]);
         res.status(200).json({notifications: notifications?.reverse(), total: notifications?.length});
     } catch (err) {
         res.status(500).json({
@@ -62,7 +75,7 @@ router.get('/all/:id',  async (req, res) => {
 })
 
 //Get Read Notifications
-router.get('/read/:id',verify, async (req, res) => {
+router.get('/read/:id', verify, async (req, res) => {
     try {
         if (!req.params.id) return res.status(402).json({msg: "provide the id ?"})
 
@@ -94,7 +107,7 @@ router.get('/unread/:id', verify, async (req, res) => {
 })
 
 //Get Single notification and change status from 0 to 1
-router.get("/:id", verify,async (req, res) => {
+router.get("/:id", verify, async (req, res) => {
     try {
         if (!req.params.id) return res.status(402).json({msg: 'provide the id ?'})
         await NotificationModel.updateOne({_id: req.params.id}, {status: 1}).then(async () => {
