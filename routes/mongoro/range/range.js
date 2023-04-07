@@ -7,6 +7,24 @@ const TicketModel = require("../../../models/mongoro/tickets/api")
 const Mpos = require("../../../models/mongoro/mpos/mpos_md")
 const MongoroUserModel = require("../../../models/mongoro/auth/mongoroUser_md")
 
+router.get("/transaction/:from/:to", async (req, res) => {
+    try {
+
+    const statement = await TransferModel.find({ $and: [{ "Date": { $gte: req.params.from } }, { "Date": { $lte: req.params.to } }] })
+   
+    res.status(200).json({
+        msg: 'Transaction fetch Successfully ',
+        status: 200,
+        statement: statement
+    })
+
+    } catch (err) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry ',
+            status: 500
+        })
+    }
+})
 
 router.get("/withdraw/:from/:to", async (req, res) => {
     try {

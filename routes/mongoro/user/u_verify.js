@@ -135,7 +135,7 @@ router.get("/banks", async (req, res) => {
         res.status(500).json({
             msg: 'there is an unknown error sorry !',
             status: 500
-        })
+        }) 
     }
 })
 
