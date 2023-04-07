@@ -46,12 +46,28 @@ function paginatedResults(model) {
 
 
 //Get All Belonging to User
-router.get('/all/:id',  async (req, res) => {
+router.get('/all/:id', async (req, res) => {
     try {
         if (!req.params.id) return res.status(402).json({msg: "provide the id ?"})
 
-        let notifications = await NotificationModel.find({userId: req.params.id})
-        res.status(200).json({notifications: notifications?.reverse(), total: notifications?.length});
+        let note = await NotificationModel.find({userId: req.params.id})
+        const notifications = await NotificationModel.aggregate([
+            {$match: {userId: req.params.id, date: {$exists: true}}},
+            {$addFields: {date: {$toDate: "$date"}}},
+            {$group: {_id: {$dateToString: {format: "%Y-%m-%d", date: "$date"}}, notifications: {$push: "$$ROOT"}}},
+            {$sort: {"_id": -1}}
+        ]);
+
+        const formattedNotifications = notifications?.map(({_id, notifications}) => ({
+            date: _id,
+            notifications,
+            total: notifications?.length
+        }));
+
+        res.status(200).json({
+            notifications: formattedNotifications,
+            total: note?.length
+        });
     } catch (err) {
         res.status(500).json({
             msg: 'there is an unknown error sorry ',
@@ -62,7 +78,7 @@ router.get('/all/:id',  async (req, res) => {
 })
 
 //Get Read Notifications
-router.get('/read/:id',verify, async (req, res) => {
+router.get('/read/:id', verify, async (req, res) => {
     try {
         if (!req.params.id) return res.status(402).json({msg: "provide the id ?"})
 
@@ -94,7 +110,7 @@ router.get('/unread/:id', verify, async (req, res) => {
 })
 
 //Get Single notification and change status from 0 to 1
-router.get("/:id", verify,async (req, res) => {
+router.get("/:id", verify, async (req, res) => {
     try {
         if (!req.params.id) return res.status(402).json({msg: 'provide the id ?'})
         await NotificationModel.updateOne({_id: req.params.id}, {status: 1}).then(async () => {
