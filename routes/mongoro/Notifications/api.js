@@ -50,21 +50,24 @@ router.get('/all/:id', async (req, res) => {
     try {
         if (!req.params.id) return res.status(402).json({msg: "provide the id ?"})
 
-        // let notifications = await NotificationModel.find({userId: req.params.id})
+        let note = await NotificationModel.find({userId: req.params.id})
         const notifications = await NotificationModel.aggregate([
-            {
-                $match: {userId: req.params.id}
-            },
-            {
-                $group: {
-                    _id: {
-                        $dateToString: {format: "%Y-%m-%d", date: "$timestamp"}
-                    },
-                    notifications: {$push: "$$ROOT"}
-                }
-            }
+            {$match: {userId: req.params.id, date: {$exists: true}}},
+            {$addFields: {date: {$toDate: "$date"}}},
+            {$group: {_id: {$dateToString: {format: "%Y-%m-%d", date: "$date"}}, notifications: {$push: "$$ROOT"}}},
+            {$sort: {"_id": -1}}
         ]);
-        res.status(200).json({notifications: notifications?.reverse(), total: notifications?.length});
+
+        const formattedNotifications = notifications?.map(({_id, notifications}) => ({
+            date: _id,
+            notifications,
+            total: notifications?.length
+        }));
+
+        res.status(200).json({
+            notifications: formattedNotifications,
+            total: note?.length
+        });
     } catch (err) {
         res.status(500).json({
             msg: 'there is an unknown error sorry ',
