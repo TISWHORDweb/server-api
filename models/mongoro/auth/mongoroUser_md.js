@@ -179,6 +179,12 @@ const mongoroUserSchema=new mongoose.Schema({
             default: false
         },
     },
+    reason:{
+        type:String, 
+    },
+    note:{
+        type:String, 
+    },
     time_created:{type:Number, default:()=>Date.now()},	
     user_updated_at:{type:Number, default:()=>Date.now()}	
 })
