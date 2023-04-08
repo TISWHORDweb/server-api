@@ -8,14 +8,21 @@ const Mpos = require("../../../models/mongoro/mpos/mpos_md")
 const MongoroUserModel = require("../../../models/mongoro/auth/mongoroUser_md")
 
 
-router.get("/transactions/:key", async (req, res) => {
-    try {
+router.get("/transaction/:key", async (req, res) => {
+    // try {
 
         const data = await TransferModel.find(
             {
                 "$or": [
-                    { name: { $regex: req.params.key } },
-                    { brand: { $regex: req.params.key } }
+                    { transaction_ID: { $regex: req.params.key } },
+                    { Date: { $regex: req.params.key } },
+                    { narration: { $regex: req.params.key } },
+                    { account_number: { $regex: req.params.key } },
+                    { full_name: { $regex: req.params.key } },
+                    { bank_name: { $regex: req.params.key } },
+                    { reference: { $regex: req.params.key } },
+                    { amount: { $regex: req.params.key } },
+                    { status: { $regex: req.params.key } }
                 ]
             }
         )
@@ -25,12 +32,12 @@ router.get("/transactions/:key", async (req, res) => {
             data: data
         })
 
-    } catch (err) {
-        res.status(500).json({
-            msg: 'there is an unknown error sorry ',
-            status: 500
-        })
-    }
+    // } catch (err) {
+    //     res.status(500).json({
+    //         msg: 'there is an unknown error sorry ',
+    //         status: 500
+    //     })
+    // }
 })
 
 
