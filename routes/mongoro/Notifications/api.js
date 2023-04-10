@@ -186,9 +186,9 @@ router.post('/test', async (req, res) => {
 
 router.delete("/delete/:id", verify, async (req, res) => {
     try {
-        if (!req.body.id) return res.status(402).json({msg: 'provide the id ?'})
+        if (!req.params.id) return res.status(402).json({msg: 'provide the id ?'})
 
-        await NotificationModel.deleteOne({_id: req.body.id})
+        await NotificationModel.deleteOne({_id: req.params.id})
         res.status(200).json("Notification deleted....");
     } catch (error) {
         res.status(500).json({
