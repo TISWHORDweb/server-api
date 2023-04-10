@@ -13,6 +13,9 @@ const kycSchema=new mongoose.Schema({
     image:{
         type:String
     },
+    idNumber:{
+        type:String
+    },
     validate_at:{type:Number, default:()=>Date.now()}		
 })
 
