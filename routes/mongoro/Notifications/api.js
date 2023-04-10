@@ -49,6 +49,7 @@ function paginatedResults(model) {
 router.get('/all/:id', async (req, res) => {
     try {
         if (!req.params.id) return res.status(402).json({msg: "provide the id ?"})
+        let unreadNote = await NotificationModel.find({userId: req.params.id, status: 0})
 
         let note = await NotificationModel.find({userId: req.params.id})
         const notifications = await NotificationModel.aggregate([
@@ -66,7 +67,8 @@ router.get('/all/:id', async (req, res) => {
 
         res.status(200).json({
             notifications: formattedNotifications,
-            total: note?.length
+            total: note?.length,
+            totalUnread: unreadNote?.length
         });
     } catch (err) {
         res.status(500).json({
@@ -161,9 +163,10 @@ router.post('/create', verify, async (req, res) => {
         })
     }
 })
+
 router.post('/test', async (req, res) => {
     let note = {
-        title: "Hi",
+        title: "Credit Alert",
         body: `Welcome to Mongoro`
     };
 
@@ -184,11 +187,11 @@ router.post('/test', async (req, res) => {
     }
 })
 
-router.delete("/delete", verify, async (req, res) => {
+router.delete("/delete/:id", verify, async (req, res) => {
     try {
-        if (!req.body.id) return res.status(402).json({msg: 'provide the id ?'})
+        if (!req.params.id) return res.status(402).json({msg: 'provide the id ?'})
 
-        await NotificationModel.deleteOne({_id: req.body.id})
+        await NotificationModel.deleteOne({_id: req.params.id})
         res.status(200).json("Notification deleted....");
     } catch (error) {
         res.status(500).json({
