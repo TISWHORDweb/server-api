@@ -218,7 +218,7 @@ router.post("/login", async (req, res) => {
                 });
 
                 await OtherModel.updateOne({ email: req.body.email }, { $set: { ip: ip } }).then(() => {
-                    res.status(200).json({ msg: 'logged in successfuly Admin !', category: "Admin", email:req.body.email, isverified: admin.isverified, token: accessToken, ip_address: ip, status: 200 });
+                    res.status(200).json({ msg: 'logged in successfuly Admin !', category: "Admin", admin });
                 })
             }
         }
@@ -317,7 +317,7 @@ router.post("/login", async (req, res) => {
             });
 
             await SuperModel.updateOne({ email: req.body.email }, { $set: { ip: ip } }).then(() => {
-                res.status(200).json({ msg: 'logged in successfuly Super Admin', category: "Super Admin",  email:req.body.email, token: accessToken, ip_address: ip, status: 200 });
+                res.status(200).json({ msg: 'logged in successfuly Super Admin', category: "Super Admin",  supers });
             })
         }
 
