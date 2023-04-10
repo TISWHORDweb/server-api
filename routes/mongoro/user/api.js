@@ -275,9 +275,14 @@ router.post("/pin_mailer", verify, async (req, res) => {
     const code = Math.floor(100000 + Math.random() * 900000)
 
     try {
-        if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?', status: 402 })
+        if (!req.body.id) return res.status(400).json({ msg: 'provide the id ?', status: 400 })
+
+        if(req.body.email !== user.email){
+            return res.status(400).json({ msg: "wrong email", status: 400 });
+        }
+
         if (originalPin !== req.body.pin) {
-            res.status(401).json({ msg: "wrong pin !", status: 401 });
+            res.status(400).json({ msg: "wrong pin !", status: 400 });
         } else {
 
 
@@ -287,8 +292,9 @@ router.post("/pin_mailer", verify, async (req, res) => {
                     Authorization: `Bearer ${process.env.SENDCHAMP}`
                 }
             }
+            
             axios.post(url, {
-                "to": user.phone,
+                "to": req.body.phone,
                 "route": "dnd",
                 "message": "Your verification code is " + code,
                 "sender_name": "MONGORO-PIN"
@@ -306,7 +312,7 @@ router.post("/pin_mailer", verify, async (req, res) => {
     
             let mailOptions = {
                 from: 'support@mongoro.com',
-                to: user.email,
+                to: req.body.email,
                 subject: 'Verification code',
                 html: `<!DOCTYPE html>
                 <html lang="en">
