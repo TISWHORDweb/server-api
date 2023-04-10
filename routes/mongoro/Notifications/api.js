@@ -163,7 +163,7 @@ router.post('/create', verify, async (req, res) => {
 })
 router.post('/test', async (req, res) => {
     let note = {
-        title: "Hi",
+        title: "Credit Alert",
         body: `Welcome to Mongoro`
     };
 
@@ -184,7 +184,7 @@ router.post('/test', async (req, res) => {
     }
 })
 
-router.delete("/delete", verify, async (req, res) => {
+router.delete("/delete/:id", verify, async (req, res) => {
     try {
         if (!req.body.id) return res.status(402).json({msg: 'provide the id ?'})
 
