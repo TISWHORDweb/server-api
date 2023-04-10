@@ -333,9 +333,23 @@ router.post('/audit', async (req, res) => {
         if ( !req.body.adminId ) return res.status(400).json({ msg: 'provide the id', status: 400 })
      
         const admin = await OtherModel.findOne({ _id: req.body.adminId });
+        const supers = await SuperModel.findOne({ _id: req.body.adminId });
+
         if(admin){
             req.body.email = admin.email
             req.body.category = admin.category
+            req.body.ip=address.ip();
+    
+            let activity = new AdminAuditModel(req.body)
+            activity.save().then(() => {
+                return res.status(200).json({
+                    msg: 'Details added Successful ',
+                    status: 200
+                })
+            })
+        }else if(supers){
+            req.body.email = supers.email
+            req.body.category = supers.category
             req.body.ip=address.ip();
     
             let activity = new AdminAuditModel(req.body)
