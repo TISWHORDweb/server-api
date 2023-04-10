@@ -15,7 +15,7 @@ router.get("/transaction/:key", async (req, res) => {
             {
                 "$or": [
                     { transaction_ID: { $regex: req.params.key } },
-                    { Date: { $regex: req.params.key } },
+                    // { Date: { $regex: req.params.key } },
                     { narration: { $regex: req.params.key } },
                     { account_number: { $regex: req.params.key } },
                     { full_name: { $regex: req.params.key } },
@@ -25,7 +25,9 @@ router.get("/transaction/:key", async (req, res) => {
                     { status: { $regex: req.params.key } }
                 ]
             }
+
         )
+
         res.status(200).json({
             msg: 'Transaction data fetch Successfully ',
             status: 200,
