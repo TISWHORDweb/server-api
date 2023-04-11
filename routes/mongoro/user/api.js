@@ -512,7 +512,7 @@ router.put('/tier_three', verify, async (req, res) => {
     try {
         if (!req.body.id) return res.status(400).json({ msg: 'provide the id ?', status: 400 })
 
-        await MongoroUserModel.updateOne({ _id: req.body.id }, { $set: { tiers: "three" } }).then(async () => {
+        await MongoroUserModel.updateOne({ _id: req.body.id }, { $set: { tiers: "three", indemnity:true } }).then(async () => {
             return res.status(200).json({
                 msg: 'Tiers upgraded Successful ',
                 status: 200
