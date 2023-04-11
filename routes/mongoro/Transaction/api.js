@@ -131,6 +131,12 @@ router.post("/", async (req, res) => {
 
   const check = await TierModel.findOne({ userId: req.body.userId, date: currentDate })
 
+  let boddy = {
+    date: currentDate,
+    userId: req.body.userId,
+    limit: number
+  }
+  
   if (!check) {
     let tier = new TierModel(boddy)
     tier.save()
@@ -158,12 +164,6 @@ router.post("/", async (req, res) => {
   if (type === "three") {
     number = 10000000
     per = 1000000
-  }
-
-  let boddy = {
-    date: currentDate,
-    userId: req.body.userId,
-    limit: number
   }
 
 

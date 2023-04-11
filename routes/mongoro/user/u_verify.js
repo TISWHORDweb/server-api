@@ -119,6 +119,22 @@ router.post('/', async (req, res) => {
 })
 
 
+// let employees = [
+//     { id: 1, salary: 25000},
+//     { id: 2, salary: 38000},
+//     { id: 3, salary: 23000},
+//     { id: 4, salary: 20000},
+//     { id: 5, salary: 45000}
+//   ];
+  
+//   // removing object with id = 3
+//   for (let i = 0; i < employees.length; i++) {
+//     if (employees[i].id === 1) {
+//       employees.splice(i, 1);
+//       break;
+//     }
+//   }
+//   console.log(employees);
 router.get("/banks", async (req, res) => {
     const url = "https://api.youverify.co/v2/api/identity/ng/bank-account-number/bank-list"
 
