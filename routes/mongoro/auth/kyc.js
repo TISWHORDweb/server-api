@@ -14,7 +14,7 @@ router.post('/', async (req, res) => {
     try {
 
         if (!req.body.userId) return res.status(400).json({ msg: 'provide the id' })
-
+        const user = await MongoroUserModel.findOne({ _id: req.body.userId})
         let details = new KycModel(req.body)
         details.save().then(() => {
 
@@ -91,6 +91,7 @@ router.post('/', async (req, res) => {
             </body>
             </html>`
         };
+
         transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
                 console.log(error);
