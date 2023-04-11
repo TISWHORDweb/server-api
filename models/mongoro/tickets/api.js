@@ -32,6 +32,9 @@ const TicketSchema=new mongoose.Schema({
     ID:{
         type:String
     },
+    userId:{
+        type:String
+    },
     time_created:{type:Number, default:()=>Date.now()}		
 })
 

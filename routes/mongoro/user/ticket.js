@@ -48,12 +48,13 @@ router.post('/create', verify, async (req, res) => {
 
     req.body.ID = "0012" + Math.floor(1000 + Math.random() * 9000)
 
-    if ( !req.body.subject || !req.body.name) return res.status(402).json({ msg: 'please check the fields' })
+    if ( !req.body.username || !req.body.option) return res.status(402).json({ msg: 'please check the fields' })
 
     try {
         const user = await MongoroUserModel.findOne({ wallet_ID: req.body.username })
         if (user) {
             req.body.image = user.image
+            req.body.userId = user._id
             req.body.email = user.email
             req.body.name = user.surname + " " + user.first_name
 
@@ -104,6 +105,22 @@ router.get("/:id", verify, async (req, res) => {
         })
     }
 })
+
+
+router.get("/user/:id", verify, async (req, res) => {
+    try {
+        if (!req.params.id) return res.status(402).json({ msg: 'provide the id ?' })
+
+        let tickets = await TicketModel.find({ userId: req.params.id })
+        res.status(200).json(tickets);
+    } catch (err) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry ',
+            status: 500
+        })
+    }
+})
+
 
 router.put('/edit', verify, async (req, res) => {
     let body = JSON.parse(JSON.stringify(req.body));
