@@ -179,6 +179,10 @@ const mongoroUserSchema=new mongoose.Schema({
             default: false
         },
     },
+    showBalance:{
+        type:Boolean,
+        default: false
+    }, 
     reason:{
         type:String, 
     },

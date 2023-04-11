@@ -27,6 +27,16 @@ let storage = multer.diskStorage({
 //set Storage Configuration to multer
 let upload = multer({ storage })
 
+router.put('/showbalance', async (req, res) => {
+    const state = req.body.showBalance
+    await MongoroUserModel.updateOne({_id:req.body.userId},{showBalance:state}).then(()=>{
+        res.status(200).json({
+            state,
+            status: 200
+        })
+    })
+})
+
 
 router.get('/all', paginatedResults(MongoroUserModel), (req, res) => {
     res.json(res.paginatedResults)

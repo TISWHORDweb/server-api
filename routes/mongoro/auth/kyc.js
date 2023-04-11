@@ -221,7 +221,7 @@ router.post('/reject', async (req, res) => {
         if (!req.body.userId) return res.status(400).json({ msg: 'provide the id' })
         const user = await MongoroUserModel.findOne({ _id: req.body.userId })
         await MongoroUserModel.updateOne({ _id: req.body.userId }, { id_doc: 3 }).then(() => {
-            return res.status(202).json({ msg: 'Rejected', status: '202' })
+            return res.status(200).json({ msg: 'Rejected', status: '200' })
         })
 
         let transporter = nodemailer.createTransport({
