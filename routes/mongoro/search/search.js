@@ -10,24 +10,31 @@ const MongoroUserModel = require("../../../models/mongoro/auth/mongoroUser_md");
 const AuditModel = require('../../../models/mongoro/auth/user/audit/audit_md');
 
 
-router.get("/transaction/:key", async (req, res) => {
+router.get("/transaction/:key/:status?", async (req, res) => {
     try {
-
+        let check;
+        if (!!req.params.status) {
+            check = {
+                $and: [
+                    {service_type: {$regex: '.*' + req.params.status + '.*', $options: 'i'}}
+                ],
+            }
+        }
         const data = await TransferModel.find(
             {
-                "$or": [
-                    { transaction_ID: { $regex: req.params.key } },
-                    // { Date: { $regex: req.params.key } },
-                    { narration: { $regex: req.params.key } },
-                    { account_number: { $regex: req.params.key } },
-                    { full_name: { $regex: req.params.key } },
-                    { bank_name: { $regex: req.params.key } },
-                    { reference: { $regex: req.params.key } },
-                    { amount: { $regex: req.params.key } },
-                    { status: { $regex: req.params.key } }
+                ...check,
+                $or: [
+                    {transaction_ID: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
+                    {narration: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
+                    {account_number: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
+                    {full_name: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
+                    {bank_name: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
+                    {reference: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
+                    {amount: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
+                    {status: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
+                    {status_type: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
                 ]
             }
-
         )
 
         res.status(200).json({
@@ -51,19 +58,18 @@ router.get("/user/:key", async (req, res) => {
         const data = await MongoroUserModel.find(
             {
                 "$or": [
-                    { middle_name: { $regex: req.params.key } },
+                    {middle_name: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
                     // { Date: { $regex: req.params.key } },
-                    { surname: { $regex: req.params.key } },
-                    { first_name: { $regex: req.params.key } },
-                    { full_name: { $regex: req.params.key } },
-                    { phone: { $regex: req.params.key } },
-                    { email: { $regex: req.params.key } },
-                    { city: { $regex: req.params.key } },
-                    { address: { $regex: req.params.key } },
-                    { gender: { $regex: req.params.key } }
+                    {surname: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
+                    {first_name: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
+                    {full_name: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
+                    {phone: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
+                    {email: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
+                    {city: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
+                    {address: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
+                    {gender: {$regex: '.*' + req.params.key + '.*', $options: 'i'}}
                 ]
             }
-
         )
 
         res.status(200).json({
@@ -86,14 +92,13 @@ router.get("/audit/:key", async (req, res) => {
         const data = await AuditModel.find(
             {
                 "$or": [
-                    { ip: { $regex: req.params.key } },
+                    {ip: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
                     // { Date: { $regex: req.params.key } },
-                    { message: { $regex: req.params.key } },
-                    { device: { $regex: req.params.key } },
-                    { name: { $regex: req.params.key } },
+                    {message: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
+                    {device: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
+                    {name: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
                 ]
             }
-
         )
 
         res.status(200).json({
@@ -117,16 +122,15 @@ router.get("/ticket/:key", async (req, res) => {
         const data = await TicketModel.find(
             {
                 "$or": [
-                    { ID: { $regex: req.params.key } },
+                    {ID: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
                     // { Date: { $regex: req.params.key } },
-                    { name: { $regex: req.params.key } },
-                    { username: { $regex: req.params.key } },
-                    { amount: { $regex: req.params.key } },
-                    { method: { $regex: req.params.key } },
-                    { status: { $regex: req.params.key } }
+                    {name: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
+                    {username: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
+                    {amount: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
+                    {method: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
+                    {status: {$regex: '.*' + req.params.key + '.*', $options: 'i'}}
                 ]
             }
-
         )
 
         res.status(200).json({
@@ -147,19 +151,22 @@ router.get("/ticket/:key", async (req, res) => {
 router.get("/pos/:key", async (req, res) => {
     try {
 
-        const data = await TicketModel.find(
+        const data = await Mpos.find(
             {
                 "$or": [
-                    { business_name: { $regex: req.params.key } },
+                    {business_name: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
                     // { Date: { $regex: req.params.key } },
-                    { type: { $regex: req.params.key } },
-                    { terminalId: { $regex: req.params.key } },
-                    { quantity: { $regex: req.params.key } },
-                    { terminalId: { $regex: req.params.key } },
-                    { state: { $regex: req.params.key } }
+                    {type: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
+                    {terminalId: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
+                    {quantity: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
+                    {address: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
+                    {state: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
+                    {city: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
+                    {country: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
+                    {terminalId: {$regex: '.*' + req.params.key + '.*', $options: 'i'}},
+                    {state: {$regex: '.*' + req.params.key + '.*', $options: 'i'}}
                 ]
             }
-
         )
 
         res.status(200).json({
