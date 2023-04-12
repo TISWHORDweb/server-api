@@ -803,21 +803,23 @@ router.post('/wallet', verify, async (req, res) => {
     tier.save()
     allTotal = 0
   } else {
-    const allTransfer = await TierModel.findOne({ userId: req.body.userId })
+    const allTransfer = await TierModel.findOne({ userId: req.body.userId, date: currentDate })
     allTotal = allTransfer.amount
   }
 
   console.log(senderAmount)
-  if (req.body.amount > per) {
+  if (sender.wallet_ID === req.body.wallet_ID) {
+    res.send({ msg: "Sorry you cant send money to yourself", status: 400 })
+  } else if (req.body.amount > per) {
     res.send({ msg: `You can only send ${per} at once any amount greater than that is not accepted, Upgrade your account to have access, Thanks`, status: 400 });
   } else if (allTotal > number) {
-    res.send({ msg: "You have reach your daily transaction limit, Upgrade your account to have access" })
+    res.send({ msg: "You have reach your daily transaction limit, Upgrade your account to have access", status: 400})
   } else if (value === true) {
-    res.send({ msg: "Sorry your account is blocked" })
+    res.send({ msg: "Sorry your account is blocked", status: 400})
   } else if (resultt === true) {
-    res.send({ msg: "Sorry service temporarily unavailable", code: 400 })
+    res.send({ msg: "Sorry service temporarily unavailable", status: 400 })
   } else if (originalPin !== req.body.pin) {
-    res.send({ msg: 'Wrong pin ', status: 401 })
+    res.send({ msg: 'Wrong pin ', status: 400 })
   } else if (senderAmount < req.body.amount) {
     res.send({ msg: "Insufficient funds", status: 400 });
   } else if (senderAmount < 100) {
