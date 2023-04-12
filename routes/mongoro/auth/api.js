@@ -15,6 +15,7 @@ const GlobalModel = require('../../../models/mongoro/admin/super_admin/global/gl
 const platform = require('platform');
 const axios = require('axios');
 const { notify } = require('../../../core/core.utils');
+const note = require('../../../note.json')
 
 //CREATE
 router.post('/register', async (req, res) => {
@@ -330,9 +331,7 @@ router.post("/login", async (req, res) => {
                 });
             }
 
-            if(user.login_alert.notification === true){
                 notify(user._id, note.title, note.body, data)
-            }
 
             await MongoroUserModel.updateOne({_id: user._id}, {$set: {ip: ip, active: true}}).then(() => {
                 res.status(200).json({
