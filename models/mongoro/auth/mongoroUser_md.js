@@ -156,7 +156,7 @@ const mongoroUserSchema=new mongoose.Schema({
         },
         email:{
             type:Boolean,
-            default: false
+            default: true
         },
     },
     transaction_alert:{
@@ -166,7 +166,7 @@ const mongoroUserSchema=new mongoose.Schema({
         },
         email:{
             type:Boolean,
-            default: false
+            default: true
         },
     },
     login_alert:{
@@ -176,7 +176,7 @@ const mongoroUserSchema=new mongoose.Schema({
         },
         email:{
             type:Boolean,
-            default: false
+            default: true
         },
     },
     showBalance:{
