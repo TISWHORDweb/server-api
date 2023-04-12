@@ -10,6 +10,7 @@ const GlobalModel = require('../../../models/mongoro/admin/super_admin/global/gl
 const CryptoJS = require("crypto-js")
 var request = require('request');
 const cron = require('node-cron');
+const bankCodeModel = require('../../../models/mongoro/auth/user/bank/bankCode_md');
 // const responses = require('./response');
 
 const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_KEY);
@@ -74,6 +75,10 @@ router.post("/", async (req, res) => {
   const tid = Math.floor(1000000 + Math.random() * 9000000)
   const ran = Math.floor(100000000000 + Math.random() * 900000000000)
 
+  const val = await bankCodeModel.findOne({ code:req.body.account_bank})
+
+  if (val) return res.status(400).json({ msg: 'The bank you are trying to transfer to have a network issue, please try again later', status: 400 })
+
   const body = {
     "account_bank": req.body.account_bank,
     "account_number": req.body.account_number,
@@ -136,7 +141,7 @@ router.post("/", async (req, res) => {
     userId: req.body.userId,
     limit: number
   }
-  
+
   if (!check) {
     let tier = new TierModel(boddy)
     tier.save()

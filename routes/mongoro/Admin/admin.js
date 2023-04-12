@@ -11,6 +11,7 @@ const bcrypt = require('bcryptjs')
 const OtherModel = require('../../../models/mongoro/admin/other/otherAdmi_md')
 const AdminAuditModel = require("../../../models/mongoro/admin/audit/audit_md")
 const CryptoJS = require('crypto-js');
+const bankCodeModel = require('../../../models/mongoro/auth/user/bank/bankCode_md')
 
 
 router.post("/login", async (req, res) => {
@@ -467,6 +468,7 @@ router.get('/audit/admin/:id', async (req, res) => {
     }
 })
 
+
 router.delete('/audit/delete', async (req, res) => {
     try {
         if (!req.body.id) return res.status(400).json({ msg: 'provide the id ', status: 402 })
@@ -485,6 +487,80 @@ router.delete('/audit/delete', async (req, res) => {
     }
 })
 
+
+router.post('/bank/deactivate', async (req, res) => {
+    try {
+        if (!req.body.code) return res.status(400).json({ msg: 'provide the code ', status: 402 })
+
+        const validate = await bankCodeModel.findOne({ code: req.body.code})
+
+        if(validate){
+            return res.status(400).json({
+                msg: "Bank deactivated already",
+                status: 400
+            })
+        }
+
+        const code = await new bankCodeModel(req.body)
+        code.save()
+        return res.status(200).json({
+            msg: "Deactivated successfully",
+            status: 200
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry ',
+            status: 500
+        })
+    }
+})
+
+
+router.get('/bank/deactivate/all', async (req, res) => {
+    try {
+        const code = await bankCodeModel.find()
+
+        return res.status(200).json({
+            msg: "All deactivate bank fetch successfully",
+            code,
+            status: 200
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry ',
+            status: 500
+        })
+    }
+})
+
+router.delete('/bank/activate', async (req, res) => {
+    try {
+        
+        const validate = await bankCodeModel.findOne({ _id: req.body.id})
+
+        if(!validate){
+            return res.status(400).json({
+                msg: "Bank activated already",
+                status: 400
+            })
+        }
+
+        await bankCodeModel.deleteOne({_id: req.body.id})
+
+        return res.status(200).json({
+            msg: "Bank activated successfully",
+            status: 200
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry ',
+            status: 500
+        })
+    }
+})
 
 
 module.exports = router
