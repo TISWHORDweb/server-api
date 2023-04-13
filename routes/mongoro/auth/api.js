@@ -414,11 +414,16 @@ router.post("/login", async (req, res) => {
                                             <td>
                                                 <p style='margin:2rem 0; font-weight: 800; color: #292929; line-height: 1.5rem;'>Dear ${user.surname + " " + user.first_name},
                                                     <p style='margin:2rem 0; font-size:14px; color: #292929; line-height: 1.5rem;'>
-                                                    <span> We noticed a recently sign in to your account from ${result.city}, ${result.region}, ${result.country_name} - ${result.continent_name} on a ${req.body.device} name with the IP address ${ip}, at ${when}.
+                                                    <span> We noticed your Mongoro account was logged in on ${req.body.device}
+                                                     from ${result.city}, ${result.region}, ${result.country_name} - ${result.continent_name}
+                                                       name with the IP address ${ip}, at ${when}. If this was you, 
+                                                       there is no need to do anything.
                                                     </span>
                                                         <br />
                                                         <br />
-                                                    <span>If this login has not originated from you, Change your password and kindly send an email to <a href='mailto:support@mongoro.com'>support@mongoro.com</a> or reach us via in-app support.</span>
+                                                    <span>Not you? Change your password and kindly send an email to
+                                                     <a href='mailto:support@mongoro.com'>support@mongoro.com</a>
+                                                      or reach us via in-app support.</span>
                                                 </p>
                                                     <br>
                                                     
@@ -431,7 +436,7 @@ router.post("/login", async (req, res) => {
                                                     <hr 
                                                         style='border: none; border-bottom: 0.6px solid #FFAB01'
                                                     />
-                                                    <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'>+2348033550170</p>
+                                                    <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'>www.mongoro.com</p>
                                                     <p style='color: #666666; text-align: center; font-size: 14px;'>support@mongoro.com</p>
                                                     <p style='color: #666666; text-align: center; font-size: 14px;'>21 Blantyre Crescent, Wuse 2. Abuja</p>
                                                     <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'> Having trouble viewing this email? Click here to view in your browser.</p>
