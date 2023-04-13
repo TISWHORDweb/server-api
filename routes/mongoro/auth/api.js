@@ -69,62 +69,77 @@ router.post('/register', async (req, res) => {
                 from: 'support@mongoro.com',
                 to: req.body.email,
                 subject: 'Verification code',
-                html: `<!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Mongoro</title>
-                    <script src="https://kit.fontawesome.com/13437b109b.js" crossorigin="anonymous"></script>
-                    <link rel="preconnect" href="https://fonts.googleapis.com">
-                    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-                    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
-                </head>
-                <body>
-                    <div class="wrapper" style='width:100%; table-layout: fixed; background: #fff; padding-bottom:60px; font-family: "Plus Jakarta Sans", sans-serif;'>
-                        <table class="main" width="100%">
-                            
-                            <tr>
-                                <td>
-                                    <table width=100% class=sub-main>
-                                        <tr>
-                                            <td>
-                                                <table width=100%>
-                                                    <tr>
-                                                        <td>
-                                                            <h3 class="header" style='color: #161616'>Welcome to Mongoro 🚀 </h3>
-                                                            <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
-                                                                    Thanks for joining Mongoro. You can now access the dashboard, Enjoy banking with us.
-                                                                <br>
-                                                                // <p style='margin:3rem 0; color: #161616; line-height: 1.5rem; font-size: 45px; text-align: center;'>
-                                                                //     <span><b></b></span>
-                                                                // </p>
-                                                                <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
-                                                                    <span>Thanks,</span>
-                                                                </p>
-                                                                <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
-                                                                    <span><b>Support Team, Mongoro Team</b></span>
-                                                                </p>
-                                                                <hr 
-                                                                    style='border: none; border-bottom: 0.6px solid #FFF7E6'
-                                                                />
-                                                                <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'>+234 09169451169</p>
-                                                                <p style='color: #666666; text-align: center; font-size: 14px;'>sales@mongoro.com</p>
-                                                                <p style='color: #666666; text-align: center; font-size: 14px;'>Space 27, Novare Mall, Wuse Zone 5, Abuja</p>
-                                                                <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'> Having trouble viewing this email? Click here to view in your browser.</p>
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                </body>
-                </html>`
+                html: `
+                <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mongoro</title>
+<script src="https://kit.fontawesome.com/13437b109b.js" crossorigin="anonymous"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="wrapper" style='width:95%; table-layout: fixed; background: #fff; padding-bottom:60px; font-family: "Plus Jakarta Sans", sans-serif; border: 10px solid #FFF7E6'>
+    <table class="main" width="100%">
+        <tr>
+            <td>
+                <table width=100% class=sub-main>
+                    <tr>
+                        <td>
+                            <a>
+                                <div style='padding: 1rem; background: #FFF7E6;'>
+                                    <img 
+                                        style='width: 7rem; display: block; margin: 0 auto'
+                                        src='http://res.cloudinary.com/dszrk3lcz/image/upload/v1681388703/dqfex6vpnnncytqrtntx.png' 
+                                        alt=''
+                                    />
+                                </div>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table width=100% style="padding: 0 9px">
+                                <tr>
+                                    <td>
+                                        <p style='margin:2rem 0; font-weight: 800; color: #292929; line-height: 1.5rem;'>Welcome to Mongoro 🚀
+                                            <p style='margin:2rem 0; font-size:14px; color: #292929; line-height: 1.5rem;'>
+                                            <span>  Thanks for joining Mongoro. You can now access the dashboard, Enjoy banking with us.
+                                            </span>
+                                                <br />
+                                                <br />
+                                        </p>
+                                            <br>
+                                            
+                                            <p style='margin:2rem 0; color: #292929; line-height: 1.5rem;'>
+                                                <span>Regards,</span>
+                                            </p>
+                                            <p style='margin:2rem 0; color: #292929; line-height: 1.5rem;'>
+                                                <span><b>Mongoro Team</b></span>
+                                            </p>
+                                            <hr 
+                                                style='border: none; border-bottom: 0.6px solid #FFAB01'
+                                            />
+                                            <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'>+2348033550170</p>
+                                            <p style='color: #666666; text-align: center; font-size: 14px;'>support@mongoro.com</p>
+                                            <p style='color: #666666; text-align: center; font-size: 14px;'>21 Blantyre Crescent, Wuse 2. Abuja</p>
+                                            <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'> Having trouble viewing this email? Click here to view in your browser.</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>`,
             };
             transporter.sendMail(mailOptions, function (error, info) {
                 if (error) {
@@ -476,9 +491,7 @@ router.post("/login", async (req, res) => {
 //FORGOTPASSWORD 
 router.post("/password_verify", async (req, res) => {
 
-    const email_code = Math.floor(100 + Math.random() * 900)
-    const sms_code = Math.floor(100 + Math.random() * 900)
-    let code = {email_code, sms_code}
+    let code = Math.floor(100000 + Math.random() * 900000)
 
     const user = await MongoroUserModel.findOne({email: req.body.email});
 
@@ -499,8 +512,80 @@ router.post("/password_verify", async (req, res) => {
         let mailOptions = {
             from: 'support@mongoro.com',
             to: req.body.email,
-            subject: 'Verification code',
-            html: `Your code is ${email_code}`
+            subject: 'Password Recovery',
+            html: `<!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Mongoro</title>
+                <script src="https://kit.fontawesome.com/13437b109b.js" crossorigin="anonymous"></script>
+                <link rel="preconnect" href="https://fonts.googleapis.com">
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+                <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+            </head>
+            <body>
+                <div class="wrapper" style='width:100%; table-layout: fixed; background: #fff; padding-bottom:60px; font-family: "Plus Jakarta Sans", sans-serif;'>
+                    <table class="main" width="100%">
+                        
+                        <tr>
+                            <td>
+                                <table width=100% class=sub-main>
+                                    <tr>
+                                        <td>
+                                            <a>
+                                                <div style='padding: 1rem; background: #FFF7E6;'>
+                                                    <img 
+                                                        style='width: 7rem; display: block; margin: 0 auto'
+                                                        src='http://res.cloudinary.com/dszrk3lcz/image/upload/v1681388703/dqfex6vpnnncytqrtntx.png' 
+                                                        alt=''
+                                                    />
+                                                </div>
+                                                
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <table width=100%>
+                                                <tr>
+                                                    <td>
+                                                        <p style='margin:2rem 0; font-weight: 600; color: #292929; line-height: 1.5rem;'>Verification code
+                                                            <p style='margin:2rem 0; font-size:14px; color: #292929; line-height: 1.5rem;'>
+                                                                <span>   To change your password, Please enter the code below</span>
+                                                            </p>
+                                                            <br>
+                                                            <p style='margin:0rem 0; color: #292929; line-height: 1.5rem; font-size: 35px; text-align: left;'>
+                                                                <span><b>${code}</b></span>
+                                                            </p>
+                                                            
+                                                            <p style='margin:2rem 0; color: #292929; line-height: 1.5rem;'>
+                                                                <span>Regards,</span>
+                                                            </p>
+                                                            <p style='margin:2rem 0; color: #292929; line-height: 1.5rem;'>
+                                                                <span><b>Mongoro Team</b></span>
+                                                            </p>
+                                                            <hr 
+                                                                style='border: none; border-bottom: 0.6px solid #FFF7E6'
+                                                            />
+                                                        
+                                                            <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'>+2348033550170</p>
+                                                            <p style='color: #666666; text-align: center; font-size: 14px;'>support@mongoro.com</p>
+                                                            <p style='color: #666666; text-align: center; font-size: 14px;'>21 Blantyre Crescent, Wuse 2. Abuja</p>
+                                                            <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'> Having trouble viewing this email? Click here to view in your browser.</p>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </body>
+            </html>`,
         };
 
         transporter.sendMail(mailOptions, function (error, info) {
@@ -514,7 +599,7 @@ router.post("/password_verify", async (req, res) => {
         var data = {
             "to": number,
             "from": "Mongoro-PIN",
-            "sms": "Your code is " + sms_code,
+            "sms": " To change your password, Please enter the code " + code,
             "type": "plain",
             "api_key": "TLMPIOB7Oe4V8NRRc7KnukwGgTAY9PZLqwVw2DMhrr8o0CEXh4BMmBfN6C0cNf",
             "channel": "generic",
