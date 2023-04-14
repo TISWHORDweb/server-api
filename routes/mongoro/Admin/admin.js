@@ -589,7 +589,6 @@ router.post('/bank/deactivate', async (req, res) => {
     }
 })
 
-
 router.get('/bank/all', async (req, res) => {
     try {
 
