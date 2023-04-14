@@ -35,7 +35,8 @@ router.post("/webhook", async (req, res) => {
         const txReference = payload.data.tx_ref;
         const flwId = payload.data.id;
 
-
+        const adminFee = 100
+        const chargeAmount = txAmount - adminFee
 
         // find user on the database using the email
         const userWallet = await MongoroUserModel.findOne({ email: csEmail });
@@ -52,7 +53,7 @@ router.post("/webhook", async (req, res) => {
         ///NOT SHOOTING
         const id = userWallet._id;
         const oldAmount = userWallet.wallet_balance
-        const newAmount = +oldAmount + +txAmount
+        const newAmount = +oldAmount + +chargeAmount
 
         var config = {
             method: 'get',
