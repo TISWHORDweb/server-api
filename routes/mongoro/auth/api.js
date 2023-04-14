@@ -319,7 +319,7 @@ router.post("/verify", async (req, res) => {
 
 router.post("/login", async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
-
+    const ip = address.ip();
     let UserPassword;
 
     const users = await GlobalModel.findOne({_id: process.env.GLOBAL_ID})
@@ -356,7 +356,7 @@ router.post("/login", async (req, res) => {
 
             var configs = {
                 method: 'get',
-                url: `https://api.ipdata.co?api-key=e93f292bf9211a39c987943a79d8bed8a9370fe943db7ac74f81084e`,
+                url: `https://api.ipdata.co/${ip}?api-key=e93f292bf9211a39c987943a79d8bed8a9370fe943db7ac74f81084e`,
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -477,7 +477,7 @@ router.post("/login", async (req, res) => {
                 notify(user._id, note.title, note.body, data)
             })
 
-            const ip = address.ip();
+            
             const timeElapsed = Date.now();
             const today = new Date(timeElapsed);
             const when = today.toUTCString();
