@@ -328,7 +328,7 @@ router.get("/all", async (req, res) => {
 router.get("/user/:id", async (req, res) => {
     try {
 
-        const kyc = await KycModel.find({ userId: req.params.id });
+        const kyc = await KycModel.findOne({ userId: req.params.id });
 
         res.status(200).json(kyc);
     } catch (err) {
