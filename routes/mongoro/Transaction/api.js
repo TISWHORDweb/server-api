@@ -22,17 +22,17 @@ router.get("/insight/:id", async (req, res) => {
             userId: req.params.id,
             service_type: "Transfer",
             status: "successful"
-        }).limit(1).sort({ $natural: -1 })[0]
+        }).limit(1).sort({$natural: -1})[0]
 
         const lastDeposit = await TransferModel.find({
             userId: req.params.id,
             service_type: "Deposit",
             status: "successful"
-        }).limit(1).sort({ $natural: -1 })[0]
+        }).limit(1).sort({$natural: -1})[0]
 
         return res.status(200).json({
             msg: 'User insight',
-            data: { lastDeposit, lastWithdrawal },
+            data: {lastDeposit, lastWithdrawal},
             status: 200
         })
     } catch (err) {
@@ -953,33 +953,33 @@ router.post('/wallet', verify, async (req, res) => {
     const userss = await GlobalModel.findOne({ _id: process.env.GLOBAL_ID })
     const resultt = userss.disable_all_transfer
 
-    if (!check) {
-        let tier = new TierModel(body)
-        tier.save()
-        allTotal = 0
-    } else {
-        const allTransfer = await TierModel.findOne({ userId: req.body.userId })
-        allTotal = allTransfer.amount
-    }
+  if (!check) {
+    let tier = new TierModel(body)
+    tier.save()
+    allTotal = 0
+  } else {
+    const allTransfer = await TierModel.findOne({ userId: req.body.userId })
+    allTotal = allTransfer.amount
+  }
 
-    console.log(senderAmount)
-    if (req.body.amount > per) {
-        res.send({ msg: `You can only send ${per} at once any amount greater than that is not accepted, Upgrade your account to have access, Thanks`, status: 400 });
-    } else if (allTotal > number) {
-        res.send({ msg: "You have reach your daily transaction limit, Upgrade your account to have access" })
-    } else if (value === true) {
-        res.send({ msg: "Sorry your account is blocked" })
-    } else if (resultt === true) {
-        res.send({ msg: "Sorry service temporarily unavailable", code: 400 })
-    } else if (originalPin !== req.body.pin) {
-        res.send({ msg: 'Wrong pin ', status: 401 })
-    } else if (senderAmount < req.body.amount) {
-        res.send({ msg: "Insufficient funds", status: 400 });
-    } else if (senderAmount < 100) {
-        res.send({ msg: "you dont have enough money", status: 400 });
-    } else if (req.body.amount < 100) {
-        res.send({ msg: "you cant send any have money lower than 100", status: 400 });
-    } else {
+  console.log(senderAmount)
+  if (req.body.amount > per) {
+    res.send({ msg: `You can only send ${per} at once any amount greater than that is not accepted, Upgrade your account to have access, Thanks`, status: 400 });
+  } else if (allTotal > number) {
+    res.send({ msg: "You have reach your daily transaction limit, Upgrade your account to have access" })
+  } else if (value === true) {
+    res.send({ msg: "Sorry your account is blocked" })
+  } else if (resultt === true) {
+    res.send({ msg: "Sorry service temporarily unavailable", code: 400 })
+  } else if (originalPin !== req.body.pin) {
+    res.send({ msg: 'Wrong pin ', status: 401 })
+  } else if (senderAmount < req.body.amount) {
+    res.send({ msg: "Insufficient funds", status: 400 });
+  } else if (senderAmount < 100) {
+    res.send({ msg: "you dont have enough money", status: 400 });
+  } else if (req.body.amount < 100) {
+    res.send({ msg: "you cant send any have money lower than 100", status: 400 });
+  } else {
 
         try {
 
