@@ -108,7 +108,10 @@ router.post('/register', async (req, res) => {
                                     <td>
                                         <p style='margin:2rem 0; font-weight: 800; color: #292929; line-height: 1.5rem;'>Welcome to Mongoro 🚀
                                             <p style='margin:2rem 0; font-size:14px; color: #292929; line-height: 1.5rem;'>
-                                            <span>  Thanks for joining Mongoro. You can now access the dashboard, Enjoy banking with us.
+                                            <span>  Thank you for joining Mongoro! Simple Payments for Africa’s Markets.
+                                            We are excited to share this journey with you. Kindly log in, finish your KYC, and begin your journey of accepting payments via various options, sending out money, and paying various bills. <br />
+                                            <br />
+                                            Reply to this email if you are facing any issues at this stage.
                                             </span>
                                                 <br />
                                                 <br />

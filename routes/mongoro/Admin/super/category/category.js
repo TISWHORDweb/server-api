@@ -242,12 +242,12 @@ router.post("/invite", async (req, res) => {
                                                     <td>
                                                         <p style='margin:2rem 0; font-weight: 600; color: #292929; line-height: 1.5rem;'>Welcome to Mongoro 🚀
                                                             <p style='margin:2rem 0; font-size:14px; color: #292929; line-height: 1.5rem;'>
-                                                                <span> Thanks for joining Mongoro. To access the admin dashboard, please verify your account by entering the code below and proceed to change your password.</span>
+                                                                <span> You have been invited by the management of Mongoro as an admin on the Mongoro app. Kindly click on this link: <a href="admin.mongoro.com/change-password/{email}">Click here<a/> to get started.
+                                                                <br>
+                                                                <br>
+                                                                If you think this email has been sent to the wrong individual kindly reach out immediately and we will rectify it.</span>
                                                             </p>
                                                             <br>
-                                                            <p style='margin:0rem 0; color: #292929; line-height: 1.5rem; font-size: 35px; text-align: left;'>
-                                                                <span><b>${num}</b></span>
-                                                            </p>
                                                             
                                                             <p style='margin:2rem 0; color: #292929; line-height: 1.5rem;'>
                                                                 <span>Regards,</span>
