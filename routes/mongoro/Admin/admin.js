@@ -103,7 +103,7 @@ router.post("/login", async (req, res) => {
                                                                 style='border: none; border-bottom: 0.6px solid #FFF7E6'
                                                             />
                                                         
-                                                            <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'>+2348033550170</p>
+                                                            <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'>www.mongoro.com</p>
                                                             <p style='color: #666666; text-align: center; font-size: 14px;'>support@mongoro.com</p>
                                                             <p style='color: #666666; text-align: center; font-size: 14px;'>21 Blantyre Crescent, Wuse 2. Abuja</p>
                                                             <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'> Having trouble viewing this email? Click here to view in your browser.</p>
@@ -237,7 +237,7 @@ router.post("/login", async (req, res) => {
                                                     <hr 
                                                         style='border: none; border-bottom: 0.6px solid #FFAB01'
                                                     />
-                                                    <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'>+2348033550170</p>
+                                                    <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'>www.mongoro.com</p>
                                                     <p style='color: #666666; text-align: center; font-size: 14px;'>support@mongoro.com</p>
                                                     <p style='color: #666666; text-align: center; font-size: 14px;'>21 Blantyre Crescent, Wuse 2. Abuja</p>
                                                     <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'> Having trouble viewing this email? Click here to view in your browser.</p>
@@ -364,7 +364,7 @@ router.post("/login", async (req, res) => {
                                                 <hr 
                                                     style='border: none; border-bottom: 0.6px solid #FFAB01'
                                                 />
-                                                <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'>+2348033550170</p>
+                                                <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'>www.mongoro.com</p>
                                                 <p style='color: #666666; text-align: center; font-size: 14px;'>support@mongoro.com</p>
                                                 <p style='color: #666666; text-align: center; font-size: 14px;'>21 Blantyre Crescent, Wuse 2. Abuja</p>
                                                 <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'> Having trouble viewing this email? Click here to view in your browser.</p>

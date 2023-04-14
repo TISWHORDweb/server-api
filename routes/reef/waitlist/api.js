@@ -73,7 +73,7 @@ router.post('/create', async (req, res) => {
                                                             <hr 
                                                                 style='border: none; border-bottom: 0.6px solid #6297ee'
                                                             />
-                                                            <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'>+2348033550170</p>
+                                                            <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'>www.mongoro.com</p>
                                                             <p style='color: #666666; text-align: center; font-size: 14px;'>sales@reeflimited.com</p>
                                                             <p style='color: #666666; text-align: center; font-size: 14px;'>21 Blantyre Crescent, Wuse 2. Abuja</p>
                                                             <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'> Having trouble viewing this email? Click here to view in your browser.</p>

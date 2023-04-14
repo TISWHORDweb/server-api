@@ -45,38 +45,55 @@ router.post('/', async (req, res) => {
                 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
             </head>
             <body>
-                <div class="wrapper" style='width:100%; table-layout: fixed; background: #fff; padding-bottom:60px; font-family: "Plus Jakarta Sans", sans-serif;'>
+                <div class="wrapper" style='width:95%; table-layout: fixed; background: #fff; padding-bottom:60px; font-family: "Plus Jakarta Sans", sans-serif; border: 10px solid #FFF7E6''>
                     <table class="main" width="100%">
-                        
                         <tr>
                             <td>
                                 <table width=100% class=sub-main>
                                     <tr>
                                         <td>
-                                            <table width=100%>
+                                            <a>
+                                                <div style='padding: 1rem; background: #FFF7E6;'>
+                                                    <img 
+                                                        style='width: 7rem; display: block; margin: 0 auto'
+                                                        src='http://res.cloudinary.com/dszrk3lcz/image/upload/v1681388703/dqfex6vpnnncytqrtntx.png' 
+                                                        alt=''
+                                                    />
+                                                </div>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <table width=100% style="padding: 0 9px">
                                                 <tr>
                                                     <td>
-                                                        <h3 class="header" style='color: #161616'>Dear ${user.surname + " " + user.first_name}, </h3>
-                                                        <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
-                                                            
-                                                        We received submission of your KYC documents for account upgrade consideration.
-                                                        Kindly expect a feedback in the next 48 business hours.
-                                                        If this action has not been carried out by you kindly inform us to protect your account immediately.
-                                                        Enjoy our unlimited services.
-
-                                                            <br>
-                                                            <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
-                                                                <span>Regards</span>
+                                                        <p style='margin:2rem 0; font-weight: 600; color: #292929; line-height: 1.5rem;'>Dear ${user.surname + " " + user.first_name},
+                                                            <p style='margin:2rem 0; font-size:14px; color: #292929; line-height: 1.5rem;'>
+                                                                <span>We received submission of your KYC documents for account upgrade consideration.
+                                                                    <br />
+                                                                    Kindly expect a feedback in the next 48 business hours.
+                                                                </span>
+                                                                <br />
+                                                                <br />
+                                                                <span>If this action has not been carried out by you kindly inform us to protect your account immediately.
+                                                                    <br />
+                                                                    <br />
+                                                                    Enjoy our unlimited services.</a> or reach us via in-app support.</span>
                                                             </p>
-                                                            <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
-                                                                <span><b>Support Team, Mongoro Team</b></span>
+                                                            <br>
+                                                            <p style='margin:2rem 0; color: #292929; line-height: 1.5rem;'>
+                                                                <span>Cheers and Regards,</span>
+                                                            </p>
+                                                            <p style='margin:2rem 0; color: #292929; line-height: 1.5rem;'>
+                                                                <span><b>Mongoro Team</b></span>
                                                             </p>
                                                             <hr 
                                                                 style='border: none; border-bottom: 0.6px solid #FFF7E6'
                                                             />
-                                                            <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'>+234 09169451169</p>
-                                                            <p style='color: #666666; text-align: center; font-size: 14px;'>sales@mongoro.com</p>
-                                                            <p style='color: #666666; text-align: center; font-size: 14px;'>Space 27, Novare Mall, Wuse Zone 5, Abuja</p>
+                                                            <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'>www.mongoro.com</p>
+                                                            <p style='color: #666666; text-align: center; font-size: 14px;'>support@mongoro.com</p>
+                                                            <p style='color: #666666; text-align: center; font-size: 14px;'>21 Blantyre Crescent, Wuse 2. Abuja</p>
                                                             <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'> Having trouble viewing this email? Click here to view in your browser.</p>
                                                     </td>
                                                 </tr>
@@ -152,37 +169,55 @@ router.post('/accept', async (req, res) => {
                 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
             </head>
             <body>
-                <div class="wrapper" style='width:100%; table-layout: fixed; background: #fff; padding-bottom:60px; font-family: "Plus Jakarta Sans", sans-serif;'>
+                <div class="wrapper" style='width:95%; table-layout: fixed; background: #fff; padding-bottom:60px; font-family: "Plus Jakarta Sans", sans-serif; border: 10px solid #FFF7E6''>
                     <table class="main" width="100%">
-                        
                         <tr>
                             <td>
                                 <table width=100% class=sub-main>
                                     <tr>
                                         <td>
-                                            <table width=100%>
+                                            <a>
+                                                <div style='padding: 1rem; background: #FFF7E6;'>
+                                                    <img 
+                                                        style='width: 7rem; display: block; margin: 0 auto'
+                                                        src='http://res.cloudinary.com/dszrk3lcz/image/upload/v1681388703/dqfex6vpnnncytqrtntx.png' 
+                                                        alt=''
+                                                    />
+                                                </div>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <table width=100% style="padding: 0 9px">
                                                 <tr>
                                                     <td>
-                                                        <h3 class="header" style='color: #161616'>Dear ${user.surname + " " + user.first_name}, </h3>
-                                                        <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
-                                                        
-                                                       We are pleased to inform you that your KYC submission has been approved and your account has been upgraded.
-You can now carry out transactions within the limits of your present tier.
-If your KYC submission have not been done by you kindly inform us to protect your account immediately.
-Enjoy our unlimited services.
-                                                            <br>
-                                                            <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
-                                                                <span>Regards</span>
+                                                        <p style='margin:2rem 0; font-weight: 600; color: #292929; line-height: 1.5rem;'>Dear ${user.surname + " " + user.first_name},
+                                                            <p style='margin:2rem 0; font-size:14px; color: #292929; line-height: 1.5rem;'>
+                                                                <span>We are pleased to inform you that your KYC submission has been approved and your account has been upgraded.
+                                                                        <br />
+                                                                    You can now carry out transactions within the limits of your present tier.
+                                                                </span>
+                                                                <br />
+                                                                <br />
+                                                                <span>If your KYC submission have not been done by you kindly inform us to protect your account immediately.
+                                                                    <br />
+                                                                    <br />
+                                                                    Enjoy our unlimited services.</a> or reach us via in-app support.</span>
                                                             </p>
-                                                            <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
-                                                                <span><b>Support Team, Mongoro Team</b></span>
+                                                            <br>
+                                                            <p style='margin:2rem 0; color: #292929; line-height: 1.5rem;'>
+                                                                <span>Cheers and Regards,</span>
+                                                            </p>
+                                                            <p style='margin:2rem 0; color: #292929; line-height: 1.5rem;'>
+                                                                <span><b>Mongoro Team</b></span>
                                                             </p>
                                                             <hr 
                                                                 style='border: none; border-bottom: 0.6px solid #FFF7E6'
                                                             />
-                                                            <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'>+234 09169451169</p>
-                                                            <p style='color: #666666; text-align: center; font-size: 14px;'>sales@mongoro.com</p>
-                                                            <p style='color: #666666; text-align: center; font-size: 14px;'>Space 27, Novare Mall, Wuse Zone 5, Abuja</p>
+                                                            <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'>www.mongoro.com</p>
+                                                            <p style='color: #666666; text-align: center; font-size: 14px;'>support@mongoro.com</p>
+                                                            <p style='color: #666666; text-align: center; font-size: 14px;'>21 Blantyre Crescent, Wuse 2. Abuja</p>
                                                             <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'> Having trouble viewing this email? Click here to view in your browser.</p>
                                                     </td>
                                                 </tr>
@@ -249,38 +284,55 @@ router.post('/reject', async (req, res) => {
                 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
             </head>
             <body>
-                <div class="wrapper" style='width:100%; table-layout: fixed; background: #fff; padding-bottom:60px; font-family: "Plus Jakarta Sans", sans-serif;'>
+                <div class="wrapper" style='width:95%; table-layout: fixed; background: #fff; padding-bottom:60px; font-family: "Plus Jakarta Sans", sans-serif; border: 10px solid #FFF7E6''>
                     <table class="main" width="100%">
-                        
                         <tr>
                             <td>
                                 <table width=100% class=sub-main>
                                     <tr>
                                         <td>
-                                            <table width=100%>
+                                            <a>
+                                                <div style='padding: 1rem; background: #FFF7E6;'>
+                                                    <img 
+                                                        style='width: 7rem; display: block; margin: 0 auto'
+                                                        src='http://res.cloudinary.com/dszrk3lcz/image/upload/v1681388703/dqfex6vpnnncytqrtntx.png' 
+                                                        alt=''
+                                                    />
+                                                </div>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <table width=100% style="padding: 0 9px">
                                                 <tr>
                                                     <td>
-                                                        <h3 class="header" style='color: #161616'>Dear ${user.surname + " " + user.first_name}, </h3>
-                                                        <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
-                                                        
-                                                        We are sorry to inform you that your KYC submission has not been approved and your account has not been upgraded.
-                                                        You can continue to carry out transactions within the limits of your present tier and reapply with appropriate documents for a second consideration.
-                                                        If your KYC submission has not been done by you kindly inform us to protect your account immediately.
-                                                        Enjoy our unlimited services.
-                                                        
-                                                            <br>
-                                                            <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
-                                                                <span>Regards</span>
+                                                        <p style='margin:2rem 0; font-weight: 600; color: #292929; line-height: 1.5rem;'>Dear ${user.surname + " " + user.first_name},
+                                                            <p style='margin:2rem 0; font-size:14px; color: #292929; line-height: 1.5rem;'>
+                                                                <span>We are sorry to inform you that your KYC submission has not been approved and your account has not been upgraded.
+                                                                    <br />
+                                                                    You can continue to carry out transactions within the limits of your present tier and reapply with appropriate documents for a second consideration.
+                                                                </span>
+                                                                <br />
+                                                                <br />
+                                                                <span>If your KYC submission have not been done by you kindly inform us to protect your account immediately.
+                                                                    <br />
+                                                                    <br />
+                                                                    Enjoy our unlimited services.</a> or reach us via in-app support.</span>
                                                             </p>
-                                                            <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
-                                                                <span><b>Support Team, Mongoro Team</b></span>
+                                                            <br>
+                                                            <p style='margin:2rem 0; color: #292929; line-height: 1.5rem;'>
+                                                                <span>Cheers and Regards,</span>
+                                                            </p>
+                                                            <p style='margin:2rem 0; color: #292929; line-height: 1.5rem;'>
+                                                                <span><b>Mongoro Team</b></span>
                                                             </p>
                                                             <hr 
                                                                 style='border: none; border-bottom: 0.6px solid #FFF7E6'
                                                             />
-                                                            <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'>+234 09169451169</p>
-                                                            <p style='color: #666666; text-align: center; font-size: 14px;'>sales@mongoro.com</p>
-                                                            <p style='color: #666666; text-align: center; font-size: 14px;'>Space 27, Novare Mall, Wuse Zone 5, Abuja</p>
+                                                            <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'>www.mongoro.com</p>
+                                                            <p style='color: #666666; text-align: center; font-size: 14px;'>support@mongoro.com</p>
+                                                            <p style='color: #666666; text-align: center; font-size: 14px;'>21 Blantyre Crescent, Wuse 2. Abuja</p>
                                                             <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'> Having trouble viewing this email? Click here to view in your browser.</p>
                                                     </td>
                                                 </tr>
