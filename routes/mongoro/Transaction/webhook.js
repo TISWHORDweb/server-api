@@ -35,7 +35,8 @@ router.post("/webhook", async (req, res) => {
         const txReference = payload.data.tx_ref;
         const flwId = payload.data.id;
 
-
+        // const adminFee = 100
+        // const chargeAmount = txAmount - adminFee
 
         // find user on the database using the email
         const userWallet = await MongoroUserModel.findOne({ email: csEmail });
@@ -77,8 +78,10 @@ router.post("/webhook", async (req, res) => {
                     "narration": payload.data.narration,
                     "userId": id,
                     "flw_id": data.id,
+                    "receiver_status": "Credit",
                     "full_name": data.meta.originatorname,
-                    "bank_name": data.meta.bankname
+                    "bank_name": data.meta.bankname,
+                    "balance": newAmount
                 }
                 // save updated transaction details to the database
                 let transaction = new TransferModel(details)
@@ -107,9 +110,11 @@ router.post("/webhook", async (req, res) => {
                     "reference": txReference,
                     "narration": payload.data.narration,
                     "userId": id,
+                    "receiver_status": "Credit",
                     "flw_id": data.id,
                     "full_name": data.meta.originatorname,
-                    "bank_name": data.meta.bankname
+                    "bank_name": data.meta.bankname,
+                    "balance": oldAmount
                 }
 
                 // save updated transaction details to the database
@@ -140,8 +145,10 @@ router.post("/webhook", async (req, res) => {
                                 "narration": payload.data.narration,
                                 "userId": id,
                                 "flw_id": data.id,
+                                "receiver_status": "Credit",
                                 "full_name": data.meta.originatorname,
-                                "bank_name": data.meta.bankname
+                                "bank_name": data.meta.bankname,
+                                "balance": newAmount
                             }
 
                             // save updated transaction details to the database
@@ -174,8 +181,10 @@ router.post("/webhook", async (req, res) => {
                                 "narration": payload.data.narration,
                                 "userId": id,
                                 "flw_id": data.id,
+                                "receiver_status": "Credit",
                                 "full_name": data.meta.originatorname,
-                                "bank_name": data.meta.bankname
+                                "bank_name": data.meta.bankname,
+                                "balance": oldAmount
                             }
 
                             // save updated transaction details to the database

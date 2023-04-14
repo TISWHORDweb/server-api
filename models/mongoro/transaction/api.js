@@ -1,72 +1,81 @@
 const mongoose = require('mongoose')
 
-const TransferSchema=new mongoose.Schema({
-    transaction_ID:{
-        type:String
+const TransferSchema = new mongoose.Schema({
+    transaction_ID: {
+        type: String
     },
-    Date:{
-        type:Number, 
-        default:()=>Date.now()
+    Date: {
+        type: Number,
+        default: () => Date.now()
     },
-    amount:{
-        type:String
-   },
-    wallet_ID:{
-        type:String
+    amount: {
+        type: String
     },
-    service_type:{
-        type:String
+    balance: {
+        type: String
     },
-    status:{
-        type:String
+    receiver_status:{
+        type: String
     },
-    full_name:{
-        type:String
+    sender_status:{
+        type: String
     },
-    account_number:{
-        type:String
+    wallet_ID: {
+        type: String
     },
-    bank_name:{
-        type:String
+    service_type: {
+        type: String
     },
-    userId:{
-        type:String
+    status: {
+        type: String
     },
-    biller_name:{
-        type:String
+    full_name: {
+        type: String
     },
-    country:{
-        type:String
+    account_number: {
+        type: String
     },
-    type:{
-        type:String
+    bank_name: {
+        type: String
     },
-    flw_id:{
-        type:String
+    userId: {
+        type: String
     },
-    customer:{
-        type:String
+    biller_name: {
+        type: String
     },
-    narration:{
-        type:String
+    country: {
+        type: String
     },
-    reference:{
-        type:String
+    type: {
+        type: String
     },
-    status_type:{
-        type:String
+    flw_id: {
+        type: String
     },
-    archive:{
-        type:Boolean,
+    customer: {
+        type: String
+    },
+    narration: {
+        type: String
+    },
+    reference: {
+        type: String
+    },
+    status_type: {
+        type: String
+    },
+    archive: {
+        type: Boolean,
         default: false,
     },
-    issue:{
-        type:Number,
+    issue: {
+        type: Number,
         default: 0
     },
 })
 
 
-const TransferModel=mongoose.model("transaction", TransferSchema)
+const TransferModel = mongoose.model("transaction", TransferSchema)
 
-module.exports=TransferModel
+module.exports = TransferModel

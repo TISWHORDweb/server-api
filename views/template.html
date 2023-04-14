@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -105,4 +105,169 @@
           </tr>
         </table>
 </body>
+</html> -->
+
+
+
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mongoro Account Statement</title>
+    <link
+      href="https://fonts.cdnfonts.com/css/museo-sans-rounded"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: Museo Sans Rounded;
+      }
+      table tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+      b {
+        font-weight: 600;
+        color: rgba(0, 0, 0, 0.8);
+      }
+    </style>
+  </head>
+​
+  <body style="background-color: #f9f9f9;">
+    <div class="header-container" style="background-color: #f9f9f9;">
+      <div class="logo-section" style="width: 95%; margin: 50px auto;">
+        <div class="logo" style="width: 300px;">
+          <img
+            src="./src/logo-colored.png"
+            style="width: 100%;"
+            alt="mongoro logo"
+          />
+        </div>
+      </div>
+      <header
+        style="
+          display: flex;
+          padding: 15px;
+          font-size: 16px;
+          width: 95%;
+          margin: 10px 30px;
+        "
+      >
+        <section style="width: 50%;">
+          <div class="set">
+            <p style="display: flex; padding: 7px;">
+              <span style="width: 25%;">Reference Number</span>
+              <b>INV345678gg7689</b>
+            </p>
+            <p style="display: flex; padding: 7px;">
+              <span style="width: 25%;">Print Date</span> <b>August 27, 2022</b>
+            </p>
+            <p style="display: flex; padding: 7px;">
+              <span style="width: 25%;">Address</span>
+              <b>No 21, Blantry Street, Wuse 2, Abuja</b>
+            </p>
+            <p style="display: flex; padding: 7px;">
+              <span style="width: 25%;">Period</span>
+              <b>May 5, 2022 - June 5, 2022</b>
+            </p>
+            <p style="display: flex; padding: 7px;">
+              <span style="width: 25%;">Account Number</span> <b>01123443232</b>
+            </p>
+            <p style="display: flex; padding: 7px;">
+              <span style="width: 25%;">Currency</span> <b>Naira NGN</b>
+            </p>
+          </div>
+        </section>
+​
+        <section style="width: 50%;">
+          <div class="set">
+            <p style="display: flex; padding: 7px;">
+              <span style="width: 25%;">Opening Balance</span>
+              <b>NGN5,000.00</b>
+            </p>
+            <p style="display: flex; padding: 7px;">
+              <span style="width: 25%;">Total Debit</span> <b>NGN345,000.00</b>
+            </p>
+            <p style="display: flex; padding: 7px;">
+              <span style="width: 25%;">Total Credit</span> <b>NGN325,000.00</b>
+            </p>
+            <p style="display: flex; padding: 7px;">
+              <span style="width: 25%;">Closing Balance</span>
+              <b>NGN25,000.00</b>
+            </p>
+          </div>
+        </section>
+      </header>
+    </div>
+​
+    <div class="table" style="width: 100%;">
+      <table
+        style="
+          width: 95%;
+          background-color: white;
+          margin: auto;
+          padding: 15px;
+        "
+      >
+        <thead>
+          <tr>
+            <td style="font-weight: 600; padding: 20px;">TRANSACTION DATE</td>
+            <td style="font-weight: 600; padding: 20px;">REFERENCE</td>
+            <td style="font-weight: 600; padding: 20px;">VALUE DATE</td>
+            <td style="font-weight: 600; padding: 20px;">DEBIT</td>
+            <td style="font-weight: 600; padding: 20px;">CREDIT</td>
+            <td style="font-weight: 600; padding: 20px;">BALANCE</td>
+            <td style="font-weight: 600; padding: 20px;">REMARK</td>
+          </tr>
+        </thead>
+​
+        <tbody>
+            {{#each products.prodlist}}
+          <tr>
+            <td style="padding: 20px;">{{this.Date}}</td>
+            <td style="padding: 20px;">{{this.reference}}</td>
+            <td style="padding: 20px;">{{this.Date}}</td>
+            <td style="padding: 20px;">{{this.sender_statuse}}</td>
+            <td style="padding: 20px;">{{this.receiver_status}}</td>
+            <td style="padding: 20px;">{{this.balance}}</td>
+            <td style="padding: 20px;">{{this.service_type}}</td>
+          </tr>
+          {{/each}}
+
+        </tbody>
+      </table>
+      <p
+        style="
+          width: 95%;
+          margin: auto;
+          background-color: white;
+          padding: 30px;
+          box-sizing: border-box;
+        "
+      >
+        Showing <span class="showing" style="color: #2ea49a;">1</span> of
+        <span class="total">10</span> entries
+      </p>
+    </div>
+​
+    <div class="disclaimer-container" style="width: 92%; margin: 30px auto;">
+      <h3>DISCLAIMER</h3>
+      <p
+        style="color: rgba(0, 0, 0, 0.6); line-height: 0.5cm; margin: 10px 0px;"
+      >
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error excepturi
+        accusamus autem aspernatur rerum dolorum cupiditate. Facere suscipit
+        sint, eligendi omnis fugit maxime eos iste natus a officia! Consequatur
+        non est vel quam eligendi magni? Lorem ipsum dolor sit amet consectetur
+        adipisicing elit. Modi dolorem iure, excepturi molestias odit ipsum
+        eaque voluptatem voluptatum quod inventore non vitae necessitatibus quia
+        magnam cum repellendus molestiae sint nemo adipisci blanditiis? Sit fuga
+        nihil eos, nobis omnis expedita illum. Lorem ipsum dolor sit amet
+        consectetur adipisicing elit. Harum officia, rem exercitationem ratione
+        in quia non accusantium adipisci nulla eius placeat nemo. Earum, eveniet
+        voluptate.
+      </p>
+    </div>
+​
+    <script src="src/index.js"></script>
+  </body>
 </html>
