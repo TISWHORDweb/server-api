@@ -345,28 +345,45 @@ router.post("/pin_mailer", verify, async (req, res) => {
                                     <table width=100% class=sub-main>
                                         <tr>
                                             <td>
+                                                <a>
+                                                    <div style='padding: 1rem; background: #FFF7E6;'>
+                                                        <img 
+                                                            style='width: 7rem; display: block; margin: 0 auto'
+                                                            src='http://res.cloudinary.com/dszrk3lcz/image/upload/v1681388703/dqfex6vpnnncytqrtntx.png' 
+                                                            alt=''
+                                                        />
+                                                    </div>
+                                                    
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
                                                 <table width=100%>
                                                     <tr>
                                                         <td>
-                                                            <h3 class="header" style='color: #161616'>Dear ${user.surname+" "+user.first_name}</h3>
-                                                            <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
-                                                                 To delete your account, please verify is your account by entering the code below .
+                                                            <p style='margin:2rem 0; font-weight: 600; color: #292929; line-height: 1.5rem;'>Dear ${user.surname+" "+user.first_name}
+                                                                <p style='margin:2rem 0; font-size:14px; color: #292929; line-height: 1.5rem;'>
+                                                                    <span>  To delete your account, please verify is your account by entering the code below .</span>
+                                                                </p>
                                                                 <br>
-                                                                <p style='margin:3rem 0; color: #161616; line-height: 1.5rem; font-size: 45px; text-align: center;'>
+                                                                <p style='margin:0rem 0; color: #292929; line-height: 1.5rem; font-size: 35px; text-align: left;'>
                                                                     <span><b>${code}</b></span>
                                                                 </p>
-                                                                <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
-                                                                    <span>Thanks,</span>
+                                                                
+                                                                <p style='margin:2rem 0; color: #292929; line-height: 1.5rem;'>
+                                                                    <span>Regards,</span>
                                                                 </p>
-                                                                <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
-                                                                    <span><b>Support Team, Mongoro Team</b></span>
+                                                                <p style='margin:2rem 0; color: #292929; line-height: 1.5rem;'>
+                                                                    <span><b>Mongoro Team</b></span>
                                                                 </p>
                                                                 <hr 
                                                                     style='border: none; border-bottom: 0.6px solid #FFF7E6'
                                                                 />
-                                                                <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'>+234 09169451169</p>
-                                                                <p style='color: #666666; text-align: center; font-size: 14px;'>sales@mongoro.com</p>
-                                                                <p style='color: #666666; text-align: center; font-size: 14px;'>Space 27, Novare Mall, Wuse Zone 5, Abuja</p>
+                                                            
+                                                                <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'>+2348033550170</p>
+                                                                <p style='color: #666666; text-align: center; font-size: 14px;'>support@mongoro.com</p>
+                                                                <p style='color: #666666; text-align: center; font-size: 14px;'>21 Blantyre Crescent, Wuse 2. Abuja</p>
                                                                 <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'> Having trouble viewing this email? Click here to view in your browser.</p>
                                                         </td>
                                                     </tr>
@@ -379,7 +396,7 @@ router.post("/pin_mailer", verify, async (req, res) => {
                         </table>
                     </div>
                 </body>
-                </html>`
+                </html>`,
             };
 
             transporter.sendMail(mailOptions, function (error, info) {

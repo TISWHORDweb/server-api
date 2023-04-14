@@ -111,9 +111,7 @@ router.post('/', async (req, res) => {
                 MongoroUserModel.updateOne({ _id: userId }, { $set: { verification: { bvn: true }, verification_number: bvv, tiers: "one" } }).then(() => {
                     res.send(details)
                 })
-
             }
-
         })
     }
 })

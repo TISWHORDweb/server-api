@@ -58,7 +58,7 @@ router.post('/create', async (req, res) => {
             from: 'support@mongoro.com',
             to: req.body.email,
             subject: '2FA Authentication',
-            html: `<!DOCTYPE html>
+            html:`<!DOCTYPE html>
             <html lang="en">
             <head>
                 <meta charset="UTF-8">
@@ -71,30 +71,44 @@ router.post('/create', async (req, res) => {
                 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
             </head>
             <body>
-                <div class="wrapper" style='width:100%; table-layout: fixed; background: #fff; padding-bottom:60px; font-family: "Plus Jakarta Sans", sans-serif;'>
+                <div class="wrapper" style='width:95%; table-layout: fixed; background: #fff; padding-bottom:60px; font-family: "Plus Jakarta Sans", sans-serif; border: 10px solid #FFF7E6'>
                     <table class="main" width="100%">
-                        
                         <tr>
                             <td>
                                 <table width=100% class=sub-main>
                                     <tr>
                                         <td>
-                                            <table width=100%>
+                                            <a>
+                                                <div style='padding: 1rem; background: #FFF7E6;'>
+                                                    <img 
+                                                        style='width: 7rem; display: block; margin: 0 auto'
+                                                        src='http://res.cloudinary.com/dszrk3lcz/image/upload/v1681388703/dqfex6vpnnncytqrtntx.png' 
+                                                        alt=''
+                                                    />
+                                                </div>
+                                                
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <table width=100% style="padding: 0 9px">
                                                 <tr>
                                                     <td>
-                                                        <h3 class="header" style='color: #161616'>Welcome to Mongoro 🚀 </h3>
-                                                        <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
-                                                                Thanks for joining Mongoro. To access your dashboard, please verify your account by signing in with the button below.
+                                                        <p style='margin:2rem 0; font-weight: 600; color: #292929; line-height: 1.5rem;'>Hello,
+                                                            <p style='margin:2rem 0; font-size:14px; color: #292929; line-height: 1.5rem;'>
+                                                            <span>Welcome to the Mongoro, here is your super admin password. You can copy this for login reference.</span>
+                                                            </p>
                                                             <br>
-                                                            <p style='margin:3rem 0; color: #161616; line-height: 1.5rem; font-size: 45px; text-align: center;'>
-                                                            <span><b>${codes}</b></span>
+                                                            <p style='margin:0rem 0; color: #292929; line-height: 1.5rem; font-size: 20px; text-align: left;'>
+                                                                <span><b>${codes}</b></span>
                                                             </p>
                                                             
-                                                            <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
-                                                                <span>Thanks,</span>
+                                                            <p style='margin:2rem 0; color: #292929; line-height: 1.5rem;'>
+                                                                <span>Regards,</span>
                                                             </p>
-                                                            <p style='margin:2rem 0; color: #161616; line-height: 1.5rem;'>
-                                                                <span><b>Support Team, Mongoro Team</b></span>
+                                                            <p style='margin:2rem 0; color: #292929; line-height: 1.5rem;'>
+                                                                <span><b>Mongoro Team</b></span>
                                                             </p>
                                                             <hr 
                                                                 style='border: none; border-bottom: 0.6px solid #FFF7E6'
@@ -114,7 +128,7 @@ router.post('/create', async (req, res) => {
                     </table>
                 </div>
             </body>
-            </html>`
+            </html>`,
         };
 
         transporter.sendMail(mailOptions, function (error, info) {
