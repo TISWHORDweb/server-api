@@ -18,20 +18,21 @@ const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_K
 
 router.get("/insight/:id", async (req, res) => {
     try {
-        const lastTransaction = await TransferModel.find({
+        const lastWithdrawal = await TransferModel.find({
             userId: req.params.id,
             service_type: "Transfer",
             status: "successful"
-        }).limit(1).sort({$natural: -1})
+        }).limit(1).sort({$natural: -1})[0]
+
         const lastDeposit = await TransferModel.find({
             userId: req.params.id,
             service_type: "Deposit",
             status: "successful"
-        }).limit(1).sort({$natural: -1})
+        }).limit(1).sort({$natural: -1})[0]
 
         return res.status(200).json({
             msg: 'User insight',
-            data: {lastDeposit, lastTransaction},
+            data: {lastDeposit, lastWithdrawal},
             status: 200
         })
     } catch (err) {
@@ -42,7 +43,7 @@ router.get("/insight/:id", async (req, res) => {
     }
 })
 
-
+//ADMIN
 router.get("/tier/all", async (req, res) => {
     try {
         const tier = await TierModel.find();
@@ -69,6 +70,7 @@ router.delete("/tier/delete", async (req, res) => {
     }
 
 });
+//ADMIN
 
 //ISSUE COLUMNS
 //0 MEANS NO ISSUES, DEFAULT (VALUE = 0 )
