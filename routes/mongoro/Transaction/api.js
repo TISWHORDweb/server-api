@@ -220,15 +220,9 @@ router.post("/", async (req, res) => {
                     const data = response.data;
 
                     console.log(data)
-                    let charges;
+
                     if (data) {
-                        if(data.data.amount < 50000){
-                          charges = 30
-                        }else if(data.data.amount >= 50000){
-                          charges = 60
-                        }
-                        const withCharges = oldAmount - charges;
-                        const newAmount = withCharges - data.data.amount;
+                        const newAmount = oldAmount - data.data.amount;
                         const flwId = data.data.id
 
                         var configs = {

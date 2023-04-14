@@ -319,8 +319,9 @@ router.post("/verify", async (req, res) => {
 
 router.post("/login", async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
-    const ip = address.ip();
     let UserPassword;
+
+    const ip = address.ip();
 
     const users = await GlobalModel.findOne({_id: process.env.GLOBAL_ID})
     const value = users.disable_all_user
@@ -467,7 +468,12 @@ router.post("/login", async (req, res) => {
 
                 let note = {
                     title: "Login Alert",
-                    body: ` We noticed a recently sign in to your account from ${result.city}, ${result.region}, ${result.country_name} - ${result.continent_name} on a ${req.body.device} name with the IP address ${ip}, at ${when}. If this login has not originated from you, kindly send an email to support@mongoro.com, or reach us via in-app support.`
+                    body: `We noticed your Mongoro account was logged in on ${req.body.device}
+                    from ${result.city}, ${result.region}, ${result.country_name} - ${result.continent_name}
+                      name with the IP address ${ip}, at ${when}. If this was you, 
+                      there is no need to do anything. Not you? Change your password and kindly send an email to
+                      <a href='mailto:support@mongoro.com'>support@mongoro.com</a>
+                       or reach us via in-app support.`
                 };
             
                 let data = 'channelId'
@@ -707,4 +713,3 @@ router.post('/sendchamp', async (req, res) => {
 })
 
 module.exports = router
-

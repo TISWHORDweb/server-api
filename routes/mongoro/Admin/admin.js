@@ -220,11 +220,16 @@ router.post("/login", async (req, res) => {
                                             <td>
                                                 <p style='margin:2rem 0; font-weight: 800; color: #292929; line-height: 1.5rem;'>Dear ${admin.email}
                                                     <p style='margin:2rem 0; font-size:14px; color: #292929; line-height: 1.5rem;'>
-                                                    <span> We noticed a recently sign in to your account from ${result.city}, ${result.region}, ${result.country_name} - ${result.continent_name} on a ${req.body.device} name with the IP address ${ip}, at ${when}.
-                                                    </span>
+                                                    <span> We noticed your Mongoro account was logged in on ${req.body.device}
+                                                    from ${result.city}, ${result.region}, ${result.country_name} - ${result.continent_name}
+                                                      name with the IP address ${ip}, at ${when}. If this was you, 
+                                                      there is no need to do anything.
+                                                   </span>
                                                         <br />
                                                         <br />
-                                                    <span>If this login has not originated from you, Change your password and kindly send an email to <a href='mailto:support@mongoro.com'>support@mongoro.com</a> or reach us via in-app support.</span>
+                                                        <span>Not you? Change your password and kindly send an email to
+                                                        <a href='mailto:support@mongoro.com'>support@mongoro.com</a>
+                                                         or reach us via in-app support.</span>
                                                 </p>
                                                     <br>
                                                     
@@ -347,11 +352,15 @@ router.post("/login", async (req, res) => {
                                         <td>
                                             <p style='margin:2rem 0; font-weight: 800; color: #292929; line-height: 1.5rem;'>Dear ${supers.email}
                                                 <p style='margin:2rem 0; font-size:14px; color: #292929; line-height: 1.5rem;'>
-                                                <span> We noticed a recently sign in to your account from ${result.city}, ${result.region}, ${result.country_name} - ${result.continent_name} on a ${req.body.device} name with the IP address ${ip}, at ${when}.
-                                                </span>
+                                                <span> We noticed your Mongoro account was logged in on ${req.body.device}
+                                                from ${result.city}, ${result.region}, ${result.country_name} - ${result.continent_name}
+                                                  name with the IP address ${ip}, at ${when}. If this was you, 
+                                                  there is no need to do anything.</span>
                                                     <br />
                                                     <br />
-                                                <span>If this login has not originated from you, Change your password and kindly send an email to <a href='mailto:support@mongoro.com'>support@mongoro.com</a> or reach us via in-app support.</span>
+                                                    <span>Not you? Change your password and kindly send an email to
+                                                    <a href='mailto:support@mongoro.com'>support@mongoro.com</a>
+                                                     or reach us via in-app support.</span>
                                             </p>
                                                 <br>
                                                 
@@ -589,36 +598,15 @@ router.post('/bank/deactivate', async (req, res) => {
     }
 })
 
-router.get('/bank/all', async (req, res) => {
+
+router.get('/bank/deactivate/all', async (req, res) => {
     try {
-
         const code = await bankCodeModel.find()
-        let filtered = []
-        code.filter((a) => {
-            filtered.push(a.code)
-        })
 
-        //console.log(codes)
-        const url = "https://api.youverify.co/v2/api/identity/ng/bank-account-number/bank-list"
-
-        const header = {
-            headers: {
-                token: process.env.U_VERIFY_KEY
-            }
-        }
-
-        await axios.get(url, header).then(resp => {
-
-            const data = resp.data.data
-            data.forEach(element => {
-                element.status = true
-                if (filtered.includes(element.code)) {
-                    element.status = false
-                }
-            });
-
-            res.status(200).json(data)
-
+        return res.status(200).json({
+            msg: "All deactivate bank fetch successfully",
+            code,
+            status: 200
         })
 
     } catch (error) {

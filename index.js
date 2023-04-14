@@ -1,6 +1,8 @@
 const express = require("express")
 const app = express()
+const expressLayouts = require('express-ejs-layouts');
 const cors = require('cors')
+const path = require('path');
 const bodyParser = require('body-parser')
 const mongoroWaitlistRoute = require('./routes/mongoro/waitlist/api')
 const reefWaitlistRoute = require('./routes/reef/waitlist/api')
@@ -37,7 +39,10 @@ const mongoose = require('mongoose')
 
 // app.use(cors({"origin":"*"}))
 app.use(cors({"origin": "*"}))
-
+app.use(expressLayouts);
+app.set('view engine', 'ejs');
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/docs', express.static(path.join(__dirname, 'docs')));
 // app.use(function(req, res, next) {
 //     res.header("Access-Control-Allow-Origin", '*');
 //     res.header("mode","no-cors")
