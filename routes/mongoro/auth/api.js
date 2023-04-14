@@ -68,7 +68,7 @@ router.post('/register', async (req, res) => {
             let mailOptions = {
                 from: 'support@mongoro.com',
                 to: req.body.email,
-                subject: 'Verification code',
+                subject: 'Welcome message',
                 html: `
                 <!DOCTYPE html>
 <html lang="en">
