@@ -13,6 +13,7 @@ const AdminAuditModel = require("../../../models/mongoro/admin/audit/audit_md")
 const CryptoJS = require('crypto-js');
 const bankCodeModel = require('../../../models/mongoro/auth/user/bank/bankCode_md')
 const axios = require('axios')
+const ipapi = require('ipapi.co');
 
 router.post("/login", async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
@@ -26,119 +27,12 @@ router.post("/login", async (req, res) => {
     // } 
     // const resultt = user.blocked
 
-    const num = Math.floor(100000 + Math.random() * 900000)
+    // const num = Math.floor(100000 + Math.random() * 900000)
 
     if (admin) {
 
         if (admin.blocked === true) {
             res.status(400).json({ msg: "your account is blocked", status: 400 })
-        } else if (admin.isverified === false) {
-
-            let transporter = nodemailer.createTransport({
-                service: "hotmail",
-                auth: {
-                    user: 'support@mongoro.com',
-                    pass: 'cmcxsbpkqvkgpwmk'
-                }
-            });
-
-            let mailOptions = {
-                from: 'support@mongoro.com',
-                to: req.body.email,
-                subject: '2FA Authentication',
-                html: `<!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta http-equiv="X-UA-Compatible" content="IE=edge">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Mongoro</title>
-                <script src="https://kit.fontawesome.com/13437b109b.js" crossorigin="anonymous"></script>
-                <link rel="preconnect" href="https://fonts.googleapis.com">
-                <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-                <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
-            </head>
-            <body>
-                <div class="wrapper" style='width:100%; table-layout: fixed; background: #fff; padding-bottom:60px; font-family: "Plus Jakarta Sans", sans-serif;'>
-                    <table class="main" width="100%">
-                        
-                        <tr>
-                            <td>
-                                <table width=100% class=sub-main>
-                                    <tr>
-                                        <td>
-                                            <a>
-                                                <div style='padding: 1rem; background: #FFF7E6;'>
-                                                    <img 
-                                                        style='width: 7rem; display: block; margin: 0 auto'
-                                                        src='http://res.cloudinary.com/dszrk3lcz/image/upload/v1681388703/dqfex6vpnnncytqrtntx.png' 
-                                                        alt=''
-                                                    />
-                                                </div>
-                                                
-                                            </a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <table width=100%>
-                                                <tr>
-                                                    <td>
-                                                        <p style='margin:2rem 0; font-weight: 600; color: #292929; line-height: 1.5rem;'>Welcome to Mongoro 🚀
-                                                            <p style='margin:2rem 0; font-size:14px; color: #292929; line-height: 1.5rem;'>
-                                                                <span>   Thanks for joining Mongoro. To access the admin dashboard, <br/> please verify your account by entering the code below and proceed to Login again.
-                                                            </p>
-                                                            <br>
-                                                            <p style='margin:0rem 0; color: #292929; line-height: 1.5rem; font-size: 35px; text-align: left;'>
-                                                                <span><b>${num}</b></span>
-                                                            </p>
-                                                            
-                                                            <p style='margin:2rem 0; color: #292929; line-height: 1.5rem;'>
-                                                                <span>Regards,</span>
-                                                            </p>
-                                                            <p style='margin:2rem 0; color: #292929; line-height: 1.5rem;'>
-                                                                <span><b>Mongoro Team</b></span>
-                                                            </p>
-                                                            <hr 
-                                                                style='border: none; border-bottom: 0.6px solid #FFF7E6'
-                                                            />
-                                                        
-                                                            <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'>www.mongoro.com</p>
-                                                            <p style='color: #666666; text-align: center; font-size: 14px;'>support@mongoro.com</p>
-                                                            <p style='color: #666666; text-align: center; font-size: 14px;'>21 Blantyre Crescent, Wuse 2. Abuja</p>
-                                                            <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'> Having trouble viewing this email? Click here to view in your browser.</p>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </body>
-            </html>`,
-            };
-
-            transporter.sendMail(mailOptions, function (error, info) {
-                if (error) {
-                    console.log(error);
-                } else {
-                    console.log('Email sent: ' + info.response);
-                }
-            });
-
-            const accessToken = jwt.sign(
-                { email: req.body.email },
-                process.env.SECRET_KEY,
-                { expiresIn: "5h" }
-            );
-
-            const ip = address.ip();
-
-            await OtherModel.updateOne({ email: req.body.email }, { $set: { code: num } })
-            res.send({ msg: "your account is not verified check your mail and follow the process", category: "Admin", email: req.body.email, isverified: admin.isverified, token: accessToken, ip_address: ip, })
 
         } else {
 
@@ -152,23 +46,15 @@ router.post("/login", async (req, res) => {
                     process.env.SECRET_KEY,
                     { expiresIn: "5h" }
                 );
-
+                
+                let add;
                 const timeElapsed = Date.now();
                 const today = new Date(timeElapsed);
                 const when = today.toUTCString();
                 const ip = address.ip();
 
-                var configs = {
-                    method: 'get',
-                    url: `https://api.ipdata.co?api-key=e93f292bf9211a39c987943a79d8bed8a9370fe943db7ac74f81084e`,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                };
-
-                axios(configs).then(function (response) {
-                    const result = response.data
-
+                var callback = function(locate){
+                    add=locate.ip
                     let transporter = nodemailer.createTransport({
                         service: "hotmail",
                         auth: {
@@ -221,10 +107,10 @@ router.post("/login", async (req, res) => {
                                                 <p style='margin:2rem 0; font-weight: 800; color: #292929; line-height: 1.5rem;'>Dear ${admin.email}
                                                     <p style='margin:2rem 0; font-size:14px; color: #292929; line-height: 1.5rem;'>
                                                     <span> We noticed your Mongoro account was logged in on ${req.body.device}
-                                                    from ${result.city}, ${result.region}, ${result.country_name} - ${result.continent_name}
-                                                      name with the IP address ${ip}, at ${when}. If this was you, 
-                                                      there is no need to do anything.
-                                                   </span>
+                                                     from ${locate.city}, ${locate.region}, ${locate.country_name},
+                                                       name with the IP address ${locate.ip}, at ${when}. If this was you, 
+                                                       there is no need to do anything.
+                                                    </span>
                                                         <br />
                                                         <br />
                                                         <span>Not you? Change your password and kindly send an email to
@@ -266,9 +152,11 @@ router.post("/login", async (req, res) => {
                             console.log('Email sent: ' + info.response);
                         }
                     });
-                })
-
-                await OtherModel.updateOne({ email: req.body.email }, { $set: { ip: ip } }).then(() => {
+                };
+            
+                ipapi.location(callback)
+             
+                await OtherModel.updateOne({ email: req.body.email }, { $set: { ip: add } }).then(() => {
                     res.status(200).json({ msg: 'logged in successfuly Admin !', category: "Admin", _id: admin._id, email: req.body.email, isverified: admin.isverified, token: accessToken, ip_address: ip, status: 200 });
                 })
             }
@@ -290,17 +178,9 @@ router.post("/login", async (req, res) => {
             const today = new Date(timeElapsed);
             const when = today.toUTCString();
 
-            var configs = {
-                method: 'get',
-                url: `https://api.ipdata.co?api-key=e93f292bf9211a39c987943a79d8bed8a9370fe943db7ac74f81084e`,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            };
-
-            axios(configs).then(function (response) {
-                const result = response.data
-
+            let add;
+            var callback = function(locate){
+                add=locate.ip
                 let transporter = nodemailer.createTransport({
                     service: "hotmail",
                     auth: {
@@ -353,9 +233,10 @@ router.post("/login", async (req, res) => {
                                             <p style='margin:2rem 0; font-weight: 800; color: #292929; line-height: 1.5rem;'>Dear ${supers.email}
                                                 <p style='margin:2rem 0; font-size:14px; color: #292929; line-height: 1.5rem;'>
                                                 <span> We noticed your Mongoro account was logged in on ${req.body.device}
-                                                from ${result.city}, ${result.region}, ${result.country_name} - ${result.continent_name}
-                                                  name with the IP address ${ip}, at ${when}. If this was you, 
-                                                  there is no need to do anything.</span>
+                                                     from ${locate.city}, ${locate.region}, ${locate.country_name},
+                                                       name with the IP address ${locate.ip}, at ${when}. If this was you, 
+                                                       there is no need to do anything.
+                                                    </span>
                                                     <br />
                                                     <br />
                                                     <span>Not you? Change your password and kindly send an email to
@@ -397,10 +278,12 @@ router.post("/login", async (req, res) => {
                         console.log('Email sent: ' + info.response);
                     }
                 });
-            })
+          
+            }
 
+            ipapi.location(callback)
 
-            await SuperModel.updateOne({ email: req.body.email }, { $set: { ip: ip } }).then(() => {
+            await SuperModel.updateOne({ email: req.body.email }, { $set: { ip: add } }).then(() => {
                 res.status(200).json({ msg: 'logged in successfuly Super Admin', category: "Super Admin", _id: supers._id, email: req.body.email, token: accessToken, ip_address: ip, status: 200 });
             })
         }
@@ -409,6 +292,7 @@ router.post("/login", async (req, res) => {
         res.status(400).json({ msg: "wrong email and password ", code: 400 })
     }
 })
+
 
 //////AUDIT
 router.post('/audit', async (req, res) => {

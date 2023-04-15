@@ -27,6 +27,7 @@
     "firebase-admin": "^11.5.0",
     "flutterwave-node-v3": "^1.0.12",
     "got": "^12.5.3",
+    "ipapi.co": "^0.3.0",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^6.8.4",
     "mongoose-paginate-v2": "^1.7.1",
