@@ -482,7 +482,6 @@ router.post('/bank/deactivate', async (req, res) => {
     }
 })
 
-
 router.get('/bank/deactivate/all', async (req, res) => {
     try {
         const code = await bankCodeModel.find()
@@ -501,7 +500,7 @@ router.get('/bank/deactivate/all', async (req, res) => {
     }
 })
 
-router.delete('/bank/activate', async (req, res) => {
+router.post('/bank/activate', async (req, res) => {
     try {
 
         const validate = await bankCodeModel.findOne({ _id: req.body.id })

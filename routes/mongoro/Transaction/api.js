@@ -943,7 +943,7 @@ router.post('/wallet', verify, async (req, res) => {
     const senderFullName = sender.surname + " " + sender.first_name
     const senderNewAmount = senderAmount - req.body.amount
 
-    let user = await MongoroUserModel.findOne({ wallet_ID: req.body.wallet_ID })
+    const user = await MongoroUserModel.findOne({ wallet_ID: req.body.wallet_ID })
     const oldAmount = user.wallet_balance
     newAmount = +oldAmount + +req.body.amount
     const receiverFullName = user.surname + " " + user.first_name
@@ -952,7 +952,7 @@ router.post('/wallet', verify, async (req, res) => {
 
     const userss = await GlobalModel.findOne({ _id: process.env.GLOBAL_ID })
     const resultt = userss.disable_all_transfer
-
+    
   if (!check) {
     let tier = new TierModel(body)
     tier.save()
@@ -978,7 +978,7 @@ router.post('/wallet', verify, async (req, res) => {
   } else if (senderAmount < 100) {
     res.send({ msg: "you dont have enough money", status: 400 });
   } else if (req.body.amount < 100) {
-    res.send({ msg: "you cant send any have money lower than 100", status: 400 });
+    res.send({ msg: "you cant send any money lower than 100", status: 400 });
   } else {
 
         try {
@@ -1001,7 +1001,8 @@ router.post('/wallet', verify, async (req, res) => {
                 "transaction_ID": tid,
                 "full_name": senderFullName,
                 "bank_name": "Mongoro",
-                "reference": `MGR_NGN_${ran}`
+                "reference": `MGR_NGN_${ran}`,
+                "balance": newAmount
             }
 
             const body = {
@@ -1015,7 +1016,8 @@ router.post('/wallet', verify, async (req, res) => {
                 "transaction_ID": tid,
                 "full_name": receiverFullName,
                 "bank_name": "Mongoro",
-                "reference": `MGR-NGN-${ran}`
+                "reference": `MGR-NGN-${ran}`,
+                "balance": senderNewAmount
             }
 
             let transaction = await new TransferModel(body)
