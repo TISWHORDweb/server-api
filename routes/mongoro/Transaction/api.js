@@ -93,10 +93,23 @@ router.post("/", async (req, res) => {
         status: 400
     })
 
+
+    let charges;
+    if(data.data.amount < 50000){
+        charges = 30
+    }else if(data.data.amount >= 50000){
+        charges = 60
+    }
+
+    const flwCharges = 15
+    const normalCharges = charges - flwCharges
+
+    const withCharges = req.body.amount+ + +normalCharges 
+
     const body = {
         "account_bank": req.body.account_bank,
         "account_number": req.body.account_number,
-        "amount": req.body.amount,
+        "amount": withCharges,
         "narration": req.body.narration,
         "currency": req.body.currency,
         "reference": `MGR-NGN-${ran}`,
@@ -186,18 +199,18 @@ router.post("/", async (req, res) => {
     }
 
 
-    if (req.body.amount > per) {
+    if (withCharges > per) {
         return res.send({
             msg: `You can only send ${per} at once any amount greater than that is not accepted, Upgrade your account to have access, Thanks`,
             status: 400
         });
-    } else if (allTotal > number) {
+    } else if (allTotal >= number) {
         return res.send({
             msg: "You have reach your daily transaction limit, Upgrade your account to have access",
             status: 400
         })
     } else {
-        const total = +req.body.amount + +allTotal
+        const total = +withCharges + +allTotal
 
         await TierModel.updateOne({ userId: req.body.userId }, { $set: { amount: total } })
 
@@ -212,9 +225,9 @@ router.post("/", async (req, res) => {
 
             console.log(oldAmount)
 
-            if (oldAmount < req.body.amount) {
+            if (oldAmount < withCharges) {
                 return res.status(400).json({ msg: "Insufficient funds", status: 404 });
-            } else if (req.body.amount < 100) {
+            } else if (withCharges < 100) {
                 return res.status(400).json({ msg: "You cant send any money lower than 100", status: 401 });
             } else {
 
@@ -224,15 +237,7 @@ router.post("/", async (req, res) => {
                     console.log(data)
 
                     if (data) {
-                        let charges;
-                        if(data.data.amount < 50000){
-                            charges = 30
-                        }else if(data.data.amount >= 50000){
-                            charges = 60
-                        }
 
-                        const withCharges = oldAmount - charges
-                        const newAmount = withCharges - data.data.amount;
                         const flwId = data.data.id
 
                         var configs = {
@@ -259,8 +264,9 @@ router.post("/", async (req, res) => {
                                 "bank_name": data.data.bank_name,
                                 "userId": req.body.userId,
                                 "reference": data.data.reference,
-                                "sender_status": "Debit",
-                                "balance": newAmount
+                                "debit_amount": withCharges,
+                                "balance": newAmount,
+                                "valueDate": Date.now(),
                             }
 
                             const detail = {
@@ -273,8 +279,9 @@ router.post("/", async (req, res) => {
                                 "account_number": data.data.account_number,
                                 "bank_name": data.data.bank_name,
                                 "userId": req.body.userId,
+                                "valueDate": Date.now(),
                                 "reference": data.data.reference,
-                                "sender_status": "Debit",
+                                "debit_amount": withCharges,
                                 "balance": oldAmount
                             }
 
@@ -364,7 +371,8 @@ router.post("/", async (req, res) => {
                                     "bank_name": data.data.bank_name,
                                     "userId": req.body.userId,
                                     "reference": data.data.reference,
-                                    "sender_status": "Debit",
+                                    "debit_amount": withCharges,
+                                    "valueDate": Date.now(),
                                     "balance": newAmount
                                 }
 
@@ -473,19 +481,20 @@ router.post("/", async (req, res) => {
                                         status: 200
                                     })
                                 })
-
+                            
                                 const details = {
                                     "flw_id": data.data.id,
                                     "transaction_ID": tid,
                                     "service_type": "Transfer",
                                     "amount": req.body.amount,
                                     "status": "pending",
+                                    "valueDate": Date.now(),
                                     "full_name": data.data.full_name,
                                     "account_number": data.data.account_number,
                                     "bank_name": data.data.bank_name,
                                     "userId": req.body.userId,
                                     "reference": data.data.reference,
-                                    "sender_status": "Debit",
+                                    "debit_amount": withCharges,
                                     "balance": newAmount
                                 }
 
@@ -952,7 +961,7 @@ router.post('/wallet', verify, async (req, res) => {
 
     const userss = await GlobalModel.findOne({ _id: process.env.GLOBAL_ID })
     const resultt = userss.disable_all_transfer
-    
+
   if (!check) {
     let tier = new TierModel(body)
     tier.save()
@@ -1001,6 +1010,8 @@ router.post('/wallet', verify, async (req, res) => {
                 "transaction_ID": tid,
                 "full_name": senderFullName,
                 "bank_name": "Mongoro",
+                "credit_amount": req.body.amount,
+                "valueDate": Date.now(),
                 "reference": `MGR_NGN_${ran}`,
                 "balance": newAmount
             }
@@ -1014,6 +1025,8 @@ router.post('/wallet', verify, async (req, res) => {
                 "status_type": "Debit",
                 "status": "successful",
                 "transaction_ID": tid,
+                "debit_amount": req.body.amount,
+                "valueDate": Date.now(),
                 "full_name": receiverFullName,
                 "bank_name": "Mongoro",
                 "reference": `MGR-NGN-${ran}`,

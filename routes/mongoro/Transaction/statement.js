@@ -64,72 +64,72 @@ router.get("/generatepdf", async (req, res) => {
     const data = await TransferModel.find({ $and: [{ userId: req.body.userId }, { "Date": { $gte: req.body.from } }, { "Date": { $lte: req.body.to } }] })
     
     console.log(data)
-    // const options = {
-    //     formate: 'A3',
-    //     orientation: 'portrait',
-    //     border: '2mm',
-    //     header: {
-    //         height: '15mm',
-    //         contents: '<h4 style=" color: red;font-size:20;font-weight:800;text-align:center;">Account Statement</h4>'
-    //     },
-    //     footer: {
-    //         height: '20mm',
-    //         contents: {
-    //             first: 'Cover page',
-    //             2: 'Second page',
-    //             default: '<span style="color: #444;">{{page}}</span>/<span>{{pages}}</span>', 
-    //             last: 'Last Page'
-    //         }
-    //     }
-    // }
+    const options = {
+        format: "A3",
+        orientation: "portrait",
+        border: "10mm",
+        header: {
+            height: "45mm",
+            contents: '<div style="text-align: center;">Author: Shyam Hajare</div>'
+        },
+        footer: {
+            height: "28mm",
+            contents: {
+                first: 'Cover page',
+                2: 'Second page', // Any page number is working. 1-based index
+                default: '<span style="color: #444;">{{page}}</span>/<span>{{pages}}</span>', // fallback value
+                last: 'Last Page'
+            }
+        }
+    };
 
-    // const html = fs.readFileSync(path.join(__dirname, '../../../views/template.html'), 'utf-8');
-    // const filename = Math.random() + '_doc' + '.pdf';
-    // let array = [];
+    const html = fs.readFileSync(path.join(__dirname, '../../../views/template.html'), 'utf-8');
+    const filename = Math.random() + '_doc' + '.pdf';
+    let array = [];
 
-    // data.forEach(d => {
-    //     const prod = {
-    //         name: d.name,
-    //         description: d.description,
-    //         unit: d.unit,
-    //         quantity: d.quantity,
-    //         price: d.price,
-    //         total: d.quantity * d.price,
-    //         imgurl: d.imgurl
-    //     }
-    //     array.push(prod);
-    // });
+    data.forEach(d => {
+        const prod = {
+            date: d.Date,
+            reference: d.reference,
+            amount: d.amount,
+            debit_amount: d.debit_amount,
+            credit_amount: d.credit_amount,
+            balance: d.balance ,
+            service_type: d.service_type
+        }
+        array.push(prod);
+    });
 
-    // let subtotal = 0;
-    // array.forEach(i => {
-    //     subtotal += i.total
-    // });
-    // const tax = (subtotal * 20) / 100;
-    // const grandtotal = subtotal - tax;
-    // const obj = {
-    //     prodlist: array,
-    //     subtotal: subtotal,
-    //     tax: tax,
-    //     gtotal: grandtotal
-    // }
-    // const document = {
-    //     html: html,
-    //     data: {
-    //         products: obj
-    //     },
-    //     path: './docs/' + filename
-    // }
-    // pdf.create(document, options)
-    //     .then(res => {
-    //         console.log(res);
-    //     }).catch(error => {
-    //         console.log(error);
-    //     });
-    // const filepath = 'http://localhost:3001/docs/' + filename;
+    let subtotal = 0;
+    array.forEach(i => {
+        subtotal += i.total
+    });
+    const tax = (subtotal * 20) / 100;
+    const grandtotal = subtotal - tax;
+    const obj = {
+        prodlist: array,
+        subtotal: subtotal,
+        tax: tax,
+        gtotal: grandtotal
+    }
+    const document = {
+        html: html,
+        data: {
+            products: obj
+        },
+        path: './docs/' + filename
+    }
+    pdf.create(document, options)
+        .then(res => {
+            console.log(res);
+        }).catch(error => {
+            console.log(error);
+        });
+    const filepath = 'http://localhost:3001/docs/' + filename;
 
-    // res.render('download', {
-    //     path: filepath
-    // });
+    res.render('download', {
+        path: filepath
+    });
 
 
 })

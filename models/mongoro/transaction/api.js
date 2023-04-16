@@ -8,16 +8,19 @@ const TransferSchema = new mongoose.Schema({
         type: Number,
         default: () => Date.now()
     },
+    credit_amount: {
+        type: String
+    },
     amount: {
         type: String
     },
     balance: {
         type: String
     },
-    receiver_status:{
+    debit_amount: {
         type: String
     },
-    sender_status:{
+    valueDate: {
         type: String
     },
     wallet_ID: {

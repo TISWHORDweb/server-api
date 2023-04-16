@@ -5,6 +5,7 @@ const TransferModel = require('../../../models/mongoro/transaction/api')
 const MongoroUserModel = require('../../../models/mongoro/auth/mongoroUser_md')
 const WebhookModel = require('../../../models/mongoro/transaction/webhook_resp_md.js')
 const cron = require('node-cron');
+const { notify } = require('../../../core/core.utils')
 
 // verify transaction from the webhook and update the database
 router.post("/webhook", async (req, res) => {
@@ -67,6 +68,10 @@ router.post("/webhook", async (req, res) => {
         await axios(config).then(function (response) {
             const data = response.data.data
 
+            const senderName = data.meta.originatorname
+            const senderBankName = data.meta.bankname
+
+
             if (data.status === "successful") {
                 const details = {
                     "transaction_ID": tid,
@@ -79,9 +84,10 @@ router.post("/webhook", async (req, res) => {
                     "userId": id,
                     "flw_id": data.id,
                     "receiver_status": "Credit",
-                    "full_name": data.meta.originatorname,
-                    "bank_name": data.meta.bankname,
-                    "balance": newAmount
+                    "full_name": senderName,
+                    "bank_name": senderBankName,
+                    "balance": newAmount,
+                    "valueDate": Date.now(),
                 }
                 // save updated transaction details to the database
                 let transaction = new TransferModel(details)
@@ -92,6 +98,16 @@ router.post("/webhook", async (req, res) => {
                     { email: csEmail },
                     { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }
                 ).then(() => {
+
+                    //Notification--------------------------------------------
+                    let note = {
+                        title: "Credit Alert",
+                        body: `You just receive a total amount of ₦${txAmount.toLocaleString()} from ${senderName} of ${senderBankName} `,
+                        channelId: 'channelId'
+                    };
+
+                    notify(id, note.title, note.body, note.channelId)
+                    //Notification--------------------------------------------
 
                     // send success response
                     res.status(201).json({
@@ -112,6 +128,7 @@ router.post("/webhook", async (req, res) => {
                     "userId": id,
                     "receiver_status": "Credit",
                     "flw_id": data.id,
+                    "valueDate": Date.now(),
                     "full_name": data.meta.originatorname,
                     "bank_name": data.meta.bankname,
                     "balance": oldAmount
@@ -134,7 +151,10 @@ router.post("/webhook", async (req, res) => {
                     axios(config).then(function (response) {
                         const data = response.data
 
-                        if (data.data.status  === "successful") {
+                        const senderName = data.meta.originatorname
+                        const senderBankName = data.meta.bankname
+
+                        if (data.data.status === "successful") {
                             const details = {
                                 "transaction_ID": tid,
                                 "service_type": "Deposit",
@@ -145,9 +165,11 @@ router.post("/webhook", async (req, res) => {
                                 "narration": payload.data.narration,
                                 "userId": id,
                                 "flw_id": data.id,
-                                "receiver_status": "Credit",
-                                "full_name": data.meta.originatorname,
-                                "bank_name": data.meta.bankname,
+                                "status_type": "Credit",
+                                "valueDate": Date.now(),
+                                "credit_amount": req.body.amount,
+                                "full_name": senderName,
+                                "bank_name": senderBankName,
                                 "balance": newAmount
                             }
 
@@ -160,6 +182,16 @@ router.post("/webhook", async (req, res) => {
                                 { email: csEmail },
                                 { $set: { wallet_balance: newAmount, wallet_updated_at: Date.now() } }
                             ).then(() => {
+
+                                //Notification--------------------------------------------
+                                let note = {
+                                    title: "Credit Alert",
+                                    body: `You just receive a total amount of ₦${txAmount.toLocaleString()} from ${senderName} of ${senderBankName} `,
+                                    channelId: 'channelId'
+                                };
+
+                                notify(id, note.title, note.body, note.channelId)
+                                //Notification--------------------------------------------
 
                                 // send success response
                                 res.status(201).json({
@@ -181,7 +213,8 @@ router.post("/webhook", async (req, res) => {
                                 "narration": payload.data.narration,
                                 "userId": id,
                                 "flw_id": data.id,
-                                "receiver_status": "Credit",
+                                "status_type": "Credit",
+                                "credit_amount": req.body.amount,
                                 "full_name": data.meta.originatorname,
                                 "bank_name": data.meta.bankname,
                                 "balance": oldAmount
@@ -265,7 +298,7 @@ function paginatedResults(model) {
             }
         }
         try {
-            const results = await model.find().sort({_id:-1}).limit(limit).skip(startIndex).exec()
+            const results = await model.find().sort({ _id: -1 }).limit(limit).skip(startIndex).exec()
             let count = await WebhookModel.count()
             res.paginatedResults = { action, results, TotalResult: count, Totalpages: Math.ceil(count / limit) }
             next()
