@@ -1,6 +1,7 @@
 const admin = require("firebase-admin");
 const MongoroUserModel = require("../models/mongoro/auth/mongoroUser_md")
 const NotificationModel = require("../models/mongoro/notification/notification_md")
+const LoginActivityModel = require("../models/mongoro/auth/user/loginActivity/loginActivity")
 
 //download sdk from firebase
 const serviceAccount = require("./mongoro-8bd64-firebase-adminsdk-l2lth-b9799fe295.json");
@@ -85,7 +86,7 @@ exports.pushNotification = async (token, title, body, campaignId) => {
 
 }
 
-exports.notify = async (id, title, body, campaignId) => {
+exports.notify = async (id, title, body, campaignId, login = false, ip='', device='') => {
     try {
         let myToken = 'dy42NkNoS-eqhGS50UDPSd:APA91bHbAgJWBHSV9wix5b5F8CPqjgChMG3yqPhYpjPXzth6PIfWmV-6-nSYK4PVTJDfQZP1rL6fY3X3afWT-EcfBuBb_B-i1LJ28-ZYiv_tU97MCVrePXuQf7xwBnRxE8EKCN540DLK'
 
@@ -107,16 +108,35 @@ exports.notify = async (id, title, body, campaignId) => {
                 body
             }
 
-            let notification = await new NotificationModel(note)
-            // console.log(user.registration_token);
-            let not = await notification.save()
-            if (user.login_alert.notification === true) {
-
-                // let sent = await this.pushNotification(user.registration_token, title, body, campaignId)
-                let sent = await this.pushNotification(token, title, body, campaignId)
-                console.log("Successfully sent message:", {note, sent, not});
-
+            let logData = {
+                userId: id,
+                device,
+                ip
             }
+
+            if (login) {
+                let login = await new LoginActivityModel(logData)
+                let not = await login.save()
+                if (user.login_alert.notification === true) {
+
+                    // let sent = await this.pushNotification(user.registration_token, title, body, campaignId)
+                    let sent = await this.pushNotification(token, title, body, campaignId)
+                    console.log("Successfully sent message:", {note, sent, not});
+
+                }
+            } else {
+                let notification = await new NotificationModel(note)
+                // console.log(user.registration_token);
+                let not = await notification.save()
+                if (user.transaction_alert.notification === true) {
+
+                    // let sent = await this.pushNotification(user.registration_token, title, body, campaignId)
+                    let sent = await this.pushNotification(token, title, body, campaignId)
+                    console.log("Successfully sent message:", {note, sent, not});
+
+                }
+            }
+
         }
     } catch
         (e) {
