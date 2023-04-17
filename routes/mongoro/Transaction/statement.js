@@ -4,6 +4,7 @@ const verify = require("../../../verifyToken")
 const Flutterwave = require('flutterwave-node-v3');
 // const view = require('')
 const TransferModel = require('../../../models/mongoro/transaction/api')
+const nodemailer = require('nodemailer');
 const pdf = require('pdf-creator-node');
 const fs = require("fs")
 const path = require("path");
@@ -33,9 +34,9 @@ router.get("/get/:id/:from/:to", async (req, res) => {
 
 
 
-router.get("/generatepdf", async (req, res) => {
+router.post("/send", async (req, res) => {
 
-    const data = await TransferModel.find({ $and: [{ userId: req.body.userId, status: 'successful' }, { "Date": { $gte: req.body.from } }, { "Date": { $lte: req.body.to } }] })
+    const data = await TransferModel.find({ $and: [{ userId: req.body.userId, status: 'successful' }, { "Date": { $gte: req.body.startDate } }, { "Date": { $lte: req.body.endDate } }] })
     const user = await MongoroUserModel.findOne({ email: req.body.email })
     const accountNumber = user.account.account_number
     let lastData = data[data.length - 1]
@@ -50,23 +51,15 @@ router.get("/generatepdf", async (req, res) => {
     });
 
 
-    var fromDate = new Date(parseInt(req.body.from));
-    var toDate = new Date(parseInt(req.body.to));
+    var fromDate = new Date(parseInt(req.body.startDate));
+    var toDate = new Date(parseInt(req.body.endDate));
 
     // Get individual date components
     var years = fromDate.toDateString()
-    var hours = ("0" + fromDate.getHours()).slice(-2);
-    var minutes = ("0" + fromDate.getMinutes()).slice(-2);
-
     var year = toDate.toDateString()
-    var hourss = ("0" + toDate.getHours()).slice(-2);
-    var minutess = ("0" + toDate.getMinutes()).slice(-2);
 
-    var amOrPm = fromDate.getHours() >= 12 ? "PM" : "AM";
-    var amOrPms = toDate.getHours() >= 12 ? "PM" : "AM";
-    // Display converted date in "from: to:" format
-    const fromFormat = years + " " + hours + ":" + minutes +" "+amOrPm
-    const toFormat = year + " " + hourss + ":" + minutess +" "+amOrPms
+    const fromFormat = years 
+    const toFormat = year 
 
     function sum(input) {
 
@@ -120,7 +113,7 @@ router.get("/generatepdf", async (req, res) => {
         const dates = new Date(d.Date);
          // Determine AM or PM
          var amOrPm = dates.getHours() >= 12 ? "PM" : "AM";
-        const dateFormat = dates.toDateString() + ", " + dates.getHours() + ":" + dates.getMinutes()+ ":"+amOrPm
+        const dateFormat = dates.toDateString() + ", " + dates.getHours() + ":" + dates.getMinutes()+ " "+amOrPm
 
         const prod = {
             Date: dateFormat,
@@ -168,15 +161,43 @@ router.get("/generatepdf", async (req, res) => {
     pdf.create(document, options)
         .then(res => {
             console.log(res);
+
+            let transporter = nodemailer.createTransport({
+                service: "hotmail",
+                auth: {
+                    user: 'support@mongoro.com',
+                    pass: 'cmcxsbpkqvkgpwmk'
+                }
+            });
+    
+            let mailOptions = {
+                from: 'support@mongoro.com',
+                to: req.body.email,
+                subject: 'Account statements',
+                text: 'Mongoro transaction statements',
+                attachments: [{
+                    filename: filename,
+                    path: res.filename,
+                    contentType: 'application/pdf'
+                }],
+            };
+
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log('Email sent: ' + info.response);
+                }
+            });
         }).catch(error => {
             console.log(error);
         });
-    const filepath = 'http://localhost:3001/docs/' + filename;
+    // const filepath = 'http://localhost:3001/docs/' + filename;
 
-    res.render('download', {
-        path: filepath
-    });
-
+    res.status(200).json({
+        msg: 'Account statement generated successfully',
+        status: 200
+    })
 
 })
 
