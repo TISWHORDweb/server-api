@@ -13,7 +13,7 @@ const request = require('request');
 const bcrypt = require('bcryptjs')
 const GlobalModel = require('../../../models/mongoro/admin/super_admin/global/global_md')
 const axios = require('axios');
-const { notify } = require('../../../core/core.utils');
+const {notify} = require('../../../core/core.utils');
 const ipapi = require('ipapi.co');
 
 //CREATE
@@ -39,20 +39,20 @@ router.post('/register', async (req, res) => {
             status: 402
         })
 
-        const validate = await MongoroUserModel.findOne({ wallet_ID: req.body.wallet_ID })
-        if (validate) return res.status(400).json({ msg: 'There is another user with this Username', status: 400 })
+        const validate = await MongoroUserModel.findOne({wallet_ID: req.body.wallet_ID})
+        if (validate) return res.status(400).json({msg: 'There is another user with this Username', status: 400})
 
-        const validates = await MongoroUserModel.findOne({ email: req.body.email })
-        if (validates) return res.status(404).json({ msg: 'There is another user with this email ', status: 404 })
+        const validates = await MongoroUserModel.findOne({email: req.body.email})
+        if (validates) return res.status(404).json({msg: 'There is another user with this email ', status: 404})
 
         let user = await new MongoroUserModel(req.body)
 
         await user.save().then(user => {
 
             const accessToken = jwt.sign(
-                { id: user._id },
+                {id: user._id},
                 process.env.SECRET_KEY,
-                { expiresIn: "5h" }
+                {expiresIn: "5h"}
             );
 
 
@@ -172,7 +172,7 @@ router.post('/register', async (req, res) => {
 router.put("/verified", async (req, res) => {
     try {
 
-        await MongoroUserModel.updateOne({ email: req.body.email }, { $set: { isverified: true } })
+        await MongoroUserModel.updateOne({email: req.body.email}, {$set: {isverified: true}})
 
         return res.status(200).json({
             msg: 'Congratulation your Account is verified',
@@ -322,23 +322,23 @@ router.post("/login", async (req, res) => {
 
     const ip = address.ip();
 
-    const users = await GlobalModel.findOne({ _id: process.env.GLOBAL_ID })
+    const users = await GlobalModel.findOne({_id: process.env.GLOBAL_ID})
     const value = users.disable_all_user
-    const user = await MongoroUserModel.findOne({ email: req.body.email })
+    const user = await MongoroUserModel.findOne({email: req.body.email})
     let resultt;
     if (user) {
         resultt = user.blocked
         UserPassword = user.password
 
         //update user if regToken is passed
-        if (!!req.body.registration_token) await user.update({ registration_token: req.body.registration_token })
+        if (!!req.body.registration_token) await user.update({registration_token: req.body.registration_token})
 
     } else if (resultt === true) {
-        res.status(403).json({ msg: "Sorry your account is blocked", code: 403 })
+        res.status(403).json({msg: "Sorry your account is blocked", code: 403})
     } else if (value === true) {
-        res.status(500).json({ msg: "Sorry service temporarily unavailable", code: 500 })
+        res.status(500).json({msg: "Sorry service temporarily unavailable", code: 500})
     } else {
-        res.status(400).json({ msg: "user not found", code: 400 })
+        res.status(400).json({msg: "user not found", code: 400})
     }
 
 
@@ -346,12 +346,12 @@ router.post("/login", async (req, res) => {
         const originalPassword = await bcrypt.compare(req.body.password, UserPassword);
 
         if (!originalPassword) {
-            res.status(400).json({ msg: "wrong password", code: 400 })
+            res.status(400).json({msg: "wrong password", code: 400})
         } else {
             const accessToken = jwt.sign(
-                { id: user._id, isverified: user.isverified },
+                {id: user._id, isverified: user.isverified},
                 process.env.SECRET_KEY,
-                { expiresIn: "5h" }
+                {expiresIn: "5h"}
             );
 
             let add;
@@ -470,8 +470,7 @@ router.post("/login", async (req, res) => {
                 let data = 'channelId'
 
 
-
-                notify(user._id, note.title, note.body, data)
+                notify(user._id, note.title, note.body, data, true, locate.ip, req.body.device)
             };
 
             ipapi.location(callback)
@@ -482,7 +481,7 @@ router.post("/login", async (req, res) => {
             const when = today.toUTCString();
 
 
-            await MongoroUserModel.updateOne({ _id: user._id }, { $set: { ip: add, active: true } }).then(() => {
+            await MongoroUserModel.updateOne({_id: user._id}, {$set: {ip: add, active: true}}).then(() => {
                 res.status(200).json({
                     msg: 'logged in successfuly ',
                     user: user,
@@ -500,10 +499,10 @@ router.post("/password_verify", async (req, res) => {
 
     let code = Math.floor(100000 + Math.random() * 900000)
 
-    const user = await MongoroUserModel.findOne({ email: req.body.email });
+    const user = await MongoroUserModel.findOne({email: req.body.email});
 
     if (!user) {
-        return res.status(404).json({ msg: 'No User is registered with this email', status: 400 })
+        return res.status(404).json({msg: 'No User is registered with this email', status: 400})
     } else {
 
         const number = user.phone
@@ -641,9 +640,9 @@ router.put('/settings', async (req, res) => {
 
 
     try {
-        if (!req.body.address || !req.body.country || !req.body.state || !req.body.city || !req.body.gender || !req.body.occupation) return res.status(402).json({ msg: 'please check the fields ?' })
+        if (!req.body.address || !req.body.country || !req.body.state || !req.body.city || !req.body.gender || !req.body.occupation) return res.status(402).json({msg: 'please check the fields ?'})
 
-        await MongoroUserModel.updateOne({ _id: id }, {
+        await MongoroUserModel.updateOne({_id: id}, {
             $set: {
                 address: req.body.address,
                 state: req.body.state,
@@ -677,12 +676,12 @@ router.put('/settings', async (req, res) => {
 
 router.post('/verify_email', async (req, res) => {
 
-    const user = await MongoroUserModel.findOne({ email: req.body.email });
+    const user = await MongoroUserModel.findOne({email: req.body.email});
 
     if (user) {
-        res.status(400).json({ msg: false, status: 400 });
+        res.status(400).json({msg: false, status: 400});
     } else {
-        res.status(200).json({ msg: true, status: 200 });
+        res.status(200).json({msg: true, status: 200});
     }
 
 })
