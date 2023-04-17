@@ -1,6 +1,6 @@
 const express = require("express")
 const app = express()
-// const expressLayouts = require('express-ejs-layouts');
+const expressLayouts = require('express-ejs-layouts');
 const cors = require('cors')
 const path = require('path');
 const bodyParser = require('body-parser')
@@ -46,8 +46,8 @@ app.use(function(req, res, next) {
   next();
 });
 
-// app.use(expressLayouts);
-// app.set('view engine', 'ejs');
+app.use(expressLayouts);
+app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/docs', express.static(path.join(__dirname, 'docs')));
 // app.use(function(req, res, next) {
