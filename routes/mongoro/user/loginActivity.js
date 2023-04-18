@@ -34,7 +34,7 @@ router.get('/user/:id', async (req, res) => {
         let activity = await LoginActivityModel.find({ userId: req.params.id })
         if (activity) {
             return res.status(200).json({
-                activity: activity,
+                activity: activity?.reverse(),
                 status: 200
             })
         } else {
