@@ -160,6 +160,8 @@ router.delete("/delete", async (req, res) => {
 
 });
 
+
+
 //INVITE    
 router.post("/invite", async (req, res) => {
 
@@ -179,9 +181,11 @@ router.post("/invite", async (req, res) => {
             msg: 'you dont have access to Invite Admin',
             status: 400
         })
-    } else if (user) {
-        res.status(400).json({ msg: "sorry..... This email address alreday exist as a user, Can't be used to register as Admin", status: 400 });
-    } else if (Supermail) {
+    } 
+    // else if (user) {
+    //     res.status(400).json({ msg: "sorry..... This email address alreday exist as a user, Can't be used to register as Admin", status: 400 });
+    // } 
+    else if (Supermail) {
         res.status(401).json({ msg: "sorry..... You cant invite super admin", status: 401 });
     } else if (admin) {
         res.status(401).json({ msg: "sorry..... This email address is already Invited", status: 401 });
@@ -242,7 +246,7 @@ router.post("/invite", async (req, res) => {
                                                     <td>
                                                         <p style='margin:2rem 0; font-weight: 600; color: #292929; line-height: 1.5rem;'>Welcome to Mongoro 🚀
                                                             <p style='margin:2rem 0; font-size:14px; color: #292929; line-height: 1.5rem;'>
-                                                                <span> You have been invited by the management of Mongoro as an admin on the Mongoro app. Kindly click on this link: <a href="admin.mongoro.com/change-password/{email}">Click here<a/> to get started.
+                                                                <span> You have been invited by the management of Mongoro as an admin on the Mongoro app. Kindly click on this link <a href='https://admin.mongoro.com/change-password/%7Bemail%7D'>Click here</a> to get started.
                                                                 <br>
                                                                 <br>
                                                                 If you think this email has been sent to the wrong individual kindly reach out immediately and we will rectify it.</span>

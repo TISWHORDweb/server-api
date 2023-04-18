@@ -12,6 +12,7 @@ router.get("/totals", async (req, res) => {
         /*
         Totals based on dates
          */
+        
         const oneDayAgoTimeStamp = Date.now() - (24 * 60 * 60 * 1000);
         const oneWeekAgoTimeStamp = Date.now() - (7 * 24 * 60 * 60 * 1000);
         const oneMonthAgoTimeStamp = Date.now() - (30 * 24 * 60 * 60 * 1000);
@@ -37,7 +38,7 @@ router.get("/totals", async (req, res) => {
                 }
             }
         ])
-        
+
         //TODAY"S DEPOSIT
         const dailyDeposit = await TransferModel.aggregate([
             {
@@ -48,7 +49,6 @@ router.get("/totals", async (req, res) => {
                     }
                 }
             },
-
             {
                 $group: {
                     _id: null,

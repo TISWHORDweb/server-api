@@ -9,7 +9,8 @@ const Qrcode = require('qrcode')
 dotenv.config()
 const CryptoJS = require("crypto-js")
 const request = require('request');
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcryptjs');
+const OtherModel = require('../../../../models/mongoro/admin/other/otherAdmi_md');
 
 //CREATE
 router.post('/create', async (req, res) => {
@@ -329,6 +330,36 @@ router.post('/verify', async (req, res) => {
     }
 
 })
+
+router.delete("/delete/admin", async (req, res) => {
+    try {
+        if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?' })
+
+        await OtherModel.deleteOne({ _id: req.body.id })
+        res.status(200).json({ msg: "Admin deleted....", status: 200 });
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
+
+});
+
+router.delete("/delete/super", async (req, res) => {
+    try {
+        if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?' })
+
+        await SuperModel.deleteOne({ _id: req.body.id })
+        res.status(200).json({ msg: "Super Admin deleted....", status: 200 });
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry !',
+            status: 500
+        })
+    }
+
+});
 
 
 module.exports = router

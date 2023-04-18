@@ -693,31 +693,31 @@ router.delete('/audit/delete', async (req, res) => {
 })
 
 
-router.post('/deletion', verify, async (req, res) => {
+// router.post('/deletion', verify, async (req, res) => {
 
-    if ( !req.body.userId ) return res.status(400).json({ msg: 'please check the fields' })
+//     if ( !req.body.userId ) return res.status(400).json({ msg: 'please check the fields' })
 
-    try {
-        const code = Math.floor(100000 + Math.random() * 900000)
+//     try {
+//         const code = Math.floor(100000 + Math.random() * 900000)
 
-        const user = await MongoroUserModel.findOne({ _id: req.body.userId })
-        if (user) {
-            req.body.phone = user.phone
-            req.body.email = user.email
+//         const user = await MongoroUserModel.findOne({ _id: req.body.userId })
+//         if (user) {
+//             req.body.phone = user.phone
+//             req.body.email = user.email
 
-            MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { note: req.body.note ,  reason: req.body.reason} }).then(async () => {
-                return res.status(200).json({
-                    msg: 'Successful',
-                    status: 200
-                })
-            })
-        }
-    } catch (error) {
-        res.status(500).json({
-            msg: 'there is an unknown error sorry ',
-            status: 500
-        })
-    }
-})
+//             MongoroUserModel.updateOne({ _id: req.body.userId }, { $set: { note: req.body.note ,  reason: req.body.reason} }).then(async () => {
+//                 return res.status(200).json({
+//                     msg: 'Successful',
+//                     status: 200
+//                 })
+//             })
+//         }
+//     } catch (error) {
+//         res.status(500).json({
+//             msg: 'there is an unknown error sorry ',
+//             status: 500
+//         })
+//     }
+// })
 
 module.exports = router
