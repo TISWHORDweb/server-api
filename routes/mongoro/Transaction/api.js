@@ -95,21 +95,18 @@ router.post("/", async (req, res) => {
 
 
     let charges;
-    if(data.data.amount < 50000){
+    if(req.body.amount < 50000){
         charges = 30
-    }else if(data.data.amount >= 50000){
+    }else if(req.body.amount >= 50000){
         charges = 60
     }
 
-    const flwCharges = 15
-    const normalCharges = charges - flwCharges
-
-    const withCharges = req.body.amount+ + +normalCharges 
+    const withCharges = req.body.amount+ + +charges 
 
     const body = {
         "account_bank": req.body.account_bank,
         "account_number": req.body.account_number,
-        "amount": withCharges,
+        "amount": req.body.amount,
         "narration": req.body.narration,
         "currency": req.body.currency,
         "reference": `MGR-NGN-${ran}`,
@@ -198,7 +195,6 @@ router.post("/", async (req, res) => {
         per = 1000000
     }
 
-
     if (withCharges > per) {
         return res.send({
             msg: `You can only send ${per} at once any amount greater than that is not accepted, Upgrade your account to have access, Thanks`,
@@ -222,6 +218,7 @@ router.post("/", async (req, res) => {
             return res.status(400).json({ msg: "Wrong PIN", status: 400 });
         } else {
             const oldAmount = user.wallet_balance
+            const newAmount = oldAmount - withCharges
 
             console.log(oldAmount)
 

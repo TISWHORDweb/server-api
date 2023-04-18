@@ -482,14 +482,32 @@ router.post('/bank/deactivate', async (req, res) => {
     }
 })
 
-router.get('/bank/deactivate/all', async (req, res) => {
+router.get('/bank/all', async (req, res) => {
     try {
         const code = await bankCodeModel.find()
 
-        return res.status(200).json({
-            msg: "All deactivate bank fetch successfully",
-            code,
-            status: 200
+        let filtered = []
+        code.filter((a)=>{
+            filtered.push(a.code)
+        })
+
+        const url = "https://api.youverify.co/v2/api/identity/ng/bank-account-number/bank-list"
+
+        const header = {
+            headers: {
+                token: process.env.U_VERIFY_KEY
+            }
+        }
+
+        await axios.get(url, header).then(resp => {
+            const data = resp.data.data
+            data.forEach(element => {
+                element.status = true
+                if(filtered.includes(element.code)){
+                    element.status = false
+                }
+            })
+            res.status(200).json(resp.data)
         })
 
     } catch (error) {
@@ -527,5 +545,20 @@ router.post('/bank/activate', async (req, res) => {
     }
 })
 
+
+router.get('/bank/deactivate/all', async (req, res) => {
+    try {
+
+        const bank = await bankCodeModel.find()
+
+        return res.status(200).json(bank)
+
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry ',
+            status: 500
+        })
+    }
+})
 
 module.exports = router

@@ -4,9 +4,11 @@ const verify = require("../../../verifyToken")
 const Flutterwave = require('flutterwave-node-v3');
 // const view = require('')
 const TransferModel = require('../../../models/mongoro/transaction/api')
+const nodemailer = require('nodemailer');
 const pdf = require('pdf-creator-node');
 const fs = require("fs")
 const path = require("path");
+const MongoroUserModel = require('../../../models/mongoro/auth/mongoroUser_md');
 // const ejs = require("ejs");
 // const html_to_pdf = require('html-pdf-node');
 
@@ -32,48 +34,61 @@ router.get("/get/:id/:from/:to", async (req, res) => {
 
 
 
-router.get("/generatepdf", async (req, res) => {
+router.post("/send", async (req, res) => {
 
-    // const data = [
-    //     {
-    //         name: "Product 1",
-    //         description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quod ullam repudiandae provident, deleniti ratione ipsum sunt porro deserunt",
-    //         unit:"pack",
-    //         quantity: 2,
-    //         price: 20,
-    //         imgurl: "https://micro-cdn.sumo.com/image-resize/sumo-convert?uri=https://media.sumo.com/storyimages/ef624259-6815-44e2-b905-580f927bd608&hash=aa79d9187ddde664f8b3060254f1a5d57655a3340145e011b5b5ad697addb9c0&format=webp"
-    //     },
-    //     {
-    //         name: "Product 2",
-    //         description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quod ullam repudiandae provident, deleniti ratione ipsum sunt porro deserunt",
-    //         unit:"pack",
-    //         quantity: 4,
-    //         price: 80,
-    //         imgurl: "https://micro-cdn.sumo.com/image-resize/sumo-convert?uri=https://media.sumo.com/storyimages/ef624259-6815-44e2-b905-580f927bd608&hash=aa79d9187ddde664f8b3060254f1a5d57655a3340145e011b5b5ad697addb9c0&format=webp"
-    //     },
-    //     {
-    //         name: "Product 3",
-    //         description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quod ullam repudiandae provident, deleniti ratione ipsum sunt porro deserunt",
-    //         unit:"pack",
-    //         quantity: 3,
-    //         price: 60,
-    //         imgurl: "https://micro-cdn.sumo.com/image-resize/sumo-convert?uri=https://media.sumo.com/storyimages/ef624259-6815-44e2-b905-580f927bd608&hash=aa79d9187ddde664f8b3060254f1a5d57655a3340145e011b5b5ad697addb9c0&format=webp"
-    //     },
-    // ]
+    const data = await TransferModel.find({ $and: [{ userId: req.body.userId, status: 'successful' }, { "Date": { $gte: req.body.startDate } }, { "Date": { $lte: req.body.endDate } }] })
+    const user = await MongoroUserModel.findOne({ email: req.body.email })
+    const accountNumber = user.account.account_number
+    let lastData = data[data.length - 1]
+    const closeBalance = lastData.balance
+    const openBalance = data[0].balance
 
-    const data = await TransferModel.find({ $and: [{ userId: req.body.userId }, { "Date": { $gte: req.body.from } }, { "Date": { $lte: req.body.to } }] })
-    
-    console.log(data)
+    const arr = []
+    const arr2 = []
+    data.forEach(function (data) {
+        arr.push(parseInt(data.credit_amount));
+        arr2.push(parseInt(data.debit_amount));
+    });
+
+
+    var fromDate = new Date(parseInt(req.body.startDate));
+    var toDate = new Date(parseInt(req.body.endDate));
+
+    // Get individual date components
+    var years = fromDate.toDateString()
+    var year = toDate.toDateString()
+
+    const fromFormat = years 
+    const toFormat = year 
+
+    function sum(input) {
+
+        if (toString.call(input) !== "[object Array]")
+            return false;
+
+        var total = 0;
+        for (var i = 0; i < input.length; i++) {
+            if (isNaN(input[i])) {
+                continue;
+            }
+            total += Number(input[i]);
+        }
+        return total;
+    }
+
+    const totalDebit = sum(arr2)
+    const totalCredit = sum(arr)
+
     const options = {
         format: "A3",
         orientation: "portrait",
         border: "10mm",
         header: {
-            height: "45mm",
-            contents: '<div style="text-align: center;">Author: Shyam Hajare</div>'
+            height: "40mm",
+            contents: '<div style="text-align: center;">Account statement</div>'
         },
         footer: {
-            height: "28mm",
+            height: "25mm",
             contents: {
                 first: 'Cover page',
                 2: 'Second page', // Any page number is working. 1-based index
@@ -83,22 +98,45 @@ router.get("/generatepdf", async (req, res) => {
         }
     };
 
+
     const html = fs.readFileSync(path.join(__dirname, '../../../views/template.html'), 'utf-8');
     const filename = Math.random() + '_doc' + '.pdf';
     let array = [];
 
+    const today = new Date()
+
+    var amOrPm = today.getHours() >= 12 ? "PM" : "AM";
+    const Format = today.toDateString() + ", " + today.getHours() + ":" + today.getMinutes()+ " "+amOrPm
+
     data.forEach(d => {
+
+        const dates = new Date(d.Date);
+         // Determine AM or PM
+         var amOrPm = dates.getHours() >= 12 ? "PM" : "AM";
+        const dateFormat = dates.toDateString() + ", " + dates.getHours() + ":" + dates.getMinutes()+ " "+amOrPm
+
         const prod = {
-            date: d.Date,
+            Date: dateFormat,
             reference: d.reference,
             amount: d.amount,
             debit_amount: d.debit_amount,
             credit_amount: d.credit_amount,
-            balance: d.balance ,
+            balance: d.balance,
             service_type: d.service_type
         }
         array.push(prod);
     });
+
+    const result = {
+        totalCredit: totalCredit,
+        close: closeBalance,
+        open: openBalance,
+        totalDebit: totalDebit,
+        accountNumber: accountNumber,
+        from: fromFormat,
+        to: toFormat,
+        today: Format,
+    }
 
     let subtotal = 0;
     array.forEach(i => {
@@ -115,22 +153,51 @@ router.get("/generatepdf", async (req, res) => {
     const document = {
         html: html,
         data: {
-            products: obj
+            products: obj,
+            topList: result
         },
         path: './docs/' + filename
     }
     pdf.create(document, options)
         .then(res => {
             console.log(res);
+
+            let transporter = nodemailer.createTransport({
+                service: "hotmail",
+                auth: {
+                    user: 'support@mongoro.com',
+                    pass: 'cmcxsbpkqvkgpwmk'
+                }
+            });
+    
+            let mailOptions = {
+                from: 'support@mongoro.com',
+                to: req.body.email,
+                subject: 'Account statements',
+                text: 'Mongoro transaction statements',
+                attachments: [{
+                    filename: filename,
+                    path: res.filename,
+                    contentType: 'application/pdf'
+                }],
+            };
+
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log('Email sent: ' + info.response);
+                }
+            });
         }).catch(error => {
             console.log(error);
         });
-    const filepath = 'http://localhost:3001/docs/' + filename;
+    // const filepath = 'http://localhost:3001/docs/' + filename;
 
-    res.render('download', {
-        path: filepath
-    });
-
+    res.status(200).json({
+        msg: 'Account statement generated successfully',
+        status: 200
+    })
 
 })
 
