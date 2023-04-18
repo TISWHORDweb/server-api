@@ -156,9 +156,9 @@ router.post('/change_password', async (req, res) => {
 
         const originalPassword = await bcrypt.compare(req.body.password, user.password);
 
-        // if (originalPassword === true) {
-        //     res.status(400).json({ msg: "You cant change your password to your previous password, use another password and try again", status: 400 });
-        // } 
+        if (originalPassword === true) {
+            res.status(400).json({ msg: "You cant change your password to your previous password, use another password and try again", status: 400 });
+        } 
 
         if (!originalPassword) {
             res.status(400).json({ msg: "wrong password", code: 400 })
