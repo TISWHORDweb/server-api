@@ -22,17 +22,17 @@ router.get("/insight/:id", async (req, res) => {
             userId: req.params.id,
             service_type: "Transfer",
             status: "successful"
-        }).limit(1).sort({$natural: -1})[0]
+        }).limit(1).sort({$natural: -1})
 
         const lastDeposit = await TransferModel.find({
             userId: req.params.id,
             service_type: "Deposit",
             status: "successful"
-        }).limit(1).sort({$natural: -1})[0]
+        }).limit(1).sort({$natural: -1})
 
         return res.status(200).json({
             msg: 'User insight',
-            data: {lastDeposit, lastWithdrawal},
+            data: {lastDeposit: lastDeposit[0], lastWithdrawal:lastWithdrawal[0]},
             status: 200
         })
     } catch (err) {
