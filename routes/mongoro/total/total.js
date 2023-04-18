@@ -37,7 +37,7 @@ router.get("/totals", async (req, res) => {
                 }
             }
         ])
-
+        
         //TODAY"S DEPOSIT
         const dailyDeposit = await TransferModel.aggregate([
             {

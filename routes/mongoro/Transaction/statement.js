@@ -37,7 +37,7 @@ router.get("/get/:id/:from/:to", async (req, res) => {
 router.post("/send", async (req, res) => {
 
     const data = await TransferModel.find({ $and: [{ userId: req.body.userId, status: 'successful' }, { "Date": { $gte: req.body.startDate } }, { "Date": { $lte: req.body.endDate } }] })
-    const user = await MongoroUserModel.findOne({ email: req.body.email })
+    const user = await MongoroUserModel.findOne({ _id: req.body.userId })
     const accountNumber = user.account.account_number
     let lastData = data[data.length - 1]
     const closeBalance = lastData.balance
