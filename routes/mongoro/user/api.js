@@ -29,7 +29,7 @@ let upload = multer({ storage })
 
 router.put('/showbalance', async (req, res) => {
     const state = req.body.showBalance
-    await MongoroUserModel.updateOne({_id:req.body.userId},{showBalance:state}).then(()=>{
+    await MongoroUserModel.updateOne({ _id: req.body.userId }, { showBalance: state }).then(() => {
         res.status(200).json({
             state,
             status: 200
@@ -66,7 +66,7 @@ function paginatedResults(model) {
             }
         }
         try {
-            const results = await model.find().sort({_id:-1}).limit(limit).skip(startIndex).exec()
+            const results = await model.find().sort({ _id: -1 }).limit(limit).skip(startIndex).exec()
             let count = await MongoroUserModel.count()
             res.paginatedResults = { action, results, TotalResult: count, Totalpages: Math.ceil(count / limit) }
             next()
@@ -155,14 +155,16 @@ router.post('/change_password', async (req, res) => {
         }
 
         const originalPassword = await bcrypt.compare(req.body.password, user.password);
+        const newp = await bcrypt.compare(req.body.newPassword, user.password);
 
-        if (originalPassword === true) {
-            res.status(400).json({ msg: "You cant change your password to your previous password, use another password and try again", status: 400 });
-        } 
 
         if (!originalPassword) {
             res.status(400).json({ msg: "wrong password", code: 400 })
         } else {
+
+            if (newp) {
+                return res.status(400).json({ msg: "You cant change your password to your previous password, use another password and try again", status: 400 });
+            }
 
             const NewPassword = await bcrypt.hash(req.body.newPassword, 13)
             await MongoroUserModel.updateOne({ _id: req.body.id }, { password: NewPassword }).then(async () => {
@@ -199,11 +201,11 @@ router.post('/reset_password', async (req, res) => {
             res.status(400).json({ msg: "No User is registered with this email", status: 400 });
         }
 
-        // const originalPassword = await bcrypt.compare(req.body.newPassword, user.password);
+        const originalPassword = await bcrypt.compare(req.body.newPassword, user.password);
 
-        // if (originalPassword === true) {
-        //     res.status(400).json({ msg: "You cant change your password to your previous password, use another password and try again", status: 400 });
-        // }
+        if (originalPassword) {
+            res.status(400).json({ msg: "You cant change your password to your previous password, use another password and try again", status: 400 });
+        }
 
         const NewPassword = await bcrypt.hash(req.body.newPassword, 13)
         await MongoroUserModel.updateOne({ email: req.body.email }, { $set: { password: NewPassword } })
@@ -287,7 +289,7 @@ router.post("/pin_mailer", verify, async (req, res) => {
     try {
         if (!req.body.id) return res.status(400).json({ msg: 'provide the id ?', status: 400 })
 
-        if(req.body.email !== user.email){
+        if (req.body.email !== user.email) {
             return res.status(400).json({ msg: "wrong email", status: 400 });
         }
 
@@ -302,7 +304,7 @@ router.post("/pin_mailer", verify, async (req, res) => {
                     Authorization: `Bearer ${process.env.SENDCHAMP}`
                 }
             }
-            
+
             axios.post(url, {
                 "to": req.body.phone,
                 "route": "dnd",
@@ -311,7 +313,7 @@ router.post("/pin_mailer", verify, async (req, res) => {
             }, header).then(function (response) {
                 console.log(JSON.stringify(response.data));
             })
-    
+
             let transporter = nodemailer.createTransport({
                 service: "hotmail",
                 auth: {
@@ -319,7 +321,7 @@ router.post("/pin_mailer", verify, async (req, res) => {
                     pass: 'cmcxsbpkqvkgpwmk'
                 }
             });
-    
+
             let mailOptions = {
                 from: 'support@mongoro.com',
                 to: req.body.email,
@@ -362,7 +364,7 @@ router.post("/pin_mailer", verify, async (req, res) => {
                                                 <table width=100%>
                                                     <tr>
                                                         <td>
-                                                            <p style='margin:2rem 0; font-weight: 600; color: #292929; line-height: 1.5rem;'>Dear ${user.surname+" "+user.first_name}
+                                                            <p style='margin:2rem 0; font-weight: 600; color: #292929; line-height: 1.5rem;'>Dear ${user.surname + " " + user.first_name}
                                                                 <p style='margin:2rem 0; font-size:14px; color: #292929; line-height: 1.5rem;'>
                                                                     <span>  To delete your account, please verify is your account by entering the code below .</span>
                                                                 </p>
@@ -409,7 +411,7 @@ router.post("/pin_mailer", verify, async (req, res) => {
 
             return res.status(200).json({
                 msg: 'Complete the 2FA verification with the code sent to your mail ',
-                code:code,
+                code: code,
                 status: 200
             })
         }
@@ -539,7 +541,7 @@ router.put('/tier_three', verify, async (req, res) => {
     try {
         if (!req.body.id) return res.status(400).json({ msg: 'provide the id ?', status: 400 })
 
-        await MongoroUserModel.updateOne({ _id: req.body.id }, { $set: { tiers: "three", indemnity:true } }).then(async () => {
+        await MongoroUserModel.updateOne({ _id: req.body.id }, { $set: { tiers: "three", indemnity: true } }).then(async () => {
             return res.status(200).json({
                 msg: 'Tiers upgraded Successful ',
                 status: 200
@@ -617,13 +619,13 @@ router.get('/withtag/:id', verify, async (req, res) => {
 //////AUDIT
 router.post('/audit', async (req, res) => {
     try {
-        if ( !req.body.userId ) return res.status(400).json({ msg: 'provide the id', status: 400 })
-     
+        if (!req.body.userId) return res.status(400).json({ msg: 'provide the id', status: 400 })
+
         const user = await MongoroUserModel.findOne({ _id: req.body.userId });
-        req.body.name = user.surname+" "+user.first_name
+        req.body.name = user.surname + " " + user.first_name
         req.body.email = user.email
         req.body.image = user.image
-        req.body.ip=address.ip();
+        req.body.ip = address.ip();
 
         let activity = new AuditModel(req.body)
         activity.save().then(() => {
