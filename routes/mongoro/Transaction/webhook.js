@@ -105,14 +105,7 @@ router.post("/webhook", async (req, res) => {
                         channelId: 'channelId'
                     };
 
-                    let notes = {
-                        title: "Charge",
-                        body: `A charge fee of ₦${adminFee} is deducted from your mongoro account, for your recent deposit of ₦${txAmount.toLocaleString()} `,
-                        channelId: 'channelId'
-                    };
-
                     notify(id, note.title, note.body, note.channelId)
-                    notify(id, notes.title, notes.body, notes.channelId)
                     //Notification--------------------------------------------
 
                     // send success response
@@ -195,14 +188,7 @@ router.post("/webhook", async (req, res) => {
                                     channelId: 'channelId'
                                 };
 
-                                let notes = {
-                                    title: "Charge",
-                                    body: `A charge fee of ₦${adminFee} is deducted from your mongoro account, for your recent deposit of ₦${txAmount.toLocaleString()} `,
-                                    channelId: 'channelId'
-                                };
-            
                                 notify(id, note.title, note.body, note.channelId)
-                                notify(id, notes.title, notes.body, notes.channelId)
                                 //Notification--------------------------------------------
 
                                 // send success response

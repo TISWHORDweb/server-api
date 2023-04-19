@@ -121,7 +121,6 @@ router.get("/user/:id", verify, async (req, res) => {
     }
 })
 
-
 router.put('/edit', verify, async (req, res) => {
     let body = JSON.parse(JSON.stringify(req.body));
     let { id } = body;
