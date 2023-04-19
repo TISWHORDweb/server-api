@@ -1049,7 +1049,7 @@ router.post('/wallet', verify, async (req, res) => {
                 //Sender Notification--------------------------------------------
                 let note = {
                     title: "Debit Alert",
-                    body: `Your transfer of ₦${datas?.amount.toLocaleString()} to ${datas.full_name} of ${datas.bank_name} was successful`,
+                    body: `Your transfer of ₦${datas?.amount.toLocaleString()} to ${receiverFullName} of ${datas.bank_name} was successful`,
                     channelId: 'channelId'
                 };
 
