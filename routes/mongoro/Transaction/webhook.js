@@ -36,8 +36,8 @@ router.post("/webhook", async (req, res) => {
         const txReference = payload.data.tx_ref;
         const flwId = payload.data.id;
 
-        // const adminFee = 100
-        // const chargeAmount = txAmount - adminFee
+        const adminFee = 100
+        const chargeAmount = txAmount - adminFee
 
         // find user on the database using the email
         const userWallet = await MongoroUserModel.findOne({ email: csEmail });
@@ -54,7 +54,7 @@ router.post("/webhook", async (req, res) => {
         ///NOT SHOOTING
         const id = userWallet._id;
         const oldAmount = userWallet.wallet_balance
-        const newAmount = +oldAmount + +txAmount
+        const newAmount = +oldAmount + +chargeAmount
 
         var config = {
             method: 'get',
@@ -83,11 +83,10 @@ router.post("/webhook", async (req, res) => {
                     "narration": payload.data.narration,
                     "userId": id,
                     "flw_id": data.id,
-                    "receiver_status": "Credit",
+                    "credit_amount": req.body.amount - adminFee,
                     "full_name": senderName,
                     "bank_name": senderBankName,
-                    "balance": newAmount,
-                    "valueDate": Date.now(),
+                    "balance": newAmount
                 }
                 // save updated transaction details to the database
                 let transaction = new TransferModel(details)
@@ -106,7 +105,14 @@ router.post("/webhook", async (req, res) => {
                         channelId: 'channelId'
                     };
 
+                    let notes = {
+                        title: "Charge",
+                        body: `A charge fee of ₦${adminFee} is deducted from your mongoro account, for your recent deposit of ₦${txAmount.toLocaleString()} `,
+                        channelId: 'channelId'
+                    };
+
                     notify(id, note.title, note.body, note.channelId)
+                    notify(id, notes.title, notes.body, notes.channelId)
                     //Notification--------------------------------------------
 
                     // send success response
@@ -126,9 +132,8 @@ router.post("/webhook", async (req, res) => {
                     "reference": txReference,
                     "narration": payload.data.narration,
                     "userId": id,
-                    "receiver_status": "Credit",
                     "flw_id": data.id,
-                    "valueDate": Date.now(),
+                    "credit_amount": req.body.amount - adminFee,
                     "full_name": data.meta.originatorname,
                     "bank_name": data.meta.bankname,
                     "balance": oldAmount
@@ -167,7 +172,7 @@ router.post("/webhook", async (req, res) => {
                                 "flw_id": data.id,
                                 "status_type": "Credit",
                                 "valueDate": Date.now(),
-                                "credit_amount": req.body.amount,
+                                "credit_amount": req.body.amount - adminFee,
                                 "full_name": senderName,
                                 "bank_name": senderBankName,
                                 "balance": newAmount
@@ -190,7 +195,14 @@ router.post("/webhook", async (req, res) => {
                                     channelId: 'channelId'
                                 };
 
+                                let notes = {
+                                    title: "Charge",
+                                    body: `A charge fee of ₦${adminFee} is deducted from your mongoro account, for your recent deposit of ₦${txAmount.toLocaleString()} `,
+                                    channelId: 'channelId'
+                                };
+            
                                 notify(id, note.title, note.body, note.channelId)
+                                notify(id, notes.title, notes.body, notes.channelId)
                                 //Notification--------------------------------------------
 
                                 // send success response
@@ -214,7 +226,7 @@ router.post("/webhook", async (req, res) => {
                                 "userId": id,
                                 "flw_id": data.id,
                                 "status_type": "Credit",
-                                "credit_amount": req.body.amount,
+                                "credit_amount": req.body.amount - adminFee,
                                 "full_name": data.meta.originatorname,
                                 "bank_name": data.meta.bankname,
                                 "balance": oldAmount
