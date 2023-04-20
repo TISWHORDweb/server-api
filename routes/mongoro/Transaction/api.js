@@ -22,17 +22,17 @@ router.get("/insight/:id", async (req, res) => {
             userId: req.params.id,
             service_type: "Transfer",
             status: "successful"
-        }).limit(1).sort({$natural: -1})
+        }).limit(1).sort({ $natural: -1 })
 
         const lastDeposit = await TransferModel.find({
             userId: req.params.id,
             service_type: "Deposit",
             status: "successful"
-        }).limit(1).sort({$natural: -1})
+        }).limit(1).sort({ $natural: -1 })
 
         return res.status(200).json({
             msg: 'User insight',
-            data: {lastDeposit: lastDeposit[0], lastWithdrawal:lastWithdrawal[0]},
+            data: { lastDeposit: lastDeposit[0], lastWithdrawal: lastWithdrawal[0] },
             status: 200
         })
     } catch (err) {
@@ -95,13 +95,13 @@ router.post("/", async (req, res) => {
 
 
     let charges;
-    if(req.body.amount < 50000){
+    if (req.body.amount < 50000) {
         charges = 30
-    }else if(req.body.amount >= 50000){
+    } else if (req.body.amount >= 50000) {
         charges = 60
     }
 
-    const withCharges = req.body.amount+ + +charges 
+    const withCharges = req.body.amount + + +charges
 
     const body = {
         "account_bank": req.body.account_bank,
@@ -262,8 +262,22 @@ router.post("/", async (req, res) => {
                                 "userId": req.body.userId,
                                 "reference": data.data.reference,
                                 "debit_amount": withCharges,
-                                "balance": newAmount,
-                                "valueDate": Date.now(),
+                                "balance": newAmount
+                            }
+
+                            const charge = {
+                                "flw_id": data.data.id,
+                                "transaction_ID": tid,
+                                "service_type": "Charges",
+                                "amount": charges,
+                                "status": "successful",
+                                "full_name": data.data.full_name,
+                                "account_number": data.data.account_number,
+                                "bank_name": data.data.bank_name,
+                                "userId": req.body.userId,
+                                "reference": data.data.reference,
+                                "debit_amount": withCharges,
+                                "balance": oldAmount
                             }
 
                             const detail = {
@@ -276,7 +290,6 @@ router.post("/", async (req, res) => {
                                 "account_number": data.data.account_number,
                                 "bank_name": data.data.bank_name,
                                 "userId": req.body.userId,
-                                "valueDate": Date.now(),
                                 "reference": data.data.reference,
                                 "debit_amount": withCharges,
                                 "balance": oldAmount
@@ -287,6 +300,9 @@ router.post("/", async (req, res) => {
 
                                 let transaction = new TransferModel(details)
                                 transaction.save()
+
+                                let Charging = new TransferModel(charge)
+                                Charging.save()
 
                                 const transactionId = transaction._id
 
@@ -369,8 +385,22 @@ router.post("/", async (req, res) => {
                                     "userId": req.body.userId,
                                     "reference": data.data.reference,
                                     "debit_amount": withCharges,
-                                    "valueDate": Date.now(),
                                     "balance": newAmount
+                                }
+                                
+                                const charge = {
+                                    "flw_id": data.data.id,
+                                    "transaction_ID": tid,
+                                    "service_type": "Charges",
+                                    "amount": charges,
+                                    "status": "successful",
+                                    "full_name": data.data.full_name,
+                                    "account_number": data.data.account_number,
+                                    "bank_name": data.data.bank_name,
+                                    "userId": req.body.userId,
+                                    "reference": data.data.reference,
+                                    "debit_amount": withCharges,
+                                    "balance": oldAmount
                                 }
 
                                 let transaction = new TransferModel(details)
@@ -387,6 +417,9 @@ router.post("/", async (req, res) => {
                                         const data = response.data
 
                                         if (data.data.status === "SUCCESSFUL") {
+
+                                            let Charging = new TransferModel(charge)
+                                            Charging.save()
 
                                             axios(configs).then(function (response) {
                                                 const data = response.data
@@ -478,7 +511,7 @@ router.post("/", async (req, res) => {
                                         status: 200
                                     })
                                 })
-                            
+
                                 const details = {
                                     "flw_id": data.data.id,
                                     "transaction_ID": tid,
@@ -493,6 +526,21 @@ router.post("/", async (req, res) => {
                                     "reference": data.data.reference,
                                     "debit_amount": withCharges,
                                     "balance": newAmount
+                                }
+
+                                const charge = {
+                                    "flw_id": data.data.id,
+                                    "transaction_ID": tid,
+                                    "service_type": "Charges",
+                                    "amount": charges,
+                                    "status": "successful",
+                                    "full_name": data.data.full_name,
+                                    "account_number": data.data.account_number,
+                                    "bank_name": data.data.bank_name,
+                                    "userId": req.body.userId,
+                                    "reference": data.data.reference,
+                                    "debit_amount": withCharges,
+                                    "balance": oldAmount
                                 }
 
                                 let transaction = new TransferModel(details)
@@ -510,6 +558,9 @@ router.post("/", async (req, res) => {
                                         console.log(data)
 
                                         if (data.data.status === "SUCCESSFUL") {
+
+                                            let Charging = new TransferModel(charge)
+                                            Charging.save()
 
                                             axios(configs).then(function (response) {
                                                 const data = response.data
@@ -959,33 +1010,33 @@ router.post('/wallet', verify, async (req, res) => {
     const userss = await GlobalModel.findOne({ _id: process.env.GLOBAL_ID })
     const resultt = userss.disable_all_transfer
 
-  if (!check) {
-    let tier = new TierModel(body)
-    tier.save()
-    allTotal = 0
-  } else {
-    const allTransfer = await TierModel.findOne({ userId: req.body.userId })
-    allTotal = allTransfer.amount
-  }
+    if (!check) {
+        let tier = new TierModel(body)
+        tier.save()
+        allTotal = 0
+    } else {
+        const allTransfer = await TierModel.findOne({ userId: req.body.userId })
+        allTotal = allTransfer.amount
+    }
 
-  console.log(senderAmount)
-  if (req.body.amount > per) {
-    res.send({ msg: `You can only send ${per} at once any amount greater than that is not accepted, Upgrade your account to have access, Thanks`, status: 400 });
-  } else if (allTotal > number) {
-    res.send({ msg: "You have reach your daily transaction limit, Upgrade your account to have access" })
-  } else if (value === true) {
-    res.send({ msg: "Sorry your account is blocked" })
-  } else if (resultt === true) {
-    res.send({ msg: "Sorry service temporarily unavailable", code: 400 })
-  } else if (originalPin !== req.body.pin) {
-    res.send({ msg: 'Wrong pin ', status: 401 })
-  } else if (senderAmount < req.body.amount) {
-    res.send({ msg: "Insufficient funds", status: 400 });
-  } else if (senderAmount < 100) {
-    res.send({ msg: "you dont have enough money", status: 400 });
-  } else if (req.body.amount < 100) {
-    res.send({ msg: "you cant send any money lower than 100", status: 400 });
-  } else {
+    console.log(senderAmount)
+    if (req.body.amount > per) {
+        res.send({ msg: `You can only send ${per} at once any amount greater than that is not accepted, Upgrade your account to have access, Thanks`, status: 400 });
+    } else if (allTotal > number) {
+        res.send({ msg: "You have reach your daily transaction limit, Upgrade your account to have access" })
+    } else if (value === true) {
+        res.send({ msg: "Sorry your account is blocked" })
+    } else if (resultt === true) {
+        res.send({ msg: "Sorry service temporarily unavailable", code: 400 })
+    } else if (originalPin !== req.body.pin) {
+        res.send({ msg: 'Wrong pin ', status: 401 })
+    } else if (senderAmount < req.body.amount) {
+        res.send({ msg: "Insufficient funds", status: 400 });
+    } else if (senderAmount < 100) {
+        res.send({ msg: "you dont have enough money", status: 400 });
+    } else if (req.body.amount < 100) {
+        res.send({ msg: "you cant send any money lower than 100", status: 400 });
+    } else {
 
         try {
 

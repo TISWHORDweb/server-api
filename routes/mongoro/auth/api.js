@@ -35,7 +35,7 @@ router.post('/register', async (req, res) => {
 
     try {
         if (!req.body.email || !req.body.usertag || !req.body.surname || !req.body.first_name || !req.body.password || !req.body.phone) return res.status(402).json({
-            msg: 'please check the fields ?',
+            msg: 'please check the fields ',
             status: 402
         })
 
