@@ -36,8 +36,8 @@ router.post("/webhook", async (req, res) => {
         const txReference = payload.data.tx_ref;
         const flwId = payload.data.id;
 
-        const adminFee = 100
-        const chargeAmount = txAmount - adminFee
+        // const adminFee = 100
+        // const chargeAmount = txAmount - adminFee
 
         // find user on the database using the email
         const userWallet = await MongoroUserModel.findOne({ email: csEmail });
@@ -54,7 +54,7 @@ router.post("/webhook", async (req, res) => {
         ///NOT SHOOTING
         const id = userWallet._id;
         const oldAmount = userWallet.wallet_balance
-        const newAmount = +oldAmount + +chargeAmount
+        const newAmount = +oldAmount + +txAmount
 
         var config = {
             method: 'get',
@@ -83,34 +83,34 @@ router.post("/webhook", async (req, res) => {
                     "narration": payload.data.narration,
                     "userId": id,
                     "flw_id": data.id,
-                    "credit_amount": req.body.amount - adminFee,
+                    "credit_amount": req.body.amount,
                     "full_name": senderName,
                     "bank_name": senderBankName,
                     "balance": newAmount
                 }
 
-                const charge = {
-                    "transaction_ID": tid,
-                    "service_type": "Charges",
-                    "amount": adminFee,
-                    "status": data.status,
-                    "email": csEmail,
-                    "reference": txReference,
-                    "narration": payload.data.narration,
-                    "userId": id,
-                    "flw_id": data.id,
-                    "credit_amount": req.body.amount - adminFee,
-                    "full_name": senderName,
-                    "bank_name": senderBankName,
-                    "balance": newAmount
-                }
+                // const charge = {
+                //     "transaction_ID": tid,
+                //     "service_type": "Charges",
+                //     "amount": ,
+                //     "status": data.status,
+                //     "email": csEmail,
+                //     "reference": txReference,
+                //     "narration": payload.data.narration,
+                //     "userId": id,
+                //     "flw_id": data.id,
+                //     "credit_amount": req.body.amount,
+                //     "full_name": senderName,
+                //     "bank_name": senderBankName,
+                //     "balance": newAmount
+                // }
                 // save updated transaction details to the database
                 let transaction = new TransferModel(details)
                 transaction.save()
 
-                let Charging = new TransferModel(charge)
-                Charging.save()
-                
+                // let Charging = new TransferModel(charge)
+                // Charging.save()
+
                 // update the user's balance on the database
                 MongoroUserModel.updateOne(
                     { email: csEmail },
@@ -145,7 +145,7 @@ router.post("/webhook", async (req, res) => {
                     "narration": payload.data.narration,
                     "userId": id,
                     "flw_id": data.id,
-                    "credit_amount": req.body.amount - adminFee,
+                    "credit_amount": req.body.amount,
                     "full_name": data.meta.originatorname,
                     "bank_name": data.meta.bankname,
                     "balance": oldAmount
@@ -183,34 +183,34 @@ router.post("/webhook", async (req, res) => {
                                 "userId": id,
                                 "flw_id": data.id,
                                 "status_type": "Credit",
-                                "credit_amount": req.body.amount - adminFee,
+                                "credit_amount": req.body.amount,
                                 "full_name": senderName,
                                 "bank_name": senderBankName,
                                 "balance": newAmount
                             }
 
-                            const charge = {
-                                "transaction_ID": tid,
-                                "service_type": "Charges",
-                                "amount": adminFee,
-                                "status": data.status,
-                                "email": csEmail,
-                                "reference": txReference,
-                                "narration": payload.data.narration,
-                                "userId": id,
-                                "flw_id": data.id,
-                                "credit_amount": req.body.amount - adminFee,
-                                "full_name": senderName,
-                                "bank_name": senderBankName,
-                                "balance": newAmount
-                            }
+                            // const charge = {
+                            //     "transaction_ID": tid,
+                            //     "service_type": "Charges",
+                            //     "amount": adminFee,
+                            //     "status": data.status,
+                            //     "email": csEmail,
+                            //     "reference": txReference,
+                            //     "narration": payload.data.narration,
+                            //     "userId": id,
+                            //     "flw_id": data.id,
+                            //     "credit_amount": req.body.amount - adminFee,
+                            //     "full_name": senderName,
+                            //     "bank_name": senderBankName,
+                            //     "balance": newAmount
+                            // }
 
                             // save updated transaction details to the database
                             let transaction = new TransferModel(details)
                             transaction.save()
 
-                            let Charging = new TransferModel(charge)
-                            Charging.save()
+                            // let Charging = new TransferModel(charge)
+                            // Charging.save()
 
                             // update the user's balance on the database
                             MongoroUserModel.updateOne(
@@ -249,7 +249,7 @@ router.post("/webhook", async (req, res) => {
                                 "userId": id,
                                 "flw_id": data.id,
                                 "status_type": "Credit",
-                                "credit_amount": req.body.amount - adminFee,
+                                "credit_amount": req.body.amount ,
                                 "full_name": data.meta.originatorname,
                                 "bank_name": data.meta.bankname,
                                 "balance": oldAmount

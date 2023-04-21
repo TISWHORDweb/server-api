@@ -94,14 +94,16 @@ router.post("/", async (req, res) => {
     })
 
 
-    let charges;
-    if (req.body.amount < 50000) {
-        charges = 30
-    } else if (req.body.amount >= 50000) {
-        charges = 60
-    }
+    // let charges;
+    // if (req.body.amount < 50000) {
+    //     charges = 30
+    // } else if (req.body.amount >= 50000) {
+    //     charges = 60
+    // }
 
-    const withCharges = req.body.amount + + +charges
+    // const withCharges = req.body.amount + + +charges
+
+    const withCharges = req.body.amount
 
     const body = {
         "account_bank": req.body.account_bank,
@@ -195,18 +197,20 @@ router.post("/", async (req, res) => {
         per = 1000000
     }
 
+    const total = +withCharges + +allTotal
+
     if (withCharges > per) {
         return res.send({
             msg: `You can only send ${per} at once any amount greater than that is not accepted, Upgrade your account to have access, Thanks`,
             status: 400
         });
-    } else if (allTotal >= number) {
+    } else if (total >= number) {
         return res.send({
-            msg: "You have reach your daily transaction limit, Upgrade your account to have access",
+            msg: `You have make a total transaction of N ${allTotal}, You have reach your daily transaction limit of N ${number}, Upgrade your account to have access`,
             status: 400
         })
     } else {
-        const total = +withCharges + +allTotal
+       
 
         await TierModel.updateOne({ userId: req.body.userId }, { $set: { amount: total } })
 
@@ -387,7 +391,7 @@ router.post("/", async (req, res) => {
                                     "debit_amount": withCharges,
                                     "balance": newAmount
                                 }
-                                
+
                                 const charge = {
                                     "flw_id": data.data.id,
                                     "transaction_ID": tid,
@@ -945,7 +949,7 @@ function paginatedResultss(model) {
 
 
 //CREATE
-router.post('/wallet', verify, async (req, res) => {
+router.post('/wallet', async (req, res) => {
 
     let number;
     let per;
@@ -1170,7 +1174,6 @@ router.delete("/delete", verify, async (req, res) => {
             status: 500
         })
     }
-
 });
 
 router.get("/:id", verify, async (req, res) => {
@@ -1249,7 +1252,6 @@ router.post("/bills", async (req, res) => {
             }
 
         };
-
 
         const user = await MongoroUserModel.find({ _id: req.body.userId });
 
