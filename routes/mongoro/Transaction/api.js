@@ -197,9 +197,9 @@ router.post("/", async (req, res) => {
         per = 1000000
     }
 
-    const total = +withCharges + +allTotal
+    const total = +req.body.amount + +allTotal
 
-    if (withCharges > per) {
+    if (req.body.amount > per) {
         return res.send({
             msg: `You can only send ${per} at once any amount greater than that is not accepted, Upgrade your account to have access, Thanks`,
             status: 400
@@ -222,13 +222,13 @@ router.post("/", async (req, res) => {
             return res.status(400).json({ msg: "Wrong PIN", status: 400 });
         } else {
             const oldAmount = user.wallet_balance
-            const newAmount = oldAmount - withCharges
+            const newAmount = oldAmount - req.body.amount
 
             console.log(oldAmount)
 
-            if (oldAmount < withCharges) {
+            if (oldAmount < req.body.amount) {
                 return res.status(400).json({ msg: "Insufficient funds", status: 404 });
-            } else if (withCharges < 100) {
+            } else if (req.body.amount < 100) {
                 return res.status(400).json({ msg: "You cant send any money lower than 100", status: 401 });
             } else {
 
@@ -265,24 +265,24 @@ router.post("/", async (req, res) => {
                                 "bank_name": data.data.bank_name,
                                 "userId": req.body.userId,
                                 "reference": data.data.reference,
-                                "debit_amount": withCharges,
+                                "debit_amount": req.body.amount,
                                 "balance": newAmount
                             }
 
-                            const charge = {
-                                "flw_id": data.data.id,
-                                "transaction_ID": tid,
-                                "service_type": "Charges",
-                                "amount": charges,
-                                "status": "successful",
-                                "full_name": data.data.full_name,
-                                "account_number": data.data.account_number,
-                                "bank_name": data.data.bank_name,
-                                "userId": req.body.userId,
-                                "reference": data.data.reference,
-                                "debit_amount": withCharges,
-                                "balance": oldAmount
-                            }
+                            // const charge = {
+                            //     "flw_id": data.data.id,
+                            //     "transaction_ID": tid,
+                            //     "service_type": "Charges",
+                            //     "amount": charges,
+                            //     "status": "successful",
+                            //     "full_name": data.data.full_name,
+                            //     "account_number": data.data.account_number,
+                            //     "bank_name": data.data.bank_name,
+                            //     "userId": req.body.userId,
+                            //     "reference": data.data.reference,
+                            //     "debit_amount": req.body.amount,
+                            //     "balance": oldAmount
+                            // }
 
                             const detail = {
                                 "flw_id": data.data.id,
@@ -295,7 +295,7 @@ router.post("/", async (req, res) => {
                                 "bank_name": data.data.bank_name,
                                 "userId": req.body.userId,
                                 "reference": data.data.reference,
-                                "debit_amount": withCharges,
+                                "debit_amount": req.body.amount,
                                 "balance": oldAmount
                             }
 
@@ -305,8 +305,8 @@ router.post("/", async (req, res) => {
                                 let transaction = new TransferModel(details)
                                 transaction.save()
 
-                                let Charging = new TransferModel(charge)
-                                Charging.save()
+                                // let Charging = new TransferModel(charge)
+                                // Charging.save()
 
                                 const transactionId = transaction._id
 
@@ -388,24 +388,24 @@ router.post("/", async (req, res) => {
                                     "bank_name": data.data.bank_name,
                                     "userId": req.body.userId,
                                     "reference": data.data.reference,
-                                    "debit_amount": withCharges,
+                                    "debit_amount": req.body.amount,
                                     "balance": newAmount
                                 }
 
-                                const charge = {
-                                    "flw_id": data.data.id,
-                                    "transaction_ID": tid,
-                                    "service_type": "Charges",
-                                    "amount": charges,
-                                    "status": "successful",
-                                    "full_name": data.data.full_name,
-                                    "account_number": data.data.account_number,
-                                    "bank_name": data.data.bank_name,
-                                    "userId": req.body.userId,
-                                    "reference": data.data.reference,
-                                    "debit_amount": withCharges,
-                                    "balance": oldAmount
-                                }
+                                // const charge = {
+                                //     "flw_id": data.data.id,
+                                //     "transaction_ID": tid,
+                                //     "service_type": "Charges",
+                                //     "amount": charges,
+                                //     "status": "successful",
+                                //     "full_name": data.data.full_name,
+                                //     "account_number": data.data.account_number,
+                                //     "bank_name": data.data.bank_name,
+                                //     "userId": req.body.userId,
+                                //     "reference": data.data.reference,
+                                //     "debit_amount": req.body.amount,
+                                //     "balance": oldAmount
+                                // }
 
                                 let transaction = new TransferModel(details)
                                 transaction.save()
@@ -422,8 +422,8 @@ router.post("/", async (req, res) => {
 
                                         if (data.data.status === "SUCCESSFUL") {
 
-                                            let Charging = new TransferModel(charge)
-                                            Charging.save()
+                                            // let Charging = new TransferModel(charge)
+                                            // Charging.save()
 
                                             axios(configs).then(function (response) {
                                                 const data = response.data
@@ -528,24 +528,24 @@ router.post("/", async (req, res) => {
                                     "bank_name": data.data.bank_name,
                                     "userId": req.body.userId,
                                     "reference": data.data.reference,
-                                    "debit_amount": withCharges,
+                                    "debit_amount": req.body.amount,
                                     "balance": newAmount
                                 }
 
-                                const charge = {
-                                    "flw_id": data.data.id,
-                                    "transaction_ID": tid,
-                                    "service_type": "Charges",
-                                    "amount": charges,
-                                    "status": "successful",
-                                    "full_name": data.data.full_name,
-                                    "account_number": data.data.account_number,
-                                    "bank_name": data.data.bank_name,
-                                    "userId": req.body.userId,
-                                    "reference": data.data.reference,
-                                    "debit_amount": withCharges,
-                                    "balance": oldAmount
-                                }
+                                // const charge = {
+                                //     "flw_id": data.data.id,
+                                //     "transaction_ID": tid,
+                                //     "service_type": "Charges",
+                                //     "amount": charges,
+                                //     "status": "successful",
+                                //     "full_name": data.data.full_name,
+                                //     "account_number": data.data.account_number,
+                                //     "bank_name": data.data.bank_name,
+                                //     "userId": req.body.userId,
+                                //     "reference": data.data.reference,
+                                //     "debit_amount": req.body.amount,
+                                //     "balance": oldAmount
+                                // }
 
                                 let transaction = new TransferModel(details)
                                 transaction.save()
@@ -563,8 +563,8 @@ router.post("/", async (req, res) => {
 
                                         if (data.data.status === "SUCCESSFUL") {
 
-                                            let Charging = new TransferModel(charge)
-                                            Charging.save()
+                                            // let Charging = new TransferModel(charge)
+                                            // Charging.save()
 
                                             axios(configs).then(function (response) {
                                                 const data = response.data
