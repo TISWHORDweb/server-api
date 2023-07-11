@@ -19,9 +19,14 @@ const request = require('request');
 const {notify} = require('../core/core.utils');
 const ipapi = require('ipapi.co');
 const { useAsync, utils, errorHandle, } = require('./../core');
+const MindCastFavourite = require('../models/model.favourites')
 
 exports.index = useAsync(async (req, res) => {
-    res.json(utils.JParser("Welcome to super admin api", true, {}));
+
+    let user = await new MindCastFavourite(req.body)
+    await user.save()
+
+    res.json(utils.JParser("Welcome to super admin api", !!user, user));
 })
 
 

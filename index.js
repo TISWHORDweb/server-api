@@ -35,7 +35,7 @@ app.use("/api/v1/auth", mindCastAuth)
 
 
 mongoose.set("strictQuery", true);
-mongoose.connect("mongodb+srv://mongoro:mongoro@mongoro.dbwd7pc.mongodb.net/?retryWrites=true&w=majority")
+mongoose.connect("mongodb+srv://young:young@podcast.u2a41sc.mongodb.net/")
     // .connect(process.env.MONGO_URL)
     .then(() => {
         console.log("Database Connected")
