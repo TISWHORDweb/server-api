@@ -4,34 +4,9 @@ const expressLayouts = require('express-ejs-layouts');
 const cors = require('cors')
 const path = require('path');
 const bodyParser = require('body-parser')
-const mongoroWaitlistRoute = require('./routes/mongoro/waitlist/api')
-const reefWaitlistRoute = require('./routes/reef/waitlist/api')
-const mongoroAuth = require('./routes/mongoro/auth/api')
-const mongoroAuthKyc = require('./routes/mongoro/auth/kyc')
-const mongoroUser = require('./routes/mongoro/user/api')
-const mongoroMpos = require('./routes/mongoro/mpos/pos')
-const mongoroAccount = require('./routes/mongoro/user/account')
-const mongoroSuperAdmin = require('./routes/mongoro/Admin/super/api')
-const mongoroTransaction = require('./routes/mongoro/Transaction/api')
-const mongoroUserTickets = require('./routes/mongoro/user/ticket')
-const mongoroAdminTickets = require('./routes/mongoro/Admin/ticket')
-const mongoroAdminMessage = require('./routes/mongoro/Admin/other/chat/chat')
-const mongoroUserMessage = require('./routes/mongoro/user/chat')
-const mongoroU_verify = require('./routes/mongoro/user/u_verify')
-const mongoroSuperAdminCategory = require('./routes/mongoro/Admin/super/category/category')
-const mongoroAppmessage = require('./routes/mongoro/Admin/other/broadcast/appmessage')
-const mongoroStatement = require('./routes/mongoro/Transaction/statement')
-const mongoroWebhook = require('./routes/mongoro/Transaction/webhook')
-const mongoroNotification = require('./routes/mongoro/Notifications/api')
-const mongoroRange = require('./routes/mongoro/range/range')
-const mongoroSearch = require('./routes/mongoro/search/search')
-const mongoroState = require('./routes/state')
-const mongoroAdmin = require('./routes/mongoro/Admin/admin')
-const mongoroBank = require('./routes/mongoro/user/bank')
-const mongoroOther = require('./routes/mongoro/Admin/other/other_admin')
-const mongoroTotal = require('./routes/mongoro/total/total')
-const mongoroActivity = require('./routes/mongoro/user/loginActivity')
-const mongoroBenefiaciary = require('./routes/mongoro/Transaction/beneficiary')
+const mindCastAuth = require('./routes/route.auth')
+// const mongoroAuthKyc = require('./routes/mongoro/auth/kyc')
+
 const mongoose = require('mongoose')
 
 // const dotenv = require("dotenv")
@@ -50,43 +25,13 @@ app.use(expressLayouts);
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/docs', express.static(path.join(__dirname, 'docs')));
-// app.use(function(req, res, next) {
-//     res.header("Access-Control-Allow-Origin", '*');
-//     res.header("mode","no-cors")
 
-// })
 
 app.use(bodyParser.json())
 
 
-app.use("/mongoro/total", mongoroTotal)
-app.use("/mongoro/other", mongoroOther)
-app.use("/mongoro_waitlist", mongoroWaitlistRoute)
-app.use("/reef_waitlist", reefWaitlistRoute)
-app.use("/mongoro/auth", mongoroAuth)
-app.use("/mongoro/auth/kyc", mongoroAuthKyc)
-app.use("/mongoro/user", mongoroUser)
-app.use("/mongoro/search", mongoroSearch)
-app.use("/mongoro/pos", mongoroMpos)
-app.use("/mongoro/login_activity", mongoroActivity)
-app.use("/mongoro/transaction", mongoroTransaction)
-app.use("/mongoro/admin/super", mongoroSuperAdmin)
-app.use("/mongoro/user/ticket", mongoroUserTickets)
-app.use("/mongoro/admin/ticket", mongoroAdminTickets)
-app.use("/mongoro/usermessage", mongoroUserMessage)
-app.use("/mongoro/adminmessage", mongoroAdminMessage)
-app.use("/mongoro/super_admin/category", mongoroSuperAdminCategory)
-app.use("/mongoro/broadcast", mongoroAppmessage)
-app.use("/mongoro/verify", mongoroU_verify)
-app.use("/mongoro/account", mongoroAccount)
-app.use("/mongoro", mongoroWebhook)
-app.use("/mongoro/bank", mongoroBank)
-app.use("/mongoro/admin", mongoroAdmin)
-app.use("/mongoro/state", mongoroState)
-app.use("/mongoro/statement", mongoroStatement)
-app.use("/mongoro/beneficiary", mongoroBenefiaciary)
-app.use("/mongoro/range", mongoroRange)
-app.use("/mongoro/notification", mongoroNotification)
+app.use("/api/v1/auth", mindCastAuth)
+// app.use("/mongoro/other", mongoroOther)
 
 
 mongoose.set("strictQuery", true);
@@ -97,8 +42,7 @@ mongoose.connect("mongodb+srv://mongoro:mongoro@mongoro.dbwd7pc.mongodb.net/?ret
     })
     .catch((err) => console.log(err));
 
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3005;
 app.listen(port, () => {
     console.log('Server is running on port ' + port);
 })
-
