@@ -5,7 +5,7 @@ const cors = require('cors')
 const path = require('path');
 const bodyParser = require('body-parser')
 const mindCastAuth = require('./routes/route.auth')
-// const mongoroAuthKyc = require('./routes/mongoro/auth/kyc')
+const mindCastUser = require('./routes/route.user')
 
 const mongoose = require('mongoose')
 
@@ -31,7 +31,7 @@ app.use(bodyParser.json())
 
 
 app.use("/api/v1/auth", mindCastAuth)
-// app.use("/mongoro/other", mongoroOther)
+app.use("/api/v1/user", mindCastUser)
 
 
 mongoose.set("strictQuery", true);

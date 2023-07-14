@@ -13,11 +13,18 @@ const MindCastUserSchema=new mongoose.Schema({
     phone:{
         type:String,    
     },
+    password:{
+        type:String,    
+    },
     notification:{
         type:Boolean,
         default: false,
     },
     isHost:{
+        type:Boolean,
+        default: false,
+    },
+    active:{
         type:Boolean,
         default: false,
     },
@@ -29,11 +36,32 @@ const MindCastUserSchema=new mongoose.Schema({
     interest:{
         type:Array,
     },
+    username:{
+        type:String,
+    },
     mood:{
         type:String,
     },
     token:{
         type:String,
+    },
+    bloked:{
+        type:Boolean,
+        default: false,
+    },
+    isverified:{
+        type:String,
+    },
+    lastLogin:{
+        type:String,
+    },
+    ip:{
+        type:String,
+    },
+    whoIs: {
+        type: Number,
+        enum : [0,1,2],
+        default: 0
     },
     time_created:{type:Number, default:()=>Date.now()},	
     updated_at:{type:Number, default:()=>Date.now()}	
