@@ -14,6 +14,7 @@ dotenv.config()
 const request = require('request');
 const { useAsync, utils, errorHandle, } = require('./../core');
 const MindCastUser = require('../models/model.user')
+const MindCastAudit = require('../models/model.audit')
 
 
 
@@ -26,8 +27,8 @@ const MindCastUser = require('../models/model.user')
 exports.userSettings = useAsync(async (req, res) => {
 
     try {
-
-        const id = req.userId;
+        // const id = req.userId;
+        const id = req.params.id;
         const body = req.body
         await MindCastUser.updateOne({ _id: id }, body).then(async () => {
             const user = await MindCastUser.find({ _id: id });
@@ -40,18 +41,68 @@ exports.userSettings = useAsync(async (req, res) => {
     }
 })
 
-
 exports.singleUser = useAsync(async (req, res) => {
 
     try {
         const user = await MindCastUser.findOne({ _id: req.params.id });
-
-        res.status(200).json({ msg: "User fetch successfully", user, status: 200 });
-
+        return res.json(utils.JParser('User fetch successfully', !!user, user));
     } catch (e) {
         throw new errorHandle(e.message, 400)
     }
 })
+
+exports.deleteUser = useAsync(async (req, res) => {
+    try {
+        if (!req.body.id) return res.status(402).json({ msg: 'provide the id ' })
+
+        await MindCastUser.deleteOne({ _id: req.body.id })
+        return res.json(utils.JParser('User deleted successfully', true, []));
+
+        res.status(200).json("");
+    } catch (e) {
+        throw new errorHandle(e.message, 400)
+    }
+
+});
+
+//Audit
+exports.audit = useAsync(async (req, res) => {
+
+    try{
+
+        const audit = await MindCastAudit.create(req.body)
+        return res.json(utils.JParser('Audit created successfully', !!audit, audit));
+
+    } catch (e) {
+        throw new errorHandle(e.message, 400)
+    }
+
+})
+
+exports.singleAudit = useAsync(async (req, res) => {
+
+    try {
+        const user = await MindCastAudit.findOne({ userID: req.params.id });
+        return res.json(utils.JParser('User audit fetch successfully', !!user, user));
+    } catch (e) {
+        throw new errorHandle(e.message, 400)
+    }
+})
+
+exports.deleteAudit = useAsync(async (req, res) => {
+    try {
+        if (!req.body.id) return res.status(402).json({ msg: 'provide the id ' })
+
+        await MindCastAudit.deleteOne({ _id: req.body.id })
+        return res.json(utils.JParser('Audit deleted successfully', true, []));
+
+        res.status(200).json("");
+    } catch (e) {
+        throw new errorHandle(e.message, 400)
+    }
+
+});
+
 
 // function paginatedResults(model) {
 //     return async (req, res, next) => {
@@ -87,21 +138,6 @@ exports.singleUser = useAsync(async (req, res) => {
 //     }
 // }
 
-
-// router.delete("/delete", verify, async (req, res) => {
-//     try {
-//         if (!req.body.id) return res.status(402).json({ msg: 'provide the id ?' })
-
-//         await MindCastUser.deleteOne({ _id: req.body.id })
-//         res.status(200).json("User deleted....");
-//     } catch (error) {
-//         res.status(500).json({
-//             msg: 'there is an unknown error sorry ',
-//             status: 500
-//         })
-//     }
-
-// });
 
 // router.get("/:id", verify, async (req, res) => {
 

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const MindCastResourceSchema=new mongoose.Schema({
-    title:{
+    i:{
         type:String,
     },
     userID:{

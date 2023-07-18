@@ -45,7 +45,7 @@ const MindCastUserSchema=new mongoose.Schema({
     token:{
         type:String,
     },
-    bloked:{
+    blocked:{
         type:Boolean,
         default: false,
     },

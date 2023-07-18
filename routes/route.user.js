@@ -6,14 +6,43 @@ const {userBodyGuard} = require('../middleware/middleware.protects');
 const express = require('express');
 const router = express.Router();
 const CoreError = require('./../core/core.error');
-const {  userSettings, singleUser } = require('../controller/controller.user');
+const {  userSettings, singleUser, deleteUser, audit, singleAudit, deleteAudit } = require('../controller/controller.user');
+const { resources, singleResources, userResources, deleteResources } = require('../controller/controller.resources');
+const { deleteSubscription, userSubscription, singleSubscription, subscription, allSubscription } = require('../controller/controller.subscription');
+const { review, singleReview, userReview, deleteReview, allReview } = require('../controller/controller.review');
 
 /**
  * auth routes
  */
 
-router.put('/setting', userBodyGuard, userSettings);
+router.put('/setting/:id', userSettings);
 router.get('/single/:id', singleUser);
+router.delete('/delete', deleteUser);
+
+//AUDIT
+router.post('/audit', audit);
+router.get('/audit/:id', singleAudit);
+router.delete('/audit/delete', deleteAudit);
+
+//RESOURCES
+router.post('/resources', resources);
+router.get('/resources/:id', singleResources);
+router.get('/resources/user/:id', userResources);
+router.delete('/resources/delete', deleteResources);
+
+// SUBSCRIPTION
+router.post('/subscription', subscription);
+router.get('/subscription/:id', singleSubscription);
+router.get('/subscriptions', allSubscription);
+router.delete('/subscription/delete', deleteSubscription);
+
+//REVIEW
+router.post('/review', review);
+router.get('/review/:id', singleReview);
+router.get('/reviews', allReview);
+router.get('/review/user/:id', userReview);
+router.delete('/review/delete', deleteReview);
+
 
 /**
  * Export lastly
