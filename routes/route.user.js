@@ -12,6 +12,7 @@ const { deleteSubscription, userSubscription, singleSubscription, subscription, 
 const { review, singleReview, userReview, deleteReview, allReview } = require('../controller/controller.review');
 const { interest, singleInterest, allInterest, userInterest, deleteInterest } = require('../controller/controller.interest');
 const { history, singleHistory, allHistory, userHistory, deleteHistory } = require('../controller/controller.history');
+const { singleFavourite, allFavourite, userFavourite, deleteFavourite, favourite } = require('../controller/controller.favourite');
 
 /**
  * auth routes
@@ -52,12 +53,19 @@ router.get('/interests', allInterest);
 router.get('/interest/user/:id', userInterest);
 router.delete('/interest/delete', deleteInterest);
 
-//REVIEW
+//HISTORY
 router.post('/history', history);
 router.get('/history/:id', singleHistory);
 router.get('/histories', allHistory);
 router.get('/history/user/:id', userHistory);
 router.delete('/history/delete', deleteHistory);
+
+//FAVOURITES
+router.post('/favourite', favourite);
+router.get('/favourite/:id', singleFavourite);
+router.get('/favourites', allFavourite);
+router.get('/favourite/user/:id', userFavourite);
+router.delete('/favourite/delete', deleteFavourite);
 
 /**
  * Export lastly
