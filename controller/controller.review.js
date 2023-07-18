@@ -13,7 +13,7 @@ exports.review = useAsync(async (req, res) => {
     try{
 
         const review = await MindCastReview.create(req.body)
-        return res.json(utils.JParser('Resources created successfully', !!review, review));
+        return res.json(utils.JParser('Review created successfully', !!review, review));
 
     } catch (e) {
         throw new errorHandle(e.message, 400)
