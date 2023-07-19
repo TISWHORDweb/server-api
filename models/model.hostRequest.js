@@ -8,7 +8,7 @@ const MindCastHostRequestSchema=new mongoose.Schema({
         type:String,  
     },
     experience:{
-        type:Array,
+        type:String,
     },
     time_created:{type:Number, default:()=>Date.now()},	
     updated_at:{type:Number, default:()=>Date.now()}	

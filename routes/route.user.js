@@ -13,6 +13,7 @@ const { review, singleReview, userReview, deleteReview, allReview } = require('.
 const { interest, singleInterest, allInterest, userInterest, deleteInterest } = require('../controller/controller.interest');
 const { history, singleHistory, allHistory, userHistory, deleteHistory } = require('../controller/controller.history');
 const { singleFavourite, allFavourite, userFavourite, deleteFavourite, favourite } = require('../controller/controller.favourite');
+const { host, singleHost, allHost, userHost, deleteHost } = require('../controller/controller.hostRequest');
 
 /**
  * auth routes
@@ -66,6 +67,14 @@ router.get('/favourite/:id', singleFavourite);
 router.get('/favourites', allFavourite);
 router.get('/favourite/user/:id', userFavourite);
 router.delete('/favourite/delete', deleteFavourite);
+
+//HOST REQUEST
+router.post('/host', host);
+router.get('/host/:id', singleHost);
+router.get('/hosts', allHost);
+router.get('/host/user/:id', userHost);
+router.delete('/host/delete', deleteHost);
+
 
 /**
  * Export lastly
