@@ -22,6 +22,39 @@ const MindCastAudit = require('../models/model.audit')
 //     res.json(res.paginatedResults)
 // })
 
+// function paginatedResults(model) {
+//     return async (req, res, next) => {
+//         const page = parseInt(req.query.page)
+//         const limit = parseInt(req.query.limit)
+
+//         const startIndex = (page - 1) * limit
+//         const endIndex = page * limit
+
+//         const action = {}
+
+//         if (endIndex < await model.countDocuments().exec()) {
+//             action.next = {
+//                 page: page + 1,
+//                 limit: limit
+//             }
+//         }
+
+//         if (startIndex > 0) {
+//             action.previous = {
+//                 page: page - 1,
+//                 limit: limit
+//             }
+//         }
+//         try {
+//             const results = await model.find().sort({ _id: -1 }).limit(limit).skip(startIndex).exec()
+//             let count = await MindCastUser.count()
+//             res.paginatedResults = { action, results, TotalResult: count, Totalpages: Math.ceil(count / limit) }
+//             next()
+//         } catch (e) {
+//             res.status(500).json({ message: e.message })
+//         }
+//     }
+// }
 
 //setup
 exports.userSettings = useAsync(async (req, res) => {
@@ -103,40 +136,18 @@ exports.deleteAudit = useAsync(async (req, res) => {
 
 });
 
+exports.allUser = useAsync(async (req, res) => {
 
-// function paginatedResults(model) {
-//     return async (req, res, next) => {
-//         const page = parseInt(req.query.page)
-//         const limit = parseInt(req.query.limit)
+    try {
 
-//         const startIndex = (page - 1) * limit
-//         const endIndex = page * limit
+        const user = await MindCastUser.find()
 
-//         const action = {}
+        res.json(utils.JParser("All businesses", !!user, user));
+    } catch (e) {
+        throw new errorHandle(e.message, 400)
+    }
+})
 
-//         if (endIndex < await model.countDocuments().exec()) {
-//             action.next = {
-//                 page: page + 1,
-//                 limit: limit
-//             }
-//         }
-
-//         if (startIndex > 0) {
-//             action.previous = {
-//                 page: page - 1,
-//                 limit: limit
-//             }
-//         }
-//         try {
-//             const results = await model.find().sort({ _id: -1 }).limit(limit).skip(startIndex).exec()
-//             let count = await MindCastUser.count()
-//             res.paginatedResults = { action, results, TotalResult: count, Totalpages: Math.ceil(count / limit) }
-//             next()
-//         } catch (e) {
-//             res.status(500).json({ message: e.message })
-//         }
-//     }
-// }
 
 
 // router.get("/:id", verify, async (req, res) => {
@@ -190,51 +201,7 @@ exports.deleteAudit = useAsync(async (req, res) => {
 
 // })
 
-// router.post('/change_password', async (req, res) => {
 
-//     const user = await MindCastUser.findOne({ _id: req.body.id });
-
-//     try {
-//         if (!req.body.id) return res.status(400).json({ msg: 'provide the id ?', status: 400 })
-
-//         if (!user) {
-//             res.status(400).json({ msg: "No User is registered with this id", status: 400 });
-//         }
-
-//         const originalPassword = await bcrypt.compare(req.body.password, user.password);
-//         const newp = await bcrypt.compare(req.body.newPassword, user.password);
-
-
-//         if (!originalPassword) {
-//             res.status(400).json({ msg: "wrong password", code: 400 })
-//         } else {
-
-//             if (newp) {
-//                 return res.status(400).json({ msg: "You cant change your password to your previous password, use another password and try again", status: 400 });
-//             }
-
-//             const NewPassword = await bcrypt.hash(req.body.newPassword, 13)
-//             await MindCastUser.updateOne({ _id: req.body.id }, { password: NewPassword }).then(async () => {
-//                 const New = await MindCastUser.findOne({ _id: req.body.id });
-//                 return res.status(200).json({
-//                     msg: 'Password changed Successfully ',
-//                     user: New,
-//                     status: 200
-//                 })
-//             }).catch((err) => {
-//                 res.send(err)
-//             })
-
-//         }
-
-//     } catch (error) {
-//         res.status(500).json({
-//             msg: 'there is an unknown error sorry ',
-//             status: 500
-//         })
-//     }
-
-// })
 
 
 // router.post('/reset_password', async (req, res) => {

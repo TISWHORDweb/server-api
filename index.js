@@ -35,8 +35,8 @@ app.use("/api/v1/user", mindCastUser)
 
 
 mongoose.set("strictQuery", true);
-mongoose.connect("mongodb+srv://young:young@podcast.u2a41sc.mongodb.net/")
-    // .connect(process.env.MONGO_URL)
+// mongoose.connect("mongodb+srv://young:young@podcast.u2a41sc.mongodb.net/")
+    mongoose.connect(process.env.MONGO_URL)
     .then(() => {
         console.log("Database Connected")
     })

@@ -50,32 +50,18 @@ exports.userRegister = useAsync(async (req, res) => {
 
             let user = await new MindCastUser(req.body)
 
-            await user.save().then(user => {
+            await user.save().then(data => {
 
+                const user = {
+                    _id:data._id,
+                    firstName :data.firstName,
+                    lastName:data.lastName,
+                    email:data.email,
+                    phone:data.phone,
+                    username:data.username
+                }
 
-                // let transporter = nodemailer.createTransport({
-                //     service: "hotmail",
-                //     auth: {
-                //         user: '',
-                //         pass: ''
-                //     }
-                // });
-
-                // let mailOptions = {
-                //     from: '',
-                //     to: req.body.email,
-                //     subject: 'Verification code',
-                //     html: `<h1>${code}</h1>`,
-                // };
-                // transporter.sendMail(mailOptions, function (error, info) {
-                //     if (error) {
-                //         console.log(error);
-                //     } else {
-                //         console.log('Email sent: ' + info.response);
-                //     }
-                // });
-
-                return res.json(utils.JParser('Congratulation you just Created your Mongoro Account', !!user, { user }));
+            return res.json(utils.JParser('Congratulation you just Created your Mind cast Account', !!user, { user }));
 
             })
         }
@@ -100,27 +86,27 @@ exports.userVerify = useAsync(async (req, res) => {
 
         let code = Math.floor(100000 + Math.random() * 900000)
 
-        // let transporter = nodemailer.createTransport({
-        //     service: "hotmail",
-        //     auth: {
-        //         user: '',
-        //         pass: ''
-        //     }
-        // });
+        let transporter = nodemailer.createTransport({
+            service: "hotmail",
+            auth: {
+                user: process.env.EMAIL_ADDRESS,
+                pass: process.env.APP_PASSWORD
+            }
+        });
 
-        // let mailOptions = {
-        //     from: '',
-        //     to: req.body.email,
-        //     subject: 'Verification code',
-        //     html: `<h1>${code}</h1>`,
-        // };
-        // transporter.sendMail(mailOptions, function (error, info) {
-        //     if (error) {
-        //         console.log(error);
-        //     } else {
-        //         console.log('Email sent: ' + info.response);
-        //     }
-        // });
+        let mailOptions = {
+            from: process.env.EMAIL_ADDRESS,
+            to: req.body.email,
+            subject: 'Verification code',
+            html: `<h1>${code}</h1>`,
+        };
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log('Email sent: ' + info.response);
+            }
+        });
 
         return res.json(utils.JParser('Code sent successfully', true, code));
 
@@ -209,29 +195,9 @@ exports.userPasswordVerify = useAsync(async (req, res) => {
         if (!user) {
             return res.json(utils.JParser('No User is registered with this email', false, []));
         } else {
-
-            // let transporter = nodemailer.createTransport({
-            //     service: "hotmail",
-            //     auth: {
-            //         user: '',
-            //         pass: ''
-            //     }
-            // });
-
-            // let mailOptions = {
-            //     from: '',
-            //     to: req.body.email,
-            //     subject: 'Verification code',
-            //     html: `<h1>${code}</h1>`,
-            // };
-            // transporter.sendMail(mailOptions, function (error, info) {
-            //     if (error) {
-            //         console.log(error);
-            //     } else {
-            //         console.log('Email sent: ' + info.response);
-            //     }
-            // });
-
+            const Name = user.firstName+" "+user.lastName
+            
+            EmailNote(req.body.email, Name, 'Here is your 2FA verification code. verify the code to have access .', "Verification Code", code)
 
             return res.json(utils.JParser('OTP sent successfully', !!user, code));
 
@@ -256,4 +222,51 @@ exports.userEmailVerify = useAsync(async (req, res) => {
     } catch (e) {
         throw new errorHandle(e.message, 400)
     }
+})
+
+
+router.post('/change_password', async (req, res) => {
+
+    const user = await MindCastUser.findOne({ _id: req.body.id });
+
+    try {
+        if (!req.body.id) return res.status(400).json({ msg: 'provide the id ?', status: 400 })
+
+        if (!user) {
+            res.status(400).json({ msg: "No User is registered with this id", status: 400 });
+        }
+
+        const originalPassword = await bcrypt.compare(req.body.password, user.password);
+        const newp = await bcrypt.compare(req.body.newPassword, user.password);
+
+
+        if (!originalPassword) {
+            res.status(400).json({ msg: "wrong password", code: 400 })
+        } else {
+
+            if (newp) {
+                return res.status(400).json({ msg: "You cant change your password to your previous password, use another password and try again", status: 400 });
+            }
+
+            const NewPassword = await bcrypt.hash(req.body.newPassword, 13)
+            await MindCastUser.updateOne({ _id: req.body.id }, { password: NewPassword }).then(async () => {
+                const New = await MindCastUser.findOne({ _id: req.body.id });
+                return res.status(200).json({
+                    msg: 'Password changed Successfully ',
+                    user: New,
+                    status: 200
+                })
+            }).catch((err) => {
+                res.send(err)
+            })
+
+        }
+
+    } catch (error) {
+        res.status(500).json({
+            msg: 'there is an unknown error sorry ',
+            status: 500
+        })
+    }
+
 })

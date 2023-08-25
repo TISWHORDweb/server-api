@@ -6,7 +6,7 @@ const {userBodyGuard} = require('../middleware/middleware.protects');
 const express = require('express');
 const router = express.Router();
 const CoreError = require('./../core/core.error');
-const {  userSettings, singleUser, deleteUser, audit, singleAudit, deleteAudit } = require('../controller/controller.user');
+const {  userSettings, singleUser, deleteUser, audit, singleAudit, deleteAudit, allUser } = require('../controller/controller.user');
 const { resources, singleResources, userResources, deleteResources } = require('../controller/controller.resources');
 const { deleteSubscription, userSubscription, singleSubscription, subscription, allSubscription } = require('../controller/controller.subscription');
 const { review, singleReview, userReview, deleteReview, allReview } = require('../controller/controller.review');
@@ -21,6 +21,7 @@ const { host, singleHost, allHost, userHost, deleteHost } = require('../controll
 
 router.put('/setting/:id', userSettings);
 router.get('/single/:id', singleUser);
+router.get('/users', allUser);
 router.delete('/delete', deleteUser);
 
 //AUDIT
