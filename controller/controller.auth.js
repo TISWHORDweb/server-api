@@ -34,7 +34,7 @@ exports.userRegister = useAsync(async (req, res) => {
     if (req.body.password) {
         req.body.password = await bcrypt.hash(req.body.password, 13)
     }
-
+    
     try {
         if (!req.body.email || !req.body.username || !req.body.lastName || !req.body.firstName || !req.body.password || !req.body.phone) return res.json(utils.JParser('please check the fields', false, []));
 
