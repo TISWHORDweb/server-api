@@ -4,6 +4,7 @@ dotenv.config()
 const { useAsync, utils, errorHandle, } = require('./../core');
 const MindCastUser = require('../models/model.user')
 const MindCastInterest = require('../models/model.interest');
+const MindCastUserInterest = require('../models/model.userInterest');
 
 
 
@@ -13,6 +14,19 @@ exports.interest = useAsync(async (req, res) => {
 
         const interest = await MindCastInterest.create(req.body)
         return res.json(utils.JParser('Interest created successfully', !!interest, interest));
+
+    } catch (e) {
+        throw new errorHandle(e.message, 400)
+    }
+
+})
+
+exports.createUserInterest = useAsync(async (req, res) => {
+
+    try{
+
+        const interest = await MindCastUserInterest.create(req.body)
+        return res.json(utils.JParser('User Interest created successfully', !!interest, interest));
 
     } catch (e) {
         throw new errorHandle(e.message, 400)
@@ -43,8 +57,18 @@ exports.allInterest = useAsync(async (req, res) => {
 exports.userInterest = useAsync(async (req, res) => {
 
     try {
-        const interest = await MindCastInterest.find({ userID: req.params.id });
+        const interest = await MindCastUserInterest.find({ user_id: req.params.id });
         return res.json(utils.JParser('User Interest fetch successfully', !!interest, interest));
+    } catch (e) {
+        throw new errorHandle(e.message, 400)
+    }
+})
+
+exports.interestUser = useAsync(async (req, res) => {
+
+    try {
+        const interest = await MindCastUserInterest.find({ interest_id: req.params.id });
+        return res.json(utils.JParser('Interest User fetch successfully', !!interest, interest));
     } catch (e) {
         throw new errorHandle(e.message, 400)
     }

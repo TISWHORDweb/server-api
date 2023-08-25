@@ -6,11 +6,11 @@ const {userBodyGuard} = require('../middleware/middleware.protects');
 const express = require('express');
 const router = express.Router();
 const CoreError = require('./../core/core.error');
-const {  userSettings, singleUser, deleteUser, audit, singleAudit, deleteAudit, allUser } = require('../controller/controller.user');
+const {  userSettings, singleUser, deleteUser, audit, singleAudit, deleteAudit, allUser, changePassword } = require('../controller/controller.user');
 const { resources, singleResources, userResources, deleteResources } = require('../controller/controller.resources');
 const { deleteSubscription, userSubscription, singleSubscription, subscription, allSubscription } = require('../controller/controller.subscription');
 const { review, singleReview, userReview, deleteReview, allReview } = require('../controller/controller.review');
-const { interest, singleInterest, allInterest, userInterest, deleteInterest } = require('../controller/controller.interest');
+const { interest, singleInterest, allInterest, userInterest, deleteInterest, createUserInterest, interestUser } = require('../controller/controller.interest');
 const { history, singleHistory, allHistory, userHistory, deleteHistory } = require('../controller/controller.history');
 const { singleFavourite, allFavourite, userFavourite, deleteFavourite, favourite } = require('../controller/controller.favourite');
 const { host, singleHost, allHost, userHost, deleteHost } = require('../controller/controller.hostRequest');
@@ -22,6 +22,7 @@ const { host, singleHost, allHost, userHost, deleteHost } = require('../controll
 router.put('/setting/:id', userSettings);
 router.get('/single/:id', singleUser);
 router.get('/users', allUser);
+router.post('/change/password', changePassword);
 router.delete('/delete', deleteUser);
 
 //AUDIT
@@ -50,9 +51,11 @@ router.delete('/review/delete', deleteReview);
 
 //INTEREST
 router.post('/interest', interest);
+router.post('/interest/user/create', createUserInterest);
 router.get('/interest/:id', singleInterest);
 router.get('/interests', allInterest);
 router.get('/interest/user/:id', userInterest);
+router.get('/interest/users/interest/:id', interestUser);
 router.delete('/interest/delete', deleteInterest);
 
 //HISTORY
