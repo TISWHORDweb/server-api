@@ -27,8 +27,8 @@ const { EmailNote } = require('../core/core.notify')
 
 exports.userRegister = useAsync(async (req, res) => {
 
-    req.body.firstName.toLowerCase()
-    req.body.lastName.toLowerCase()
+    // req.body.firstName.toLowerCase()
+    // req.body.lastName.toLowerCase()
     req.body.username.toLowerCase()
 
     if (req.body.password) {
