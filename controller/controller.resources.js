@@ -33,27 +33,23 @@ exports.singleResources = useAsync(async (req, res) => {
 exports.userResources = useAsync(async (req, res) => {
 
     try {
-        const code = await MindCastResource.find()
 
         let resources = await MindCastResource.find({ userID: req.params.id });
 
         return res.json(utils.JParser('User resources fetch successfully', !!resources, resources));
-
 
     } catch (e) {
         throw new errorHandle(e.message, 400)
     }
 })
 
-exports.userResources = useAsync(async (req, res) => {
+exports.interestResources = useAsync(async (req, res) => {
 
     try {
-        const code = await MindCastResource.find()
 
-        let resources = await MindCastResource.find({ userID: req.params.id });
+        let resources = await MindCastResource.find({ interestID: req.params.id });
 
-        return res.json(utils.JParser('User resources fetch successfully', !!resources, resources));
-
+        return res.json(utils.JParser('Interest resources fetch successfully', !!resources, resources));
 
     } catch (e) {
         throw new errorHandle(e.message, 400)

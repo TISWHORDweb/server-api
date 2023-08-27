@@ -3,19 +3,16 @@ const dotenv = require("dotenv")
 dotenv.config()
 const { useAsync, utils, errorHandle, } = require('./../core');
 const MindCastUser = require('../models/model.user')
-const MindCastResource = require('../models/model.resources');
-const MindCastSubscription = require('../models/model.subscription');
+const MindCastBookmark = require('../models/model.bookmark');
 
 
 
-
-
-exports.subscription = useAsync(async (req, res) => {
+exports.bookmark = useAsync(async (req, res) => {
 
     try{
 
-        const subscription = await MindCastSubscription.create(req.body)
-        return res.json(utils.JParser('Subscription created successfully', !!subscription, subscription));
+        const bookmark = await MindCastBookmark.create(req.body)
+        return res.json(utils.JParser('Bookmark created successfully', !!bookmark, bookmark));
 
     } catch (e) {
         throw new errorHandle(e.message, 400)
@@ -23,43 +20,42 @@ exports.subscription = useAsync(async (req, res) => {
 
 })
 
-exports.singleSubscription = useAsync(async (req, res) => {
+exports.singleBookmark = useAsync(async (req, res) => {
 
     try {
-        const resources = await MindCastSubscription.findOne({ _id: req.params.id });
-        return res.json(utils.JParser('Subscription fetch successfully', !!resources, resources));
+        const bookmark = await MindCastBookmark.findOne({ _id: req.params.id });
+        return res.json(utils.JParser('Bookmark fetch successfully', !!bookmark, bookmark));
     } catch (e) {
         throw new errorHandle(e.message, 400)
     }
 })
 
-exports.allSubscription = useAsync(async (req, res) => {
+exports.allBookmark = useAsync(async (req, res) => {
 
     try {
-        const resources = await MindCastSubscription.find();
-        return res.json(utils.JParser('Subscriptions fetch successfully', !!resources, resources));
+        const bookmark = await MindCastBookmark.find();
+        return res.json(utils.JParser('Bookmark fetch successfully', !!bookmark, bookmark));
     } catch (e) {
         throw new errorHandle(e.message, 400)
     }
 })
 
-exports.userSubscription= useAsync(async (req, res) => {
+exports.userBookmark= useAsync(async (req, res) => {
 
     try {
-        const resources = await MindCastResource.find({ userID: req.params.id });
-        return res.json(utils.JParser('User subscription fetch successfully', !!resources, resources));
+        const bookmark = await MindCastBookmark.find({ userID: req.params.id });
+        return res.json(utils.JParser('User Bookmark fetch successfully', !!bookmark, bookmark));
     } catch (e) {
         throw new errorHandle(e.message, 400)
     }
 })
 
-
-exports.deleteSubscription= useAsync(async (req, res) => {
+exports.deleteBookmark = useAsync(async (req, res) => {
     try {
         if (!req.body.id) return res.status(402).json({ msg: 'provide the id ' })
 
-        await MindCastSubscription.deleteOne({ _id: req.body.id })
-        return res.json(utils.JParser('Subscription deleted successfully', true, []));
+        await MindCastBookmark.deleteOne({ _id: req.body.id })
+        return res.json(utils.JParser('Bookmark deleted successfully', true, []));
 
     } catch (e) {
         throw new errorHandle(e.message, 400)

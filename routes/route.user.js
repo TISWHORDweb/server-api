@@ -7,13 +7,14 @@ const express = require('express');
 const router = express.Router();
 const CoreError = require('./../core/core.error');
 const {  userSettings, singleUser, deleteUser, audit, singleAudit, deleteAudit, allUser, changePassword } = require('../controller/controller.user');
-const { resources, singleResources, userResources, deleteResources } = require('../controller/controller.resources');
+const { resources, singleResources, userResources, deleteResources, interestResources } = require('../controller/controller.resources');
 const { deleteSubscription, userSubscription, singleSubscription, subscription, allSubscription } = require('../controller/controller.subscription');
 const { review, singleReview, userReview, deleteReview, allReview } = require('../controller/controller.review');
 const { interest, singleInterest, allInterest, userInterest, deleteInterest, createUserInterest, interestUser } = require('../controller/controller.interest');
 const { history, singleHistory, allHistory, userHistory, deleteHistory } = require('../controller/controller.history');
 const { singleFavourite, allFavourite, userFavourite, deleteFavourite, favourite } = require('../controller/controller.favourite');
 const { host, singleHost, allHost, userHost, deleteHost } = require('../controller/controller.hostRequest');
+const { bookmark, singleBookmark, allBookmark, userBookmark, deleteBookmark } = require('../controller/controller.bookmark');
 
 /**
  * auth routes
@@ -34,6 +35,7 @@ router.delete('/audit/delete', deleteAudit);
 router.post('/resources', resources);
 router.get('/resources/:id', singleResources);
 router.get('/resources/user/:id', userResources);
+router.get('/resources/interest/:id', interestResources);
 router.delete('/resources/delete', deleteResources);
 
 // SUBSCRIPTION
@@ -78,6 +80,14 @@ router.get('/host/:id', singleHost);
 router.get('/hosts', allHost);
 router.get('/host/user/:id', userHost);
 router.delete('/host/delete', deleteHost);
+
+
+//Bookmark
+router.post('/bookmark', bookmark);
+router.get('/bookmark/:id', singleBookmark);
+router.get('/bookmark/all', allBookmark);
+router.get('/bookmark/user/:id', userBookmark);
+router.delete('/bookmark/delete', deleteBookmark);
 
 
 /**
