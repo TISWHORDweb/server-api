@@ -34,9 +34,9 @@ exports.userRegister = useAsync(async (req, res) => {
     if (req.body.password) {
         req.body.password = await bcrypt.hash(req.body.password, 13)
     }
-    
+
     try {
-        if (!req.body.email || !req.body.username || !req.body.lastName || !req.body.firstName || !req.body.password || !req.body.phone) return res.json(utils.JParser('please check the fields', false, []));
+        if (!req.body.email  || !req.body.password || !req.body.username) return res.json(utils.JParser('please check the fields', false, []));
 
         req.body.token = sha1(req.body.email + new Date())
         req.body.lastLogin = CryptoJS.AES.encrypt(JSON.stringify(new Date()), process.env.SECRET_KEY).toString()
@@ -176,7 +176,7 @@ exports.userLogin = useAsync(async (req, res) => {
                 // };
 
                 await MindCastUser.updateOne({ _id: user._id }, { $set: { ip: ip, active: true, token: token, lastLogin: lastLogin } }).then(() => {
-                    return res.json(utils.JParser('logged in successfuly', false, { user, token, IP_Address }));
+                    return res.json(utils.JParser('logged in successfuly', true, { user, token, IP_Address }));
                 })
             }
         }

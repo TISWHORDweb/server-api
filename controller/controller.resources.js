@@ -9,7 +9,7 @@ const MindCastResource = require('../models/model.resources')
 
 exports.resources = useAsync(async (req, res) => {
 
-    try{
+    try {
 
         const audit = await MindCastResource.create(req.body)
         return res.json(utils.JParser('Resources created successfully', !!audit, audit));
@@ -33,8 +33,13 @@ exports.singleResources = useAsync(async (req, res) => {
 exports.userResources = useAsync(async (req, res) => {
 
     try {
-        const resources = await MindCastResource.find({ userID: req.params.id });
+        const code = await MindCastResource.find()
+
+        let resources = await MindCastResource.find({ userID: req.params.id });
+
         return res.json(utils.JParser('User resources fetch successfully', !!resources, resources));
+
+
     } catch (e) {
         throw new errorHandle(e.message, 400)
     }

@@ -13,6 +13,9 @@ const MindCastResourceSchema=new mongoose.Schema({
     image:{
         type:String,    
     },
+    file:{
+        type:String,    
+    },
     thumbnail:{
         type:String,  
     },
