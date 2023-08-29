@@ -61,7 +61,7 @@ router.put('/interest/:id', interestUpdate);
 router.get('/interests', allInterest);
 router.get('/interest/user/:id', userInterest);
 router.get('/interest/users/interest/:id', interestUser);
-router.get('/interest/users/delete', deleteUserInterest);
+router.get('/interest/user/delete', deleteUserInterest);
 router.delete('/interest/delete', deleteInterest);
 
 //HISTORY

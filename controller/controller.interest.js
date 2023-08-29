@@ -94,7 +94,9 @@ exports.deleteUserInterest = useAsync(async (req, res) => {
     try {
         if (!req.body.id) return res.status(402).json({ msg: 'provide the id ' })
 
-        await MindCastUserInterest.deleteOne({ _id: req.body.id })
+        await MindCastUserInterest.deleteOne({ _id: req.body.id }).catch((error)=>{
+        return res.json(utils.JParser('Interest deleted error', false, error));
+        })
         return res.json(utils.JParser('Interest deleted successfully', true, []));
 
     } catch (e) {
