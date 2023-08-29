@@ -20,8 +20,25 @@ exports.resources = useAsync(async (req, res) => {
 
 })
 
-exports.singleResources = useAsync(async (req, res) => {
+exports.resourceUpdate = useAsync(async (req, res) => {
 
+    try {
+        // const id = req.userId;
+        const id = req.params.id;
+        const body = req.body
+        await MindCastResource.updateOne({ _id: id }, body).then(async () => {
+            const resource = await MindCastResource.find({ _id: id });
+            return res.json(utils.JParser('Resources Updated  Successfully', !!resource, resource));
+
+        })
+
+    } catch (e) {
+        throw new errorHandle(e.message, 400)
+    }
+})
+
+
+exports.singleResources = useAsync(async (req, res) => {
     try {
         const resources = await MindCastResource.findOne({ _id: req.params.id });
         return res.json(utils.JParser('Resources fetch successfully', !!resources, resources));
