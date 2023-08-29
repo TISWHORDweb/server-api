@@ -10,6 +10,9 @@ const MindCastHostRequestSchema=new mongoose.Schema({
     experience:{
         type:String,
     },
+    buildCommunity:{
+        type:String,
+    },
     time_created:{type:Number, default:()=>Date.now()},	
     updated_at:{type:Number, default:()=>Date.now()}	
 })

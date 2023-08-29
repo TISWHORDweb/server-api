@@ -7,10 +7,13 @@ const MindCastUserSchema=new mongoose.Schema({
     lastName:{
         type:String, 
     },
-    practice:{
+    experience:{
         type:String, 
     },
     userBio:{
+        type:String, 
+    },
+    image:{
         type:String, 
     },
     email:{
