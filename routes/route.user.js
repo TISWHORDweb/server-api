@@ -10,7 +10,7 @@ const {  userSettings, singleUser, deleteUser, audit, singleAudit, deleteAudit, 
 const { resources,allResources,resourceUpdate, singleResources, userResources, deleteResources, interestResources } = require('../controller/controller.resources');
 const { deleteSubscription, userSubscription, singleSubscription, subscription, allSubscription } = require('../controller/controller.subscription');
 const { review, singleReview, userReview, deleteReview, allReview } = require('../controller/controller.review');
-const { interest, singleInterest, allInterest, userInterest, deleteInterest, createUserInterest, interestUser } = require('../controller/controller.interest');
+const { interest,interestUpdate, singleInterest, allInterest, userInterest, deleteInterest, createUserInterest,deleteUserInterest, interestUser } = require('../controller/controller.interest');
 const { history, singleHistory, allHistory, userHistory, deleteHistory } = require('../controller/controller.history');
 const { singleFavourite, allFavourite, userFavourite, deleteFavourite, favourite } = require('../controller/controller.favourite');
 const { host, singleHost, allHost, userHost, deleteHost } = require('../controller/controller.hostRequest');
@@ -57,9 +57,11 @@ router.delete('/review/delete', deleteReview);
 router.post('/interest', interest);
 router.post('/interest/user/create', createUserInterest);
 router.get('/interest/:id', singleInterest);
+router.put('/interest/:id', interestUpdate);
 router.get('/interests', allInterest);
 router.get('/interest/user/:id', userInterest);
 router.get('/interest/users/interest/:id', interestUser);
+router.get('/interest/users/delete', deleteUserInterest);
 router.delete('/interest/delete', deleteInterest);
 
 //HISTORY

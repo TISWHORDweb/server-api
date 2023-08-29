@@ -21,6 +21,22 @@ exports.interest = useAsync(async (req, res) => {
 
 })
 
+exports.interestUpdate = useAsync(async (req, res) => {
+
+    try {
+        // const id = req.userId;
+        const id = req.params.id;
+        const body = req.body
+        await MindCastInterest.updateOne({ _id: id }, body).then(async () => {
+            const interest = await MindCastInterest.find({ _id: id });
+            return res.json(utils.JParser('Interest Updated  Successfully', !!interest, interest));
+        })
+
+    } catch (e) {
+        throw new errorHandle(e.message, 400)
+    }
+})
+
 exports.createUserInterest = useAsync(async (req, res) => {
 
     try{
@@ -74,6 +90,18 @@ exports.interestUser = useAsync(async (req, res) => {
     }
 })
 
+exports.deleteUserInterest = useAsync(async (req, res) => {
+    try {
+        if (!req.body.id) return res.status(402).json({ msg: 'provide the id ' })
+
+        await MindCastUserInterest.deleteOne({ _id: req.body.id })
+        return res.json(utils.JParser('Interest deleted successfully', true, []));
+
+    } catch (e) {
+        throw new errorHandle(e.message, 400)
+    }
+});
+
 exports.deleteInterest = useAsync(async (req, res) => {
     try {
         if (!req.body.id) return res.status(402).json({ msg: 'provide the id ' })
@@ -84,5 +112,4 @@ exports.deleteInterest = useAsync(async (req, res) => {
     } catch (e) {
         throw new errorHandle(e.message, 400)
     }
-
 });
