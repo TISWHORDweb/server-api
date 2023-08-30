@@ -15,6 +15,8 @@ const request = require('request');
 const { useAsync, utils, errorHandle, } = require('./../core');
 const MindCastUser = require('../models/model.user')
 const MindCastAudit = require('../models/model.audit')
+const MindCastInterest = require('../models/model.interest');
+const MindCastUserInterest = require('../models/model.userInterest');
 
 
 
@@ -73,6 +75,32 @@ exports.userSettings = useAsync(async (req, res) => {
         throw new errorHandle(e.message, 400)
     }
 })
+
+exports.userHomeData = useAsync(async (req, res) => {
+
+    try {
+        const user = await MindCastUser.findOne({ _id: req.params.id });
+        let userInterest=[]
+        if(user){
+
+            const alluserInterest = await MindCastUserInterest.find({ user_id: req.params.id });
+            userInterest=alluserInterest
+
+            userInterest.forEach( interest => {
+                let oneInterest =  MindCastInterest.findOne({ _id: interest._id });
+                interest.interest=oneInterest
+            });
+            let body={user,userInterest}
+
+
+            return res.json(utils.JParser('User fetch successfully', !!user, body));
+        }
+        
+    } catch (e) {
+        throw new errorHandle(e.message, 400)
+    }
+})
+
 
 exports.singleUser = useAsync(async (req, res) => {
 

@@ -6,7 +6,7 @@ const {userBodyGuard} = require('../middleware/middleware.protects');
 const express = require('express');
 const router = express.Router();
 const CoreError = require('./../core/core.error');
-const {  userSettings, singleUser, deleteUser, audit, singleAudit, deleteAudit, allUser, changePassword } = require('../controller/controller.user');
+const {  userSettings, singleUser, deleteUser,userHomeData, audit, singleAudit, deleteAudit, allUser, changePassword } = require('../controller/controller.user');
 const { resources,allResources,resourceUpdate, singleResources, userResources, deleteResources, interestResources } = require('../controller/controller.resources');
 const { deleteSubscription, userSubscription, singleSubscription, subscription, allSubscription } = require('../controller/controller.subscription');
 const { review, singleReview, userReview, deleteReview, allReview } = require('../controller/controller.review');
@@ -23,6 +23,7 @@ const { bookmark, singleBookmark, allBookmark, userBookmark, deleteBookmark } = 
 router.put('/setting/:id', userSettings);
 router.get('/single/:id', singleUser);
 router.get('/users', allUser);
+router.get('/user/home/:id', userHomeData);
 router.post('/change/password', changePassword);
 router.delete('/delete', deleteUser);
 
