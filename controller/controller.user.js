@@ -92,7 +92,7 @@ exports.userHomeData = useAsync(async (req, res) => {
                     if(interest._id==element.interest_id){
 
                         let interestedResources=[]
-                        let anInterest={}
+                        let anInterest={"record":{},"resources":[] }
 
                         resources.forEach(aRes => {
 
