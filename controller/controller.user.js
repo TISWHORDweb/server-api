@@ -88,11 +88,11 @@ exports.userHomeData = useAsync(async (req, res) => {
             
 
             allInterests.forEach( interest => {
-                
-                alluserInterest.forEach(element => {
-
+                alluserInterest.forEach( async element => {
                     if(interest._id==element.interest_id){
-                        userInterest.push(interest)
+                        let resources = await MindCastResource.find({ interestID: element.interest_id });
+                        let data={resources,interest}
+                        userInterest.push(data)
                     }
                     
                 });
