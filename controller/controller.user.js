@@ -17,6 +17,7 @@ const MindCastUser = require('../models/model.user')
 const MindCastAudit = require('../models/model.audit')
 const MindCastInterest = require('../models/model.interest');
 const MindCastUserInterest = require('../models/model.userInterest');
+const MindCastResource = require('../models/model.resources')
 
 
 
@@ -93,17 +94,17 @@ exports.userHomeData = useAsync(async (req, res) => {
 
                         let interestedResources=[]
 
-                        // resources.forEach(aRes => {
+                        resources.forEach(aRes => {
 
-                        //     if(interest._id==aRes.interestID){
+                            if(interest._id==aRes.interestID){
                                 
-                        //         interestedResources.push(aRes)
-                        //     }
-                        // });
+                                interestedResources.push(aRes)
+                            }
+                        });
 
-                       // let anInterest={interest, interestedResources }
+                        let anInterest={interest, interestedResources }
                         
-                        userInterest.push(interest)
+                        userInterest.push(anInterest)
                     }
                     
                 });
