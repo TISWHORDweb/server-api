@@ -101,9 +101,9 @@ exports.userHomeData = useAsync(async (req, res) => {
                         //     }
                         // });
 
-                        let anInterest={interest, interestedResources }
+                       // let anInterest={interest, interestedResources }
                         
-                        userInterest.push(anInterest)
+                        userInterest.push(interest)
                     }
                     
                 });
