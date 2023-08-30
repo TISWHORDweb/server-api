@@ -92,7 +92,6 @@ exports.userHomeData = useAsync(async (req, res) => {
                     if(interest._id==element.interest_id){
 
                         let interestedResources=[]
-                        let anInterest={"record":{},"resources":[] }
 
                         resources.forEach(aRes => {
 
@@ -101,8 +100,8 @@ exports.userHomeData = useAsync(async (req, res) => {
                                 interestedResources.push(aRes)
                             }
                         });
-                        anInterest.record=interest
-                        anInterest.resources=interestedResources
+                        let anInterest={interest, interestedResources }
+                        
                         
                         userInterest.push(anInterest)
                     }
