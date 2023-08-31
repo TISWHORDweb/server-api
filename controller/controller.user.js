@@ -87,7 +87,7 @@ exports.userHomeData = useAsync(async (req, res) => {
             const alluserInterest = await MindCastUserInterest.find({ user_id: req.params.id });
             const allInterests = await MindCastInterest.find();
             const resources = await MindCastResource.find();
-            const allHost = await MindCastUser.find({ isHost: true });
+            const allHost = await MindCastUser.find({ isHost: "true" });
 
             allInterests.forEach( interest => {
                 alluserInterest.forEach( async element => {
@@ -113,7 +113,7 @@ exports.userHomeData = useAsync(async (req, res) => {
                
                 
             });
-            
+
             let body={user,userInterest,allHost}
 
 
