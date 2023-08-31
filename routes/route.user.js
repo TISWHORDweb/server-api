@@ -96,11 +96,11 @@ router.get('/bookmark/user/:id', userBookmark);
 router.delete('/bookmark/delete', deleteBookmark);
 
 //Recommend
-router.post('/recommend', bookmark);
-router.get('/recommend/:id', singleRecommend);
-router.get('/recommend/all', allRecommends);
-router.get('/recommend/user/:id', userRecommend);
-router.delete('/recommend/delete', deleteRecommend);
+router.post('/recommendation', bookmark);
+router.get('/recommendation/:id', singleRecommend);
+router.get('/recommendation/all', allRecommends);
+router.get('/recommendation/user/:id', userRecommend);
+router.delete('/recommendation/delete', deleteRecommend);
 
 
 
