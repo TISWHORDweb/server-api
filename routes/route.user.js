@@ -15,7 +15,7 @@ const { history, singleHistory, allHistory, userHistory, deleteHistory } = requi
 const { singleFavourite, allFavourite, userFavourite, deleteFavourite, favourite } = require('../controller/controller.favourite');
 const { host, singleHost, allHost, userHost, deleteHost } = require('../controller/controller.hostRequest');
 const { bookmark, singleBookmark, allBookmark, userBookmark, deleteBookmark } = require('../controller/controller.bookmark');
-const { recommend, singleRecommend, allRecommends, userRecommend, deleteRecommend } = require('../controller/controller.recommend');
+const { recommend, singleRecommend, userRecommend, deleteRecommend, allRecommend } = require('../controller/controller.recommend');
 
 /**
  * auth routes
@@ -98,8 +98,8 @@ router.delete('/bookmark/delete', deleteBookmark);
 //Recommend
 router.post('/recommendation', bookmark);
 router.get('/recommendation/:id', singleRecommend);
-router.get('/recommendation/all', allRecommends);
-router.get('/recommendation/user/:id', userRecommend);
+router.get('/recommendation/all', allRecommend);
+// router.get('/recommendation/user/:id', userRecommend);
 router.delete('/recommendation/delete', deleteRecommend);
 
 
