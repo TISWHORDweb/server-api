@@ -113,6 +113,7 @@ exports.userHomeData = useAsync(async (req, res) => {
                
                 
             });
+            
             let body={user,userInterest,allHost}
 
 
