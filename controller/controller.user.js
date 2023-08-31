@@ -82,7 +82,7 @@ exports.userHomeData = useAsync(async (req, res) => {
     try {
         const user = await MindCastUser.findOne({ _id: req.params.id });
         let userInterest=[]
-        const allHost = await MindCastUser.find({ isHost: "true" });
+        const allHost = await MindCastUser.find({ isHost: true });
         if(user){
 
             const alluserInterest = await MindCastUserInterest.find({ user_id: req.params.id });
@@ -118,7 +118,7 @@ exports.userHomeData = useAsync(async (req, res) => {
             let body={user,userInterest,allHost}
 
 
-            return res.json(utils.JParser('User fetch successfully', !!user, body));
+            return res.json(utils.JParser('User Data fetch successfully', !!user, body));
         }
         
     } catch (e) {
