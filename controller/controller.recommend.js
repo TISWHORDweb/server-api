@@ -9,7 +9,6 @@ const MindCastRecommend= require('../models/model.recommend');
 
 exports.recommend = useAsync(async (req, res) => {
     try{
-        return res.json(utils.JParser('recommend created successfully', true, "Working"));
         const recommend = await MindCastRecommend.create(req.body)
         return res.json(utils.JParser('recommend created successfully', !!recommend, recommend));
 
