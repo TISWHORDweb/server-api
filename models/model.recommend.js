@@ -12,6 +12,6 @@ const MindCastRecommendSchema=new mongoose.Schema({
 })
 
 
-const mindCastRecommend=mongoose.model("mindCastRecommend", MindCastRecommendSchema)
+const mindCastRecommend=mongoose.model("mindRecommend", MindCastRecommendSchema)
 
 module.exports=mindCastRecommend

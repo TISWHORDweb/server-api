@@ -96,7 +96,7 @@ router.get('/bookmark/user/:id', userBookmark);
 router.delete('/bookmark/delete', deleteBookmark);
 
 //Recommend
-router.post('/recommendation', bookmark);
+router.post('/recommendation', recommend);
 router.get('/recommendation/:id', singleRecommend);
 router.get('/recommendation/all', allRecommend);
 // router.get('/recommendation/user/:id', userRecommend);

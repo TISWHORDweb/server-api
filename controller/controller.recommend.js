@@ -29,7 +29,6 @@ exports.singleRecommend = useAsync(async (req, res) => {
 })
 
 exports.allRecommend = useAsync(async (req, res) => {
-
     try {
         const recommend = await MindCastRecommend.find();
         return res.json(utils.JParser('recommend fetch successfully', !!recommend, recommend));
@@ -39,7 +38,6 @@ exports.allRecommend = useAsync(async (req, res) => {
 })
 
 exports.interestRecommend= useAsync(async (req, res) => {
-
     try {
         const recommend = await MindCastRecommend.find({ resourceID: req.params.id });
         return res.json(utils.JParser('Interest recommend fetch successfully', !!recommend, recommend));
