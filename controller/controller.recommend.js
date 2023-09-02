@@ -28,6 +28,16 @@ exports.singleRecommend = useAsync(async (req, res) => {
     }
 })
 
+exports.interestRecommend= useAsync(async (req, res) => {
+
+    try {
+        const recommend = await MindCastRecommend.find({ interestID: req.params.id });
+        return res.json(utils.JParser('Interest Recomend fetch successfully', !!recommend, recommend));
+    } catch (e) {
+        throw new errorHandle(e.message, 400)
+    }
+})
+
 exports.allRecommend = useAsync(async (req, res) => {
     try {
         const recommend = await MindCastRecommend.find();
@@ -37,14 +47,14 @@ exports.allRecommend = useAsync(async (req, res) => {
     }
 })
 
-exports.interestRecommend= useAsync(async (req, res) => {
-    try {
-        const recommend = await MindCastRecommend.find({ resourceID: req.params.id });
-        return res.json(utils.JParser('Interest recommend fetch successfully', !!recommend, recommend));
-    } catch (e) {
-        throw new errorHandle(e.message, 400)
-    }
-})
+// exports.interestRecommend= useAsync(async (req, res) => {
+//     try {
+//         const recommend = await MindCastRecommend.find({ resourceID: req.params.id });
+//         return res.json(utils.JParser('Interest recommend fetch successfully', !!recommend, recommend));
+//     } catch (e) {
+//         throw new errorHandle(e.message, 400)
+//     }
+// })
 
 exports.deleteRecommend = useAsync(async (req, res) => {
     try {

@@ -18,6 +18,7 @@ const MindCastAudit = require('../models/model.audit')
 const MindCastInterest = require('../models/model.interest');
 const MindCastUserInterest = require('../models/model.userInterest');
 const MindCastResource = require('../models/model.resources')
+const MindCastRecommend= require('../models/model.recommend');
 
 
 
@@ -82,12 +83,14 @@ exports.userHomeData = useAsync(async (req, res) => {
     try {
         const user = await MindCastUser.findOne({ _id: req.params.id });
         let userInterest=[]
+        let userRecommend=[]
         const allHost = await MindCastUser.find({ isHost: true });
         if(user){
 
             const alluserInterest = await MindCastUserInterest.find({ user_id: req.params.id });
             const allInterests = await MindCastInterest.find();
             const resources = await MindCastResource.find();
+            const recommendations = await MindCastRecommend.find();
             
 
             allInterests.forEach( interest => {
@@ -115,7 +118,17 @@ exports.userHomeData = useAsync(async (req, res) => {
                 
             });
 
-            let body={user,userInterest,allHost}
+            recommendations.forEach(recommend=>{
+                userInterest.forEach( data => { 
+                    if(data.interest._id==recommend.interestID){
+                        userRecommend.push(data)
+                    }
+                });
+            })
+            
+
+
+            let body={user,userInterest,allHost,userRecommend}
 
 
             return res.json(utils.JParser('User Data fetch successfully', !!user, body));
