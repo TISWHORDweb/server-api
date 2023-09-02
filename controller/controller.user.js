@@ -121,7 +121,11 @@ exports.userHomeData = useAsync(async (req, res) => {
             recommendations.forEach(recommend=>{
                 userInterest.forEach( data => { 
                     if(data.interest._id==recommend.interestID){
-                        userRecommend.push(data)
+                        data.interestedResources.forEach( resource => { 
+                            let body ={"interestID":data.interest._id, "interestName":data.interest._id,resource }
+                            userRecommend.push(body)
+                         });
+                        
                     }
                 });
             })
