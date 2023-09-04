@@ -88,16 +88,22 @@ exports.interestAndResources = useAsync(async (req, res) => {
 
         let resources = await MindCastResource.find();
         let interests = await MindCastInterest.find();
+        let interest_resources=[]
+
+        interests.forEach(interest=>{
+            let resource=[]
+            resources.forEach(reso=>{
+                if(reso.interestID==interest._id){
+                    resource.push(reso)
+                }
+               
+            })
+    
+            interest_resources.push({interest,resource })
+        })
         
 
-       for (let index = 0; index < interests.length; index++) {
-
-        interests[index].resource= await MindCastResource.find({ interestID: interests[index]._id }); 
-        console.log(interests[index]);
-        
-       }
-
-        return res.json(utils.JParser('Interest resources fetch successfully', !!interests, interests));
+        return res.json(utils.JParser('Interest resources fetch successfully', !!interest_resources, interest_resources));
 
     } catch (e) {
         throw new errorHandle(e.message, 400)

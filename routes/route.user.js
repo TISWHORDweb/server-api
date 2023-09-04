@@ -40,7 +40,7 @@ router.get('/resources/:id', singleResources);
 router.put('/resources/:id', resourceUpdate);
 router.get('/resources/user/:id', userResources);
 router.get('/resources/interest/:id', interestResources);
-router.get('/resources/interest', interestAndResources);
+router.get('/resource-interests', interestAndResources);
 router.delete('/resources/delete', deleteResources);
 
 // SUBSCRIPTION
