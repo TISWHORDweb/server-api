@@ -4,6 +4,7 @@ dotenv.config()
 const { useAsync, utils, errorHandle, } = require('./../core');
 const MindCastUser = require('../models/model.user')
 const MindCastResource = require('../models/model.resources')
+const MindCastInterest = require('../models/model.interest');
 
 
 
@@ -75,6 +76,28 @@ exports.interestResources = useAsync(async (req, res) => {
         let resources = await MindCastResource.find({ interestID: req.params.id });
 
         return res.json(utils.JParser('Interest resources fetch successfully', !!resources, resources));
+
+    } catch (e) {
+        throw new errorHandle(e.message, 400)
+    }
+})
+
+exports.interestAndResources = useAsync(async (req, res) => {
+
+    try {
+
+        let resources = await MindCastResource.find();
+        let interests = await MindCastInterest.find();
+        
+
+       for (let index = 0; index < interests.length; index++) {
+
+        interests[index].resource= await MindCastResource.find({ interestID: interests[index]._id }); 
+        console.log(interests[index]);
+        
+       }
+
+        return res.json(utils.JParser('Interest resources fetch successfully', !!interests, interests));
 
     } catch (e) {
         throw new errorHandle(e.message, 400)

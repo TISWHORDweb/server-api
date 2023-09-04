@@ -7,7 +7,7 @@ const express = require('express');
 const router = express.Router();
 const CoreError = require('./../core/core.error');
 const {  userSettings, singleUser, deleteUser,userHomeData, audit, singleAudit, deleteAudit, allUser, changePassword } = require('../controller/controller.user');
-const { resources,allResources,resourceUpdate, singleResources, userResources, deleteResources, interestResources } = require('../controller/controller.resources');
+const { resources,allResources,resourceUpdate, singleResources, userResources, deleteResources, interestResources,interestAndResources } = require('../controller/controller.resources');
 const { deleteSubscription, userSubscription, singleSubscription, subscription, allSubscription } = require('../controller/controller.subscription');
 const { review, singleReview, userReview, deleteReview, allReview } = require('../controller/controller.review');
 const { interest,interestUpdate, singleInterest, allInterest, userInterest, deleteInterest, createUserInterest,deleteUserInterest, interestUser } = require('../controller/controller.interest');
@@ -40,6 +40,7 @@ router.get('/resources/:id', singleResources);
 router.put('/resources/:id', resourceUpdate);
 router.get('/resources/user/:id', userResources);
 router.get('/resources/interest/:id', interestResources);
+router.get('/resources/interest', interestAndResources);
 router.delete('/resources/delete', deleteResources);
 
 // SUBSCRIPTION
