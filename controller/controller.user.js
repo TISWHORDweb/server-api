@@ -140,6 +140,13 @@ exports.userHomeData = useAsync(async (req, res) => {
             })
 
 
+             bookmarks.forEach(aRes => {
+                resources.forEach(mark=>{
+                    if(mark.resourceID==aRes._id){
+                        userBookmarks.push(aRes)
+                    }
+                }) 
+            });
             
 
 
