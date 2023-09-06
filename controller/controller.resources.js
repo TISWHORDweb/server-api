@@ -98,7 +98,7 @@ exports.interestAndResources = useAsync(async (req, res) => {
                 }
                
             })
-    
+
             interest_resources.push({interest,resource })
         })
         

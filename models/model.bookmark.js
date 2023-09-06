@@ -4,6 +4,9 @@ const MindCastBookmarkSchema=new mongoose.Schema({
     userID:{
         type:String, 
     },
+    type:{
+        type:String, 
+    },
     resourceID:{
         type:String,  
     },

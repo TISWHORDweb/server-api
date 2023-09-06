@@ -19,6 +19,7 @@ const MindCastInterest = require('../models/model.interest');
 const MindCastUserInterest = require('../models/model.userInterest');
 const MindCastResource = require('../models/model.resources')
 const MindCastRecommend= require('../models/model.recommend');
+const MindCastBookmark = require('../models/model.bookmark');
 
 
 
@@ -84,6 +85,7 @@ exports.userHomeData = useAsync(async (req, res) => {
         const user = await MindCastUser.findOne({ _id: req.params.id });
         let userInterest=[]
         let userRecommend=[]
+        let userBookmarks=[]
         const allHost = await MindCastUser.find({ isHost: true });
         if(user){
 
@@ -91,6 +93,7 @@ exports.userHomeData = useAsync(async (req, res) => {
             const allInterests = await MindCastInterest.find();
             const resources = await MindCastResource.find();
             const recommendations = await MindCastRecommend.find();
+            const bookmarks = await MindCastBookmark.find({ user_id: req.params.id });
             
 
             allInterests.forEach( interest => {
@@ -100,6 +103,12 @@ exports.userHomeData = useAsync(async (req, res) => {
                         let interestedResources=[]
 
                         resources.forEach(aRes => {
+
+                            bookmarks.forEach(mark=>{
+                                if(mark.resourceID==aRes._id){
+                                    userBookmarks.push(aRes)
+                                }
+                            })
 
                             if(interest._id==aRes.interestID){
                                 
@@ -129,10 +138,12 @@ exports.userHomeData = useAsync(async (req, res) => {
                     }
                 });
             })
+
+
             
 
 
-            let body={user,userInterest,allHost,userRecommend}
+            let body={user,userInterest,allHost,userRecommend,userBookmarks}
 
 
             return res.json(utils.JParser('User Data fetch successfully', !!user, body));
