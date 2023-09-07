@@ -30,8 +30,9 @@ const MindCastUserSchema=new mongoose.Schema({
         default: false,
     },
     isHost:{
-        type:Boolean,
-        default: false,
+        type:String,
+        enum : ['none','pending','host'],
+        default: 'none'
     },
     active:{
         type:Boolean,
@@ -39,7 +40,7 @@ const MindCastUserSchema=new mongoose.Schema({
     },
     status: {
         type: String,
-        enum : ['free','paid','host'],
+        enum : ['free','paid','blocked'],
         default: 'free'
     },
     interest:{
