@@ -94,6 +94,7 @@ exports.userHomeData = useAsync(async (req, res) => {
             const resources = await MindCastResource.find();
             const recommendations = await MindCastRecommend.find();
             const bookmarks = await MindCastBookmark.find({ user_id: req.params.id });
+            console.log(bookmarks);
             
 
             allInterests.forEach( interest => {
@@ -103,12 +104,6 @@ exports.userHomeData = useAsync(async (req, res) => {
                         let interestedResources=[]
 
                         resources.forEach(aRes => {
-
-                            bookmarks.forEach(mark=>{
-                                if(mark.resourceID==aRes._id){
-                                    userBookmarks.push(aRes)
-                                }
-                            })
 
                             if(interest._id==aRes.interestID){
                                 
@@ -139,13 +134,15 @@ exports.userHomeData = useAsync(async (req, res) => {
                 });
             })
 
+            bookmarks.forEach(mark=> {
 
-             bookmarks.forEach(aRes => {
-                resources.forEach(mark=>{
-                    if(mark.resourceID==aRes._id){
-                        userBookmarks.push(aRes)
+                resources.forEach( (resource,index)=>{
+                    if(resource._id  == mark.resourceID ){
+                        let data={"bookmarkID":mark._id, resource}
+                        userBookmarks.push(data)
                     }
                 }) 
+
             });
             
 
