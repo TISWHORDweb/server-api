@@ -13,6 +13,11 @@ const MindCastHostRequestSchema=new mongoose.Schema({
     buildCommunity:{
         type:String,
     },
+    approved:{
+        type:String,
+        enum : ['pending','approved','revoked'],
+        default: 'pending'
+    },
     time_created:{type:Number, default:()=>Date.now()},	
     updated_at:{type:Number, default:()=>Date.now()}	
 })
