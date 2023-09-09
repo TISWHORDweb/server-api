@@ -158,6 +158,45 @@ exports.userHomeData = useAsync(async (req, res) => {
     }
 })
 
+exports.hostPorfile = useAsync(async (req, res) => {
+
+    try {
+        const user = await MindCastUser.findOne({ _id: req.params.id });
+        let hostedResources=[]
+        if(user){
+
+            const allInterests = await MindCastInterest.find();
+            const resources = await MindCastResource.find({ user_id: req.params.id });
+         
+            
+            allInterests.forEach( interest => {
+                let interestedResources=[]
+                        resources.forEach(aRes => {
+                            if(interest._id==aRes.interestID){
+                                interestedResources.push(aRes)
+                            }
+                        });
+
+                        let anInterest={interest, interestedResources }
+                        
+                        hostedResources.push(anInterest)
+               
+               
+                
+            });
+
+
+
+            let body={user,hostedResources}
+
+
+            return res.json(utils.JParser('User Data fetch successfully', !!user, body));
+        }
+        
+    } catch (e) {
+        throw new errorHandle(e.message, 400)
+    }
+})
 
 exports.singleUser = useAsync(async (req, res) => {
 
