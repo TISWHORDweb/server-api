@@ -35,8 +35,6 @@ const MindCastUserSchema=new mongoose.Schema({
     },
     hostStatus:{
         type:String,
-        enum : ['none','pending','host'],
-        default: 'none'
     },
     active:{
         type:Boolean,

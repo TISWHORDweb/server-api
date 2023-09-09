@@ -94,7 +94,7 @@ exports.userHomeData = useAsync(async (req, res) => {
             const resources = await MindCastResource.find();
             const recommendations = await MindCastRecommend.find();
             const bookmarks = await MindCastBookmark.find({ user_id: req.params.id });
-            console.log(bookmarks);
+            
             
 
             allInterests.forEach( interest => {

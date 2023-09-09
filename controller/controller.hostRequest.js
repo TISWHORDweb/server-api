@@ -13,9 +13,10 @@ exports.host = useAsync(async (req, res) => {
 
         const host = await MindCastHostRequest.create(req.body)
         console.log(req.body);
+        let id= req.body.userID
         let updateData={"hostStatus":"pending"}
 
-        await MindCastUser.updateOne({ _id: req.body.userID },updateData )
+        await MindCastUser.updateOne({ _id: id},updateData )
         return res.json(utils.JParser('Host created successfully', !!host, host));
 
     } catch (e) {
