@@ -89,11 +89,11 @@ exports.userHomeData = useAsync(async (req, res) => {
         const allHost = await MindCastUser.find({ isHost: true });
         if(user){
 
-            const alluserInterest = await MindCastUserInterest.find({ user_id: req.params.id });
+            const alluserInterest = await MindCastUserInterest.find({ userID: req.params.id });
             const allInterests = await MindCastInterest.find();
             const resources = await MindCastResource.find();
             const recommendations = await MindCastRecommend.find();
-            const bookmarks = await MindCastBookmark.find({ user_id: req.params.id });
+            const bookmarks = await MindCastBookmark.find({ userID: req.params.id });
             
             
 
@@ -166,7 +166,7 @@ exports.hostPorfile = useAsync(async (req, res) => {
         if(user){
 
             const allInterests = await MindCastInterest.find();
-            const resources = await MindCastResource.find({ user_id: req.params.id });
+            const resources = await MindCastResource.find({ userID: req.params.id });
          
             
             allInterests.forEach( interest => {
