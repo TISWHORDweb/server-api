@@ -280,7 +280,7 @@ exports.changePassword = useAsync(async (req, res) => {
         if (!req.body.id) return res.status(400).json({ msg: 'provide the id ?', status: 400 })
 
         if (!user) {
-            return res.json(utils.JParser('No User is registered with this id', true, []));
+            return res.json(utils.JParser('No User is registered with this id', false, []));
         }
 
         const originalPassword = await bcrypt.compare(req.body.password, user.password);
@@ -288,13 +288,11 @@ exports.changePassword = useAsync(async (req, res) => {
 
 
         if (!originalPassword) {
-            return res.json(utils.JParser('wrong password', true, []));
+            return res.json(utils.JParser('wrong password', false, []));
         } else {
-
             if (newp) {
                 return res.json(utils.JParser('You cant change your password to your previous password, use another password and try again', true, []));
             }
-
             const NewPassword = await bcrypt.hash(req.body.newPassword, 13)
             await MindCastUser.updateOne({ _id: req.body.id }, { password: NewPassword }).then(async () => {
                 const New = await MindCastUser.findOne({ _id: req.body.id });
