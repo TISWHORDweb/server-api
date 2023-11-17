@@ -20,6 +20,7 @@ const MindCastUserInterest = require('../models/model.userInterest');
 const MindCastResource = require('../models/model.resources')
 const MindCastRecommend= require('../models/model.recommend');
 const MindCastBookmark = require('../models/model.bookmark');
+const MoodTracker = require('../models/model.moodTracker');
 
 
 
@@ -69,6 +70,10 @@ exports.userSettings = useAsync(async (req, res) => {
         const id = req.params.id;
         const body = req.body
         await MindCastUser.updateOne({ _id: id }, body).then(async () => {
+            if (res.body.mood!=null) {
+                const d = new Date();
+               await MoodTracker.create({userID:id, mood:res.body.mood, date:d, day:d.getDate(), month:d.getMonth()})
+            }
             const user = await MindCastUser.find({ _id: id });
             return res.json(utils.JParser('Account Setup Successfully', !!user, user));
 
@@ -94,6 +99,8 @@ exports.userHomeData = useAsync(async (req, res) => {
             const resources = await MindCastResource.find();
             const recommendations = await MindCastRecommend.find();
             const bookmarks = await MindCastBookmark.find({ userID: req.params.id });
+            const moods = await MoodTracker.find({ userID: req.params.id });
+            
             
             
 
@@ -150,7 +157,7 @@ exports.userHomeData = useAsync(async (req, res) => {
             
 
 
-            let body={user,userInterest,allHost,userRecommend,userBookmarks}
+            let body={user,userInterest,allHost,userRecommend,userBookmarks,moods}
 
 
             return res.json(utils.JParser('User Data fetch successfully', !!user, body));
