@@ -70,9 +70,11 @@ exports.userSettings = useAsync(async (req, res) => {
         const id = req.params.id;
         const body = req.body
         await MindCastUser.updateOne({ _id: id }, body).then(async () => {
-            if (res.body.mood!=null) {
+            
+            if (req.body.mood !=null ) {
+
                 const d = new Date();
-               await MoodTracker.create({userID:id, mood:res.body.mood, date:d, day:d.getDate(), month:d.getMonth()})
+               await MoodTracker.create({userID:id, mood:req.body.mood, date:d, day:d.getDate(), month:d.getMonth()})
             }
             const user = await MindCastUser.find({ _id: id });
             return res.json(utils.JParser('Account Setup Successfully', !!user, user));
