@@ -6,8 +6,10 @@ const path = require('path');
 const bodyParser = require('body-parser')
 const mindCastAuth = require('./routes/route.auth')
 const mindCastUser = require('./routes/route.user')
+const cron=require('node-cron')
 
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const { log } = require("console");
 
 // const dotenv = require("dotenv")
 // dotenv.config()
@@ -44,5 +46,8 @@ mongoose.set("strictQuery", true);
 
 const port = process.env.PORT || 3005;
 app.listen(port, () => {
+    cron.schedule("* * * * * *", ()=>{
+        console.log("Task Scheduled successfully");
+    })
     console.log('Server is running on port ' + port);
 })
