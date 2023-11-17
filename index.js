@@ -46,8 +46,8 @@ mongoose.set("strictQuery", true);
 
 const port = process.env.PORT || 3005;
 app.listen(port, () => {
-    cron.schedule("* * * * * *", ()=>{
-        console.log("Task Scheduled successfully");
-    })
+    // cron.schedule("* * * * * *", ()=>{
+    //     console.log("Task Scheduled successfully");
+    // })
     console.log('Server is running on port ' + port);
 })
