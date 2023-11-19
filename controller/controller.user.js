@@ -175,7 +175,7 @@ exports.userHomeData = useAsync(async (req, res) => {
             amood.data=aMoods
             
         });
-        console.log(allMoods);
+       
             
 
 
