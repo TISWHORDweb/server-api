@@ -147,19 +147,39 @@ exports.userHomeData = useAsync(async (req, res) => {
             })
 
             bookmarks.forEach(mark=> {
-
                 resources.forEach( (resource,index)=>{
                     if(resource._id  == mark.resourceID ){
                         let data={"bookmarkID":mark._id, resource}
                         userBookmarks.push(data)
                     }
                 }) 
-
             });
+
+            let allMoods=[{"name":"Happy", "data":[]},{"name":"Sad", "data":[]},{"name":"Angry", "data":[]}]
+
+            allMoods.forEach(amood => {
+                
+            let aMoods=[];
+            
+            for (let i = 0; i < 12; i++) {
+                let total=0
+
+                moods.forEach(element => {
+                if(i==element.month && element.mood==amood.name){
+                    total=total+1
+                }
+               });
+               aMoods.push({"month":i+1,"total": total})
+                
+            }
+            amood.data=aMoods
+            
+        });
+        console.log(allMoods);
             
 
 
-            let body={user,userInterest,allHost,userRecommend,userBookmarks,moods}
+            let body={user,userInterest,allHost,userRecommend,userBookmarks,allMoods}
 
 
             return res.json(utils.JParser('User Data fetch successfully', !!user, body));
