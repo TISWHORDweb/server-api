@@ -247,7 +247,7 @@ exports.deleteUser = useAsync(async (req, res) => {
         await MindCastUser.deleteOne({ _id: req.body.id })
         return res.json(utils.JParser('User deleted successfully', true, []));
 
-        res.status(200).json("");
+      
     } catch (e) {
         throw new errorHandle(e.message, 400)
     }
