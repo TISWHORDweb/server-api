@@ -21,13 +21,13 @@ const { recommend, singleRecommend, interestRecommend, deleteRecommend, allRecom
  * auth routes
  */
 
-router.put('/setting/:id', userSettings);
+router.put('/user/setting/:id', userSettings);
 router.get('/single/:id', singleUser);
 router.get('/users', allUser);
 router.get('/user/host/:id', hostPorfile);
 router.get('/user/home/:id', userHomeData); 
 router.post('/change/password', changePassword);
-router.delete('/delete', deleteUser);
+router.post('/delete', deleteUser);
 
 //AUDIT
 router.post('/audit', audit);
