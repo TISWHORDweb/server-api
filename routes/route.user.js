@@ -32,7 +32,7 @@ router.post('/delete', deleteUser);
 //AUDIT
 router.post('/audit', audit);
 router.get('/audit/:id', singleAudit);
-router.delete('/audit/delete', deleteAudit);
+router.post('/audit/delete', deleteAudit);
 
 //RESOURCES
 router.post('/resources', resources);
@@ -43,20 +43,20 @@ router.put('/resources/:id', resourceUpdate);
 router.get('/resources/user/:id', userResources);
 router.get('/resources/interest/:id', interestResources);
 router.get('/resource-interests', interestAndResources);
-router.delete('/resources/delete', deleteResources);
+router.post('/resources/delete', deleteResources);
 
 // SUBSCRIPTION
 router.post('/subscription', subscription);
 router.get('/subscription/:id', singleSubscription);
 router.get('/subscriptions', allSubscription);
-router.delete('/subscription/delete', deleteSubscription);
+router.post('/subscription/delete', deleteSubscription);
 
 //REVIEW
 router.post('/review', review);
 router.get('/review/:id', singleReview);
 router.get('/reviews', allReview);
 router.get('/review/user/:id', userReview);
-router.delete('/review/delete', deleteReview);
+router.post('/review/delete', deleteReview);
 
 //INTEREST
 router.post('/interest', interest);
@@ -67,28 +67,28 @@ router.get('/interests', allInterest);
 router.get('/interest/user/:id', userInterest);
 router.get('/interest/users/interest/:id', interestUser);
 router.get('/interest/user/delete', deleteUserInterest);
-router.delete('/interest/delete', deleteInterest);
+router.post('/interest/delete', deleteInterest);
 
 //HISTORY
 router.post('/history', history);
 router.get('/history/:id', singleHistory);
 router.get('/histories', allHistory);
 router.get('/history/user/:id', userHistory);
-router.delete('/history/delete', deleteHistory);
+router.post('/history/delete', deleteHistory);
 
 //FAVOURITES
 router.post('/favourite', favourite);
 router.get('/favourite/:id', singleFavourite);
 router.get('/favourites', allFavourite);
 router.get('/favourite/user/:id', userFavourite);
-router.delete('/favourite/delete', deleteFavourite);
+router.post('/favourite/delete', deleteFavourite);
 
 //HOST REQUEST
 router.post('/host', host);
 router.get('/host/:id', singleHost);
 router.get('/hosts', allHost);
 router.get('/host/user/:id', userHost);
-router.delete('/host/delete', deleteHost);
+router.post('/host/delete', deleteHost);
 
 
 //Bookmark
@@ -96,14 +96,14 @@ router.post('/bookmark', bookmark);
 router.get('/bookmark/:id', singleBookmark);
 router.get('/bookmark/all', allBookmark);
 router.get('/bookmark/user/:id', userBookmark);
-router.delete('/bookmark/delete', deleteBookmark);
+router.post('/bookmark/delete', deleteBookmark);
 
 //Recommend
 router.post('/recommendation', recommend);
 router.get('/recommendation/:id', singleRecommend);
 router.get('/recommendation', allRecommend);
 router.get('/recommendation/interest/:id', interestRecommend);
- router.delete('/recommendation/delete', deleteRecommend);
+ router.post('/recommendation/delete', deleteRecommend);
 
 
 
