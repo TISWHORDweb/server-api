@@ -107,30 +107,21 @@ exports.userHomeData = useAsync(async (req, res) => {
             
 
             allInterests.forEach( interest => {
-                alluserInterest.forEach( async element => {
-                    if(interest._id==element.interest_id){
+                let interestedResources=[]
 
-                        let interestedResources=[]
+                resources.forEach(aRes => {
 
-                        resources.forEach(aRes => {
-
-                            if(interest._id==aRes.interestID){
-                                
-                                interestedResources.push(aRes)
-                            }
-                        });
-
+                    if(interest._id==aRes.interestID){
                         
-
-                        
-                        let anInterest={interest, interestedResources }
-                        
-                        userInterest.push(anInterest)
+                        interestedResources.push(aRes)
                     }
-                    
                 });
+                
+                let anInterest={interest, interestedResources }
+                
+                userInterest.push(anInterest)
                
-               
+
                 
             });
 
