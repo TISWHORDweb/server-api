@@ -47,6 +47,22 @@ exports.singleResources = useAsync(async (req, res) => {
     }
 })
 
+exports.updatePlayCount = useAsync(async (req, res) => {
+    try {
+        let resource = null
+        await MindCastResource.findOne({ _id: req.params.id }).then(async (data) => {
+            console.log(data);
+            let count=data.no_plays
+            await MindCastResource.updateOne({ _id: req.params.id },{no_plays: count + 1}).then(async () => {
+                resource = await MindCastResource.findOne({ _id: req.params.id })
+            })
+        });
+        return res.json(utils.JParser('Resource fetch successfully', !!resource, resource));
+    } catch (e) {
+        throw new errorHandle(e.message, 400)
+    }
+})
+
 exports.allResources = useAsync(async (req, res) => {
     try {
         const resources = await MindCastResource.find();
@@ -73,11 +89,11 @@ exports.searchResources = useAsync(async (req, res) => {
 
     try {
 
-        let resources = await MindCastResource.find({$or:[{title:{'$regex':req.body.query}}, {description:{'$regex':req.body.query}}]});
+        let resources = await MindCastResource.find({ $or: [{ title: { '$regex': req.body.query } }, { description: { '$regex': req.body.query } }] });
 
-        let hosts = await MindCastUser.find({ isHost:true, $or:[{username:{'$regex':req.body.query}}]});
+        let hosts = await MindCastUser.find({ isHost: true, $or: [{ username: { '$regex': req.body.query } }] });
 
-        return res.json(utils.JParser('User resources fetch successfully', !!resources, {resources,hosts}));
+        return res.json(utils.JParser('User resources fetch successfully', !!resources, { resources, hosts }));
 
     } catch (e) {
         throw new errorHandle(e.message, 400)
@@ -103,20 +119,20 @@ exports.interestAndResources = useAsync(async (req, res) => {
 
         let resources = await MindCastResource.find();
         let interests = await MindCastInterest.find();
-        let interest_resources=[]
+        let interest_resources = []
 
-        interests.forEach(interest=>{
-            let resource=[]
-            resources.forEach(reso=>{
-                if(reso.interestID==interest._id){
+        interests.forEach(interest => {
+            let resource = []
+            resources.forEach(reso => {
+                if (reso.interestID == interest._id) {
                     resource.push(reso)
                 }
-               
+
             })
 
-            interest_resources.push({interest,resource })
+            interest_resources.push({ interest, resource })
         })
-        
+
 
         return res.json(utils.JParser('Interest resources fetch successfully', !!interest_resources, interest_resources));
 
