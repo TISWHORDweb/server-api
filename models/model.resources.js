@@ -36,6 +36,7 @@ const MindCastResourceSchema=new mongoose.Schema({
     },
     no_plays:{
         type:Number,
+        default:0
     },
     time_created:{type:Number, default:()=>Date.now()},	
     updated_at:{type:Number, default:()=>Date.now()}	
