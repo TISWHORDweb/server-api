@@ -34,6 +34,9 @@ const MindCastResourceSchema=new mongoose.Schema({
     moodType:{
         type:String,
     },
+    no_plays:{
+        type:Number,
+    },
     time_created:{type:Number, default:()=>Date.now()},	
     updated_at:{type:Number, default:()=>Date.now()}	
 })
