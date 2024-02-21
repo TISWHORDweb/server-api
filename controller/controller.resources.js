@@ -51,7 +51,6 @@ exports.updatePlayCount = useAsync(async (req, res) => {
     try {
         let resource = null
         await MindCastResource.findOne({ _id: req.params.id }).then(async (data) => {
-            console.log(data);
             let count=data.no_plays
             await MindCastResource.updateOne({ _id: req.params.id },{no_plays: count + 1}).then(async () => {
                 resource = await MindCastResource.findOne({ _id: req.params.id })
