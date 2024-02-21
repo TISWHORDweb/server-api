@@ -54,7 +54,12 @@ exports.userSingleBookmark= useAsync(async (req, res) => {
         var query = {$and:[{userID:{$regex: req.params.userID, $options: 'i'}},{resourceID:{$regex: req.params.resourceID, $options: 'i'}}]}
 
         const bookmark = await MindCastBookmark.findOne(query);
-        return res.json(utils.JParser('User Bookmark fetch successfully', !!bookmark, bookmark));
+        if(bookmark!=null){
+            return res.json(utils.JParser('User Bookmark fetch successfully', !!bookmark, bookmark));
+        }else{
+            return res.json(utils.JParser('No favourites yet',));
+        }
+       
     } catch (e) {
         throw new errorHandle(e.message, 400)
     }
