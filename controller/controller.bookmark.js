@@ -57,7 +57,7 @@ exports.userSingleBookmark= useAsync(async (req, res) => {
         if(bookmark!=null){
             return res.json(utils.JParser('User Bookmark fetch successfully', !!bookmark, bookmark));
         }else{
-            return res.json(utils.JParser('No favourites yet',));
+            return res.json(utils.JParser('No favourites yet',!!bookmark));
         }
        
     } catch (e) {
