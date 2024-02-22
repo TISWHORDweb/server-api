@@ -98,11 +98,11 @@ exports.searchResources = useAsync(async (req, res) => {
 
     try {
 
-        let resources = await MindCastResource.find({ $or: [{ title: { '$regex': req.body.query } }, { description: { '$regex': req.body.query } }] });
+        let resources = await MindCastResource.find({ $or: [{ title: { $regex: req.body.query, $options: 'i' } }, { description: { $regex: req.body.query,$options: 'i' } }] });
 
         let hosts = await MindCastUser.find({ isHost: true, $or: [{ username: { '$regex': req.body.query } }] });
 
-        return res.json(utils.JParser('User resources fetch successfully', !!resources, { resources, hosts }));
+        return res.json(utils.JParser('Search results fetch successfully', !!resources, { resources, hosts }));
 
     } catch (e) {
         throw new errorHandle(e.message, 400)
