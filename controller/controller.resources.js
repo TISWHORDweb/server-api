@@ -74,9 +74,7 @@ exports.allResources = useAsync(async (req, res) => {
 exports.highResources = useAsync(async (req, res) => {
     try {
         let resources = await MindCastResource.find();
-        console.log(resources);
         resources=resources.sort((a,b)=>  b.no_plays - a.no_plays)
-       
         return res.json(utils.JParser('Resources fetch successfully', !!resources, resources));
     } catch (e) {
         throw new errorHandle(e.message, 400)
