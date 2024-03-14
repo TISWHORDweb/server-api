@@ -63,6 +63,30 @@ const MoodTracker = require('../models/model.moodTracker');
 // }
 
 //setup
+
+exports.userUpdateMood = useAsync(async (req, res) => {
+
+    try {
+        // const id = req.userId;
+        
+        const users = await MindCastUser.find();
+        users.forEach((user)=>{
+
+            if (user.mood !=null ) {
+                const d = new Date();
+                //MoodTracker.create({userID:user._id, mood:user.mood, date:d, day:d.getDate(), month:d.getMonth()})
+                console.log("Mood updated");
+            }
+        })
+        
+        
+       // return res.json(utils.JParser('Mood Update Successfully',true));
+
+    } catch (e) {
+        throw new errorHandle(e.message, 400)
+    }
+})
+
 exports.userSettings = useAsync(async (req, res) => {
 
     try {

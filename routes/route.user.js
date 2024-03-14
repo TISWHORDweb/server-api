@@ -6,7 +6,7 @@ const {userBodyGuard} = require('../middleware/middleware.protects');
 const express = require('express');
 const router = express.Router();
 const CoreError = require('./../core/core.error');
-const {  userSettings, singleUser, deleteUser,userHomeData, audit, singleAudit, deleteAudit, allUser, changePassword,hostPorfile } = require('../controller/controller.user');
+const {  userSettings, singleUser, deleteUser,userHomeData, audit, singleAudit, deleteAudit, allUser, changePassword,hostPorfile, userUpdateMood } = require('../controller/controller.user');
 const { resources,allResources,resourceUpdate, singleResources, userResources, deleteResources, interestResources,interestAndResources ,searchResources, updatePlayCount,highResources} = require('../controller/controller.resources');
 const { deleteSubscription, userSubscription, singleSubscription, subscription, allSubscription } = require('../controller/controller.subscription');
 const { review, singleReview, userReview, deleteReview, allReview } = require('../controller/controller.review');
@@ -28,6 +28,7 @@ router.get('/user/host/:id', hostPorfile);
 router.get('/user/home/:id', userHomeData); 
 router.post('/change/password', changePassword);
 router.post('/delete', deleteUser);
+router.post('/mood-update/:id', userUpdateMood);
 
 //AUDIT
 router.post('/audit', audit);
