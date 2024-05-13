@@ -40,11 +40,7 @@ const MindCastUserSchema=new mongoose.Schema({
         type:Boolean,
         default: false,
     },
-    status: {
-        type: String,
-        enum : ['free','paid','blocked'],
-        default: 'free'
-    },
+   
     interest:{
         type:Array,
     },
@@ -68,6 +64,20 @@ const MindCastUserSchema=new mongoose.Schema({
         type:String,
     },
     ip:{
+        type:String,
+    },
+    status: {
+        type: String,
+        enum : ['free','paid','blocked'],
+        default: 'free'
+    },
+    subscription_product:{
+        type:String,
+    },
+    subscription_end_date:{
+        type:String,
+    },
+    coupon_code:{
         type:String,
     },
     whoIs: {
