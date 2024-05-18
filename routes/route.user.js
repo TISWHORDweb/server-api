@@ -16,7 +16,7 @@ const { singleFavourite, allFavourite, userFavourite, deleteFavourite, favourite
 const { host, singleHost, allHost, userHost, deleteHost } = require('../controller/controller.hostRequest');
 const { bookmark, singleBookmark, allBookmark, userBookmark, deleteBookmark,userSingleBookmark } = require('../controller/controller.bookmark');
 const { recommend, singleRecommend, interestRecommend, deleteRecommend, allRecommend } = require('../controller/controller.recommend');
-
+const { app_message_create, app_version_create, singleAppMessage, singleAppVersion, deleteAppMessage, deleteAppVersion } = require('../controller/controller.app-management');
 /**
  * auth routes
  */
@@ -109,7 +109,13 @@ router.get('/recommendation', allRecommend);
 router.get('/recommendation/interest/:id', interestRecommend);
  router.post('/recommendation/delete', deleteRecommend);
 
-
+//Recommend
+router.post('/app-version', app_version_create);
+router.post('/app-message', app_message_create);
+router.get('/app-version', singleAppVersion);
+router.get('/app-message', singleAppMessage);
+router.post('/app-version/delete', singleAppVersion);
+router.post('/app-message/delete', singleAppMessage);
 
 /**
  * Export lastly
