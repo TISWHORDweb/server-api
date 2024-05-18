@@ -10,6 +10,9 @@ const MindCastAppMessageSchema=new mongoose.Schema({
     image:{
         type:String, 
     },
+    status:{
+        type:String, 
+    },
     time_created:{type:Number, default:()=>Date.now()},	
     updated_at:{type:Number, default:()=>Date.now()}	
 })
