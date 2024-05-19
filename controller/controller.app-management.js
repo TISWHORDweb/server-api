@@ -25,7 +25,7 @@ exports.singleAppVersion = useAsync(async (req, res) => {
 
     try {
         const appVersions = await MindCastApp.find({}).sort({_id:-1}).limit(1);
-        return res.json(utils.JParser('App Version successfully', !!appVersions, appVersions));
+        return res.json(utils.JParser('App Version successfully', !!appVersions, appVersions[0]));
     } catch (e) {
         throw new errorHandle(e.message, 400)
     }
@@ -49,7 +49,7 @@ exports.singleAppMessage = useAsync(async (req, res) => {
     try {
         const appMessage = await MindCastAppMessage.find({}).sort({_id:-1}).limit(1);
 
-        return res.json(utils.JParser('App Message successfully', !!appMessage, appMessage));
+        return res.json(utils.JParser('App Message successfully', !!appMessage, appMessage[0]));
     } catch (e) {
         throw new errorHandle(e.message, 400)
     }
