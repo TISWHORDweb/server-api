@@ -114,8 +114,8 @@ router.post('/app-version', app_version_create);
 router.post('/app-message', app_message_create);
 router.get('/app-version', singleAppVersion);
 router.get('/app-message', singleAppMessage);
-router.post('/app-version/delete', singleAppVersion);
-router.post('/app-message/delete', singleAppMessage);
+router.post('/app-version/delete', deleteAppVersion);
+router.post('/app-message/delete', deleteAppMessage);
 
 /**
  * Export lastly
