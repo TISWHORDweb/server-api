@@ -108,15 +108,17 @@ exports.sendMoodCheck = useAsync(async (req, res) => {
                 "page": "check_mood"
             }
         }
+        
 
         const headers = {
             'Content-Type': 'application/json',
-            'Authorization': 'key=AAAANn3xa2g:APA91bG-gebLalXkm4Mz540rI_l8_sIeIROh9g5O_-6Z5JJ-zyA5GFeMbJbmdYiWGjF2rlaahPq3qku-YCfCyxosQc8qeL83rbdFSTs9nCX7QsEDj3F0l3xyoyBbYLQbJsDBCZVBxE--'
+            'Authorization': `key=${process.env.FIREBASE_NOTIFICATION_KEY}`
           }
-        
+          
+          
         
         await axios.post('https://fcm.googleapis.com/fcm/send', sendData,{  headers: headers}).then((data)=>{
-            
+
             return res.json(utils.JParser('Notification Sent Successfully'));
         })
 
