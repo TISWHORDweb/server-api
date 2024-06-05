@@ -6,7 +6,7 @@ const path = require('path');
 const bodyParser = require('body-parser')
 const mindCastAuth = require('./routes/route.auth')
 const mindCastUser = require('./routes/route.user')
-const {  userUpdateMood } = require('./controller/controller.user');
+const {  userUpdateMood, sendMoodCheck } = require('./controller/controller.user');
 
 const cron=require('node-cron')
 
@@ -52,5 +52,18 @@ app.listen(port, () => {
         userUpdateMood()
         console.log("Task Scheduled successfully");
     })
+
+    cron.schedule("0 7 * * *", ()=>{
+        sendMoodCheck()
+        console.log("Notification sent successfully");
+    })
+
+    cron.schedule("0 20 * * *", ()=>{
+        sendMoodCheck()
+        console.log("Notification sent successfully");
+    })
+
+   
+
     console.log('Server is running on port ' + port);
 })

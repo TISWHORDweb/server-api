@@ -21,6 +21,7 @@ const MindCastResource = require('../models/model.resources')
 const MindCastRecommend= require('../models/model.recommend');
 const MindCastBookmark = require('../models/model.bookmark');
 const MoodTracker = require('../models/model.moodTracker');
+const { log } = require('console')
 
 
 
@@ -86,6 +87,49 @@ exports.userUpdateMood = useAsync(async (req, res) => {
         throw new errorHandle(e.message, 400)
     }
 })
+
+exports.sendMoodCheck = useAsync(async (req, res) => {
+
+    try {
+        let sendData={
+            "to":"/topics/MINDCAST-ALERT",
+             "priority": "high",
+             "content-available":true,
+            "notification": {
+                "title": "Mood Check",
+                "body": "Consistency is key to better mental health. Don't forget to track your mood today.",
+                "click_action": "FLUTTER_NOTIFICATION_CLICK",
+                "priority": "high",
+                "content_available": true,
+                 "sound": "default"
+            },
+            "data": {
+                "routeId": 6,
+                "page": "check_mood"
+            }
+        }
+
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'key=AAAANn3xa2g:APA91bG-gebLalXkm4Mz540rI_l8_sIeIROh9g5O_-6Z5JJ-zyA5GFeMbJbmdYiWGjF2rlaahPq3qku-YCfCyxosQc8qeL83rbdFSTs9nCX7QsEDj3F0l3xyoyBbYLQbJsDBCZVBxE--'
+          }
+        
+        
+        await axios.post('https://fcm.googleapis.com/fcm/send', sendData,{  headers: headers}).then((data)=>{
+            
+            return res.json(utils.JParser('Notification Sent Successfully'));
+        })
+
+        .catch((error) => {
+           console.log(error);
+          })
+
+    } catch (e) {
+        throw new errorHandle(e.message, 400)
+    }
+})
+
+
 
 exports.userSettings = useAsync(async (req, res) => {
 

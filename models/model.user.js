@@ -80,6 +80,12 @@ const MindCastUserSchema=new mongoose.Schema({
     coupon_code:{
         type:String,
     },
+    coupon_code:{
+        type:String,
+    },
+    fire_base_token:{
+        type:String,
+    },
     whoIs: {
         type: Number,
         enum : [0,1,2],
