@@ -58,7 +58,7 @@ exports.generateCoupon = useAsync(async (req, res) => {
         let mailOptions = {
             from: "Mindcasts App  noreply@mindcasts.life",
             to: req.body.email,
-            subject: `${req.body.assignedName} - Coupon Codes`,
+            subject: `${req.body.assignedName} - Subscription Codes`,
             html: htmlToSend,
         };
 
@@ -73,7 +73,7 @@ exports.generateCoupon = useAsync(async (req, res) => {
         });
         
 
-        return res.json(utils.JParser('coupon created successfully', !!coupons, coupons));
+        return res.json(utils.JParser('Subscription created successfully', !!coupons, coupons));
 
     } catch (e) {
         throw new errorHandle(e.message, 400)
@@ -140,7 +140,7 @@ exports.checkActivecoupons = useAsync(async (req, res) => {
 
         });
 
-
+        return res.json(utils.JParser('Coupons Updated', true));
 
     } catch (e) {
         throw new errorHandle(e.message, 400)
