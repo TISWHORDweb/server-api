@@ -8,9 +8,35 @@ const nodemailer = require('nodemailer');
 const handlebars = require("handlebars")
 const fs = require("fs")
 const path = require("path")
+const stripe = require('stripe')('sk_test_51Kv1hhGrAkA0etTm6P44vBMzx5yRgnaDgMaPWiIuRgOSzJAKFGrl12gPrz59YArj23ERXYnWLvcYngfyfs0rZgO600g735azel')
 
 
 
+exports.stripePayment = useAsync(async (req, res) => {
+
+    
+
+    const paymentLink = await stripe.paymentLinks.create({
+        line_items: [
+          {
+            price: 'price_1PRUPNGrAkA0etTmllyi3VFu',
+            quantity: req.body.totalUsers,
+          },
+        ],
+        after_completion: {
+          type: 'redirect',
+          
+          redirect: {
+            url: 'https://www.mindcasts.life/checkout.html',
+            
+          },
+        },
+      });
+      console.log(paymentLink);
+      let data={data:req.body, paymentLink:paymentLink}
+      return res.json(utils.JParser('Subscription link', true, data));
+
+})
 
 exports.generateCoupon = useAsync(async (req, res) => {
 

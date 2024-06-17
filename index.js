@@ -60,10 +60,10 @@ app.listen(port, () => {
     //     console.log("Notification sent successfully");
     // })
 
-    // cron.schedule("0 20 * * *", ()=>{
-    //     sendMoodCheck()
-    //     console.log("Notification sent successfully");
-    // })
+    cron.schedule("0 20 * * *", ()=>{
+        sendMoodCheck()
+        console.log("Notification sent successfully");
+    })
 
    
 
