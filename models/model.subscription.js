@@ -5,7 +5,7 @@ const MindCastSubscriptionSchema=new mongoose.Schema({
         type:String,
     },
     duration:{
-        type:String, 
+        type:Number,
     },
     price:{
         type:Number,    

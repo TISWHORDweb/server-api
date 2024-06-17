@@ -68,20 +68,20 @@ const { log } = require('console')
 exports.userUpdateMood = useAsync(async (req, res) => {
 
     try {
-        // const id = req.userId;
+         const id = req.userId;
         
         const users = await MindCastUser.find();
         users.forEach((user)=>{
 
             if (user.mood !=null ) {
                 const d = new Date();
-                //MoodTracker.create({userID:user._id, mood:user.mood, date:d, day:d.getDate(), month:d.getMonth()})
+                MoodTracker.create({userID:user._id, mood:user.mood, date:d, day:d.getDate(), month:d.getMonth()})
                 console.log("Mood updated");
             }
         })
         
         
-       // return res.json(utils.JParser('Mood Update Successfully',true));
+        return res.json(utils.JParser('Mood Update Successfully',true));
 
     } catch (e) {
         throw new errorHandle(e.message, 400)
@@ -130,6 +130,7 @@ exports.sendMoodCheck = useAsync(async (req, res) => {
         throw new errorHandle(e.message, 400)
     }
 })
+
 
 
 

@@ -25,6 +25,8 @@ app.use(function(req, res, next) {
   next();
 });
 
+app.use(express.urlencoded());  
+app.use(express.json());
 app.use(expressLayouts);
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
@@ -53,15 +55,15 @@ app.listen(port, () => {
         console.log("Task Scheduled successfully");
     })
 
-    cron.schedule("0 7 * * *", ()=>{
-        sendMoodCheck()
-        console.log("Notification sent successfully");
-    })
+    // cron.schedule("0 7 * * *", ()=>{
+    //     sendMoodCheck()
+    //     console.log("Notification sent successfully");
+    // })
 
-    cron.schedule("0 20 * * *", ()=>{
-        sendMoodCheck()
-        console.log("Notification sent successfully");
-    })
+    // cron.schedule("0 20 * * *", ()=>{
+    //     sendMoodCheck()
+    //     console.log("Notification sent successfully");
+    // })
 
    
 

@@ -17,6 +17,7 @@ const { host, singleHost, allHost, userHost, deleteHost } = require('../controll
 const { bookmark, singleBookmark, allBookmark, userBookmark, deleteBookmark,userSingleBookmark } = require('../controller/controller.bookmark');
 const { recommend, singleRecommend, interestRecommend, deleteRecommend, allRecommend } = require('../controller/controller.recommend');
 const { app_message_create, app_version_create, singleAppMessage, singleAppVersion, deleteAppMessage, deleteAppVersion } = require('../controller/controller.app-management');
+const { generateCoupon, singlecoupon, allcoupon, deletecoupon, assigncoupon } = require('../controller/controller.coupon');
 /**
  * auth routes
  */
@@ -110,7 +111,7 @@ router.get('/recommendation', allRecommend);
 router.get('/recommendation/interest/:id', interestRecommend);
  router.post('/recommendation/delete', deleteRecommend);
 
-//Recommend
+//App Version
 router.post('/app-version', app_version_create);
 router.post('/app-message', app_message_create);
 router.get('/app-version', singleAppVersion);
@@ -118,6 +119,10 @@ router.get('/app-message', singleAppMessage);
 router.post('/app-version/delete', deleteAppVersion);
 router.post('/app-message/delete', deleteAppMessage);
 
+//App Cuopns
+router.post('/create-coupons', generateCoupon);
+router.get('/all-coupons', allcoupon);
+router.post('/assign-coupon', assigncoupon);
 
 /**
  * Export lastly
