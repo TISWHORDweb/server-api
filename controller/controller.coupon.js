@@ -35,6 +35,7 @@ exports.stripePayment = useAsync(async (req, res) => {
       console.log(paymentLink);
       let data={data:req.body, paymentLink:paymentLink}
       return res.json(utils.JParser('Subscription link', true, data));
+      
 
 })
 
