@@ -8,7 +8,7 @@ const nodemailer = require('nodemailer');
 const handlebars = require("handlebars")
 const fs = require("fs")
 const path = require("path")
-const stripe = require('stripe')('sk_test_51Kv1hhGrAkA0etTm6P44vBMzx5yRgnaDgMaPWiIuRgOSzJAKFGrl12gPrz59YArj23ERXYnWLvcYngfyfs0rZgO600g735azel')
+const stripe = require('stripe')(process.env.SECRET_STP_KEY)
 
 
 
@@ -19,7 +19,7 @@ exports.stripePayment = useAsync(async (req, res) => {
     const paymentLink = await stripe.paymentLinks.create({
         line_items: [
           {
-            price: 'price_1PRUPNGrAkA0etTmllyi3VFu',
+            price: 'prod_QHwQ5IjwTvMI09',
             quantity: req.body.totalUsers,
           },
         ],
