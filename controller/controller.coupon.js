@@ -13,9 +13,6 @@ const stripe = require('stripe')(process.env.SECRET_STP_KEY)
 
 
 exports.stripePayment = useAsync(async (req, res) => {
-
-    
-
     const paymentLink = await stripe.paymentLinks.create({
         line_items: [
           {
