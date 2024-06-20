@@ -7,31 +7,35 @@ const MindCastCoupon = require('../models/model.cuponCodes');
 const nodemailer = require('nodemailer');
 const handlebars = require("handlebars")
 const fs = require("fs")
-const path = require("path")
+const path = require("path");
+const MindCastCouponPayment = require('../models/model.couponPayment');
 const stripe = require('stripe')(process.env.SECRET_STP_KEY)
 
 
 
 exports.stripePayment = useAsync(async (req, res) => {
-    const paymentLink = await stripe.paymentLinks.create({
-        line_items: [
-          {
-            price: 'price_1PRMXYGrAkA0etTmQ3a5bmzm',
-            quantity: req.body.totalUsers,
-          },
-        ],
-        after_completion: {
-          type: 'redirect',
-          
-          redirect: {
-            url: 'https://www.mindcasts.life/checkout.html',
+
+    await MindCastCouponPayment.create({email:req.body.email, status:"pending"})
+
+        const paymentLink = await stripe.paymentLinks.create({
+            line_items: [
+              {
+                price: 'price_1PRMXYGrAkA0etTmQ3a5bmzm',
+                quantity: req.body.totalUsers,
+              },
+            ],
+            after_completion: {
+              type: 'redirect',
+              redirect: {
+                url: `https://www.mindcasts.life/checkout.html?email=${req.body.email}&totalUsers=${req.body.totalUsers}&assignedName=${req.body.assignedName}&totalMonths=${req.body.totalMonths}`,
             
-          },
-        },
-      });
-      console.log(paymentLink);
-      let data={data:req.body, paymentLink:paymentLink}
-      return res.json(utils.JParser('Subscription link', true, data));
+              },
+            },
+          });
+          console.log(paymentLink);
+          let data={data:req.body, paymentLink:paymentLink}
+          return res.json(utils.JParser('Subscription link', true, data));
+    
       
 
 })
@@ -40,64 +44,72 @@ exports.generateCoupon = useAsync(async (req, res) => {
 
     try {
 
-        let assignedName = req.body.assignedName
-        let totalUsers = req.body.totalUsers
-        let totalMonths = req.body.totalMonths;
-        let email = req.body.email
+        const payment = await MindCastCouponPayment.findOne({ email: req.body.email });
 
-         let allCodes=``
-        for (let i = 0; i < totalUsers; i++) {
-
-            function randomString(length, chars) {
-
-                var result = '';
-                for (var i = length; i > 0; --i) result += chars[Math.round(Math.random() * (chars.length - 1))];
-                return result;
+        if(payment!=null){
+            let assignedName = req.body.assignedName
+            let totalUsers = req.body.totalUsers
+            let totalMonths = req.body.totalMonths;
+            let email = req.body.email
+    
+             let allCodes=``
+            for (let i = 0; i < totalUsers; i++) {
+    
+                function randomString(length, chars) {
+    
+                    var result = '';
+                    for (var i = length; i > 0; --i) result += chars[Math.round(Math.random() * (chars.length - 1))];
+                    return result;
+                }
+                let code = randomString(8, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')
+    
+                allCodes+=`<li>Code-${i+1} - <b>${code}</b></li> \n`
+                let cupon = { "coupon": code, "email": email, "duration": totalMonths, "price": 0, "assignedName": assignedName, }
+                
+                await MindCastCoupon.create(cupon)
             }
-            let code = randomString(8, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')
-
-            allCodes+=`<li>Code-${i+1} - <b>${code}</b></li> \n`
-            let cupon = { "coupon": code, "email": email, "duration": totalMonths, "price": 0, "assignedName": assignedName, }
+            const coupons = await MindCastCoupon.find({ email: req.body.email });
+            console.log(allCodes);
+    
+            let transporter = nodemailer.createTransport({
+                host: process.env.EMAIL_HOST,
+                port: 465,
+                encoding:"ssl",
+                secure: true,
+                auth: {
+                    user: process.env.EMAIL_ADDRESS,
+                    pass: process.env.APP_PASSWORD
+                }
+            });
+    
+            const emailTemplateSource = fs.readFileSync(path.join(__dirname, "../views/mailTemplate-promo.hbs"), "utf8")
+            const template = handlebars.compile(emailTemplateSource)
+            const htmlToSend = template({ name: req.body.assignedName, coupons:coupons, allCodes:allCodes, totalUsers:totalUsers })
+    
+            let mailOptions = {
+                from: "Mindcasts App  noreply@mindcasts.life",
+                to: req.body.email,
+                subject: `${req.body.assignedName} - Subscription Codes`,
+                html: htmlToSend,
+            };
+    
+           
+    
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log('Email sent: ' + info.response);
+                }
+            });
             
-            await MindCastCoupon.create(cupon)
+            await MindCastCouponPayment.deleteOne({ email: req.body.email });
+
+            return res.json(utils.JParser('Subscription created successfully', !!coupons, coupons));
+        }else{
+            return res.json(utils.JParser('No subscription has been paid yet', false, ));
         }
-        const coupons = await MindCastCoupon.find({ email: req.body.email });
-        console.log(allCodes);
-
-        let transporter = nodemailer.createTransport({
-            host: process.env.EMAIL_HOST,
-            port: 465,
-            encoding:"ssl",
-            secure: true,
-            auth: {
-                user: process.env.EMAIL_ADDRESS,
-                pass: process.env.APP_PASSWORD
-            }
-        });
-
-        const emailTemplateSource = fs.readFileSync(path.join(__dirname, "../views/mailTemplate-promo.hbs"), "utf8")
-        const template = handlebars.compile(emailTemplateSource)
-        const htmlToSend = template({ name: req.body.assignedName, coupons:coupons, allCodes:allCodes, totalUsers:totalUsers })
-
-        let mailOptions = {
-            from: "Mindcasts App  noreply@mindcasts.life",
-            to: req.body.email,
-            subject: `${req.body.assignedName} - Subscription Codes`,
-            html: htmlToSend,
-        };
-
-       
-
-        transporter.sendMail(mailOptions, function (error, info) {
-            if (error) {
-                console.log(error);
-            } else {
-                console.log('Email sent: ' + info.response);
-            }
-        });
         
-
-        return res.json(utils.JParser('Subscription created successfully', !!coupons, coupons));
 
     } catch (e) {
         throw new errorHandle(e.message, 400)
@@ -136,7 +148,7 @@ exports.assigncoupon = useAsync(async (req, res) => {
             }
 
         } else {
-            return res.json(utils.JParser('Coupon not found', false));
+            return res.json(utils.JParser('Subscription not found', false));
         }
 
     } catch (e) {
@@ -165,7 +177,7 @@ exports.checkActivecoupons = useAsync(async (req, res) => {
 
         });
 
-        return res.json(utils.JParser('Coupons Updated', true));
+        return res.json(utils.JParser('Subscriptions Updated', true));
 
     } catch (e) {
         throw new errorHandle(e.message, 400)
@@ -176,7 +188,7 @@ exports.singlecoupon = useAsync(async (req, res) => {
 
     try {
         const coupon = await MindCastCoupon.findOne({ _id: req.params.id });
-        return res.json(utils.JParser('coupon fetch successfully', !!coupon, coupon));
+        return res.json(utils.JParser('Subscription fetch successfully', !!coupon, coupon));
     } catch (e) {
         throw new errorHandle(e.message, 400)
     }
@@ -186,7 +198,7 @@ exports.allcoupon = useAsync(async (req, res) => {
 
     try {
         const coupon = await MindCastCoupon.find();
-        return res.json(utils.JParser('coupon fetch successfully', !!coupon, coupon));
+        return res.json(utils.JParser('Subscription fetch successfully', !!coupon, coupon));
     } catch (e) {
         throw new errorHandle(e.message, 400)
     }
@@ -196,7 +208,7 @@ exports.usercoupon = useAsync(async (req, res) => {
 
     try {
         const coupon = await MindCastCoupon.find({ userID: req.params.id });
-        return res.json(utils.JParser('User coupon fetch successfully', !!coupon, coupon));
+        return res.json(utils.JParser('User Subscription fetch successfully', !!coupon, coupon));
     } catch (e) {
         throw new errorHandle(e.message, 400)
     }
@@ -207,7 +219,7 @@ exports.deletecoupon = useAsync(async (req, res) => {
         if (!req.body.id) return res.status(402).json({ msg: 'provide the id ' })
 
         await MindCastCoupon.deleteOne({ _id: req.body.id })
-        return res.json(utils.JParser('coupon deleted successfully', true, []));
+        return res.json(utils.JParser('Subscription deleted successfully', true, []));
 
     } catch (e) {
         throw new errorHandle(e.message, 400)
