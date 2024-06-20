@@ -108,7 +108,8 @@ exports.generateCoupon = useAsync(async (req, res) => {
 exports.assigncoupon = useAsync(async (req, res) => {
 
     try {
-        const coupon = await MindCastCoupon.findOne({ name: req.body.code });
+        const coupon = await MindCastCoupon.findOne({ coupon: req.body.code });
+        
         if (coupon != null) {
 
             if (coupon.status == "pending") {
@@ -129,9 +130,9 @@ exports.assigncoupon = useAsync(async (req, res) => {
 
                 const updatedCoupon = await MindCastCoupon.find({ _id: coupon._id });
 
-                return res.json(utils.JParser('coupon fetch successfully', !!updatedCoupon, updatedCoupon));
+                return res.json(utils.JParser('Subscription fetch successfully', !!updatedCoupon, updatedCoupon));
             } else {
-                return res.json(utils.JParser('Coupon code already in use ', false));
+                return res.json(utils.JParser('Subscription code already in use ', false));
             }
 
         } else {
