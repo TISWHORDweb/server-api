@@ -5,13 +5,47 @@ const { useAsync, utils, errorHandle, } = require('./../core');
 const MindCastUser = require('../models/model.user')
 const MindCastResource = require('../models/model.resources')
 const MindCastInterest = require('../models/model.interest');
+const { Axios } = require('axios');
 
 
 
 exports.resources = useAsync(async (req, res) => {
 
     try {
+        let sendData={
+            "to":"/topics/MINDCAST-ALERT",
+             "priority": "high",
+             "content-available":true,
+            "notification": {
+                "title": "New Content Available",
+                "body": `New! ${req.body.title} added. Listen now.`,
+                "click_action": "FLUTTER_NOTIFICATION_CLICK",
+                "priority": "high",
+                "content_available": true,
+                 "sound": "default"
+            },
+            "data": {
+                "routeId": 6,
+                "page": "home"
+            }
+        }
+        
 
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `key=${process.env.FIREBASE_NOTIFICATION_KEY}`
+          }
+          
+          
+        
+        await Axios.post('https://fcm.googleapis.com/fcm/send', sendData,{  headers: headers}).then((data)=>{
+
+            return res.json(utils.JParser('Notification Sent Successfully'));
+        })
+
+        .catch((error) => {
+           console.log(error);
+        })
         const audit = await MindCastResource.create(req.body)
         return res.json(utils.JParser('Resources created successfully', !!audit, audit));
 

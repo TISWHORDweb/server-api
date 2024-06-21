@@ -124,7 +124,7 @@ exports.sendMoodCheck = useAsync(async (req, res) => {
 
         .catch((error) => {
            console.log(error);
-          })
+        })
 
     } catch (e) {
         throw new errorHandle(e.message, 400)
