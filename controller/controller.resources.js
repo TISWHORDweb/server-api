@@ -5,7 +5,7 @@ const { useAsync, utils, errorHandle, } = require('./../core');
 const MindCastUser = require('../models/model.user')
 const MindCastResource = require('../models/model.resources')
 const MindCastInterest = require('../models/model.interest');
-const { Axios } = require('axios');
+const axios = require('axios')
 
 
 
@@ -38,11 +38,7 @@ exports.resources = useAsync(async (req, res) => {
           
           
         
-        await Axios.post('https://fcm.googleapis.com/fcm/send', sendData,{  headers: headers}).then((data)=>{
-
-            return res.json(utils.JParser('Notification Sent Successfully'));
-        })
-
+        await axios.post('https://fcm.googleapis.com/fcm/send', sendData,{  headers: headers})
         .catch((error) => {
            console.log(error);
         })
