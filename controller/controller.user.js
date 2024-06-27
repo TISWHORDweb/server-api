@@ -168,11 +168,13 @@ exports.userHomeData = useAsync(async (req, res) => {
         if(user){
 
             const alluserInterest = await MindCastUserInterest.find({ userID: req.params.id });
-            const allInterests = await MindCastInterest.find();
+            const allInterests = await MindCastInterest.find().sort({'position': 1}).all();
             const resources = await MindCastResource.find();
             const recommendations = await MindCastRecommend.find();
             const bookmarks = await MindCastBookmark.find({ userID: req.params.id });
             const moods = await MoodTracker.find({ userID: req.params.id });
+
+           
             
             
             
