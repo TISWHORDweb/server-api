@@ -94,7 +94,7 @@ exports.updatePlayCount = useAsync(async (req, res) => {
 
 exports.allResources = useAsync(async (req, res) => {
     try {
-        const resources = await MindCastResource.find();
+        const resources = await MindCastResource.find().sort({'time_created': -1}).all();
         return res.json(utils.JParser('Resources fetch successfully', !!resources, resources));
     } catch (e) {
         throw new errorHandle(e.message, 400)

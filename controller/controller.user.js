@@ -169,7 +169,7 @@ exports.userHomeData = useAsync(async (req, res) => {
 
             const alluserInterest = await MindCastUserInterest.find({ userID: req.params.id });
             const allInterests = await MindCastInterest.find().sort({'position': 1}).all();
-            const resources = await MindCastResource.find();
+            const resources = await MindCastResource.find().sort({'position': -1}).all();
             const recommendations = await MindCastRecommend.find();
             const bookmarks = await MindCastBookmark.find({ userID: req.params.id });
             const moods = await MoodTracker.find({ userID: req.params.id });
@@ -360,7 +360,7 @@ exports.allUser = useAsync(async (req, res) => {
 
     try {
 
-        const user = await MindCastUser.find()
+        const user = await MindCastUser.find().sort({'time_created': -1}).all();
 
         res.json(utils.JParser("All businesses", !!user, user));
     } catch (e) {

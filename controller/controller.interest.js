@@ -63,7 +63,7 @@ exports.singleInterest = useAsync(async (req, res) => {
 exports.allInterest = useAsync(async (req, res) => {
 
     try {
-        const interest = await MindCastInterest.find();
+        const interest = await MindCastInterest.find().sort({'position': -1}).all();
         return res.json(utils.JParser('Interest fetch successfully', !!interest, interest));
     } catch (e) {
         throw new errorHandle(e.message, 400)
