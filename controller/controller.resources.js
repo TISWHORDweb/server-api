@@ -143,7 +143,7 @@ exports.interestResources = useAsync(async (req, res) => {
 
     try {
 
-        let resources = await MindCastResource.find({ interestID: req.params.id });
+        let resources = await MindCastResource.find({ interestID: req.params.id }).sort({'time_created': -1}).all();
 
         return res.json(utils.JParser('Interest resources fetch successfully', !!resources, resources));
 
@@ -156,8 +156,8 @@ exports.interestAndResources = useAsync(async (req, res) => {
 
     try {
 
-        let resources = await MindCastResource.find();
-        let interests = await MindCastInterest.find();
+        let resources = await MindCastResource.find().sort({'time_created': -1}).all();
+        let interests = await MindCastInterest.find().sort({'position': 1}).all();
         let interest_resources = []
 
         interests.forEach(interest => {
