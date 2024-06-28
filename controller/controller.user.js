@@ -169,13 +169,7 @@ exports.userHomeData = useAsync(async (req, res) => {
 
             const alluserInterest = await MindCastUserInterest.find({ userID: req.params.id });
             const allInterests = await MindCastInterest.find().sort({'position': 1}).all();
-            let resources=null;
-            
-            if (user.status=="paid") {
-                resources = await MindCastResource.find().sort({'time_created': -1}).all();
-            }else{
-                resources = await MindCastResource.find({paymentType:"free"}).sort({'time_created': -1}).all();
-            }
+            let resources= await MindCastResource.find().sort({'time_created': -1}).all();
             
 
             const recommendations = await MindCastRecommend.find().sort({'time_created': -1}).all();
@@ -187,12 +181,26 @@ exports.userHomeData = useAsync(async (req, res) => {
 
             allInterests.forEach( interest => {
                 let interestedResources=[]
+                let freeCount=0
+                
+
 
                 resources.forEach(aRes => {
 
                     if(interest._id==aRes.interestID){
+
+
                         
-                        interestedResources.push(aRes)
+                        if(interest.name=="Stories"){
+                            interestedResources.push(aRes)
+                        }else{
+
+                            if(user.status=="free" && aRes.paymentType=="free"){
+                                interestedResources.push(aRes)
+                            }else if(user.status=="paid" && aRes.paymentType=="paid"){
+                                interestedResources.push(aRes)
+                            }
+                        }
                     }
                 });
                 
