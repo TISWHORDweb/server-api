@@ -31,6 +31,11 @@ const MindCastResourceSchema=new mongoose.Schema({
     resourceUrl:{
         type:String,
     },
+    paymentType:{
+        type:String,
+        enum : ['free','paid'],
+        default: 'paid'
+    },
     moodType:{
         type:String,
     },

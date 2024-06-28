@@ -169,12 +169,18 @@ exports.userHomeData = useAsync(async (req, res) => {
 
             const alluserInterest = await MindCastUserInterest.find({ userID: req.params.id });
             const allInterests = await MindCastInterest.find().sort({'position': 1}).all();
-            const resources = await MindCastResource.find().sort({'position': -1}).all();
-            const recommendations = await MindCastRecommend.find();
-            const bookmarks = await MindCastBookmark.find({ userID: req.params.id });
-            const moods = await MoodTracker.find({ userID: req.params.id });
+            let resources=null;
+            
+            if (user.status=="paid") {
+                resources = await MindCastResource.find().sort({'time_created': -1}).all();
+            }else{
+                resources = await MindCastResource.find({paymentType:"free"}).sort({'time_created': -1}).all();
+            }
+            
 
-           
+            const recommendations = await MindCastRecommend.find().sort({'time_created': -1}).all();
+            const bookmarks = await MindCastBookmark.find({ userID: req.params.id }).sort({'time_created': -1}).all();
+            const moods = await MoodTracker.find({ userID: req.params.id });
             
             
             
