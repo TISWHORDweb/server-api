@@ -121,7 +121,6 @@ exports.sendMoodCheck = useAsync(async (req, res) => {
 
             return res.json(utils.JParser('Notification Sent Successfully'));
         })
-
         .catch((error) => {
            console.log(error);
         })
@@ -133,6 +132,33 @@ exports.sendMoodCheck = useAsync(async (req, res) => {
 
 
 
+exports.checkUserSubscription = useAsync(async (req, res) => {
+    try {
+
+        const users = await MindCastUser.find({ subscription_product: { $ne: null } });
+
+        console.log(users);
+
+        users.forEach( async data => {
+
+            const firstDate =  new Date(data.subscription_end_date).getTime()
+            const secondDate = new Date().getTime()
+
+            if(firstDate < secondDate){
+                console.log(true);
+                await MindCastUser.updateOne({ _id: data.id }, {"status":"free","subscription_product":null,"subscription_end_date":null,})
+            }else{
+                console.log(false);
+            }
+
+        });
+
+        return res.json(utils.JParser('Subscriptions Updated', true));
+
+    } catch (e) {
+        throw new errorHandle(e.message, 400)
+    }
+})
 
 exports.userSettings = useAsync(async (req, res) => {
 
