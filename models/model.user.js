@@ -77,6 +77,9 @@ const MindCastUserSchema=new mongoose.Schema({
     subscription_end_date:{
         type:String,
     },
+    subscription_id:{
+        type:String,
+    },
     coupon_code:{
         type:String,
     },

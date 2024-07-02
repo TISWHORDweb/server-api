@@ -98,6 +98,7 @@ exports.createStripeSubscription = useAsync(async (req, res) => {
             payment_settings: { save_default_payment_method: 'on_subscription' },
             expand: ['latest_invoice.payment_intent'],
         });
+        await MindCastUser.updateOne({ _id: req.body.user_id }, { 'subscription_id': subscription.id })
         console.log(subscription);
         let subObject = {
             subscriptionId: subscription.id,
