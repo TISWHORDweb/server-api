@@ -16,10 +16,10 @@ const stripe = require('stripe')(process.env.SECRET_STP_KEY)
 exports.createStripeCustomer = useAsync(async (req, res) => {
 
     try {
-        const user = await MindCastUser.findOne({ _id: req.body.user_id, email:req.body.CUSTOMER_EMAIL });
-        let stripeCustomer=null
+        const user = await MindCastUser.findOne({ _id: req.body.user_id, email: req.body.CUSTOMER_EMAIL });
+        let stripeCustomer = null
 
-        if(user!=null && user.stripe_customer_id==null){
+        if (user != null && user.stripe_customer_id == null) {
             const customer = await stripe.customers.create({
                 email: req.body.CUSTOMER_EMAIL,
                 name: req.body.CUSTOMER_NAME,
@@ -41,35 +41,35 @@ exports.createStripeCustomer = useAsync(async (req, res) => {
                     state: 'CA',
                 },
             });
-            await MindCastUser.updateOne({ _id: req.body.user_id }, {'stripe_customer_id':customer.id})
+            await MindCastUser.updateOne({ _id: req.body.user_id }, { 'stripe_customer_id': customer.id })
             stripeCustomer = await MindCastUser.findOne({ _id: req.body.user_id });
-        }else if(user!=null && user.stripe_customer_id!=null){
+        } else if (user != null && user.stripe_customer_id != null) {
             stripeCustomer = await MindCastUser.findOne({ _id: req.body.user_id });
         }
 
-        if(stripeCustomer!=null){
+        if (stripeCustomer != null) {
             const ephemeralKey = await stripe.ephemeralKeys.create(
-                {customer:stripeCustomer.stripe_customer_id},
-                {apiVersion: '2020-08-27'}
-              );
-              const setupIntent = await stripe.setupIntents.create({
+                { customer: stripeCustomer.stripe_customer_id },
+                { apiVersion: '2020-08-27' }
+            );
+            const setupIntent = await stripe.setupIntents.create({
                 customer: stripeCustomer.stripe_customer_id,
                 automatic_payment_methods: {
-                  enabled: true,
+                    enabled: true,
                 },
-              });
-            let response={
+            });
+            let response = {
                 setupIntent: setupIntent.client_secret,
                 ephemeralKey: ephemeralKey.secret,
                 customer: stripeCustomer.stripe_customer_id,
-              }
-    
-            return res.json(utils.JParser('Subscription Created Successfully', true, response));
-        }else{
+            }
+
+            return res.json(utils.JParser('Subscription Created Successfully', !!response, {"we":"have"}));
+        } else {
             return res.json(utils.JParser('Customer does not exist', false));
         }
 
-        
+
 
     } catch (e) {
         throw new errorHandle(e.message, 400)
@@ -92,15 +92,15 @@ exports.createStripeSubscription = useAsync(async (req, res) => {
                 price: priceId,
             }],
             trial_end: 1720166677,
-            billing_cycle_anchor: 1722845077, 
+            billing_cycle_anchor: 1722845077,
             payment_behavior: 'default_incomplete',
             payment_settings: { save_default_payment_method: 'on_subscription' },
             expand: ['latest_invoice.payment_intent'],
         });
         console.log(subscription);
-        let subObject={
+        let subObject = {
             subscriptionId: subscription.id,
-          }
+        }
 
         return res.json(utils.JParser('Subscription Created Successfully', true, subObject));
 
@@ -112,24 +112,24 @@ exports.createStripeSubscription = useAsync(async (req, res) => {
 exports.createPaymentMethod = useAsync(async (req, res) => {
 
     const customerId = req.body.customerId;
-    
+
 
     try {
         const ephemeralKey = await stripe.ephemeralKeys.create(
-            {customer:customerId},
-            {apiVersion: '2020-08-27'}
-          );
-          const setupIntent = await stripe.setupIntents.create({
+            { customer: customerId },
+            { apiVersion: '2020-08-27' }
+        );
+        const setupIntent = await stripe.setupIntents.create({
             customer: customerId,
             automatic_payment_methods: {
-              enabled: true,
+                enabled: true,
             },
-          });
-        let response={
+        });
+        let response = {
             setupIntent: setupIntent.client_secret,
             ephemeralKey: ephemeralKey.secret,
             customer: customerId,
-          }
+        }
 
         return res.json(utils.JParser('Subscription Created Successfully', true, response));
 
