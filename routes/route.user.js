@@ -18,6 +18,7 @@ const { bookmark, singleBookmark, allBookmark, userBookmark, deleteBookmark,user
 const { recommend, singleRecommend, interestRecommend, deleteRecommend, allRecommend } = require('../controller/controller.recommend');
 const { app_message_create, app_version_create, singleAppMessage, singleAppVersion, deleteAppMessage, deleteAppVersion } = require('../controller/controller.app-management');
 const { generateCoupon, singlecoupon, allcoupon, deletecoupon, assigncoupon,stripePayment } = require('../controller/controller.coupon');
+const {createStripeCustomer,createStripeSubscription, createPaymentMethod } = require('../controller/controller.stripe-api');
 /**
  * auth routes
  */
@@ -32,6 +33,14 @@ router.post('/delete', deleteUser);
 router.post('/mood-update/:id', userUpdateMood);
 router.get('/send-mood-check', sendMoodCheck);
 router.get('/check-subscription', checkUserSubscription);
+
+
+
+//STRIPE
+router.post('/create-stripe-customer', createStripeCustomer);
+router.post('/create-stripe-subscription', createStripeSubscription);
+router.post('/create-stripe-payment', createPaymentMethod);
+
 
 
 //AUDIT

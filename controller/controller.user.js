@@ -22,6 +22,7 @@ const MindCastRecommend= require('../models/model.recommend');
 const MindCastBookmark = require('../models/model.bookmark');
 const MoodTracker = require('../models/model.moodTracker');
 const { log } = require('console')
+const stripe = require('stripe')(process.env.SECRET_STP_KEY)
 
 
 
@@ -63,10 +64,14 @@ const { log } = require('console')
 //     }
 // }
 
-//setup
+//setup Stripe
+
+
+
 
 exports.userUpdateMood = useAsync(async (req, res) => {
 
+    
     try {
          const id = req.userId;
         

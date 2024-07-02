@@ -27,7 +27,7 @@ exports.stripePayment = useAsync(async (req, res) => {
             after_completion: {
               type: 'redirect',
               redirect: {
-                url: `https://www.mindcasts.life/checkout.html?email=${req.body.email}&totalUsers=${req.body.totalUsers}&assignedName=${req.body.assignedName}&totalMonths=${req.body.totalMonths}`,
+                url: `https://mindcasts.life/checkout?email=${req.body.email}&totalUsers=${req.body.totalUsers}&assignedName=${req.body.assignedName}&totalMonths=${req.body.totalMonths}`,
             
               },
             },

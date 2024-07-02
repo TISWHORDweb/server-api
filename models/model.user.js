@@ -83,6 +83,9 @@ const MindCastUserSchema=new mongoose.Schema({
     coupon_code:{
         type:String,
     },
+    stripe_customer_id:{
+        type:String,
+    },
     fire_base_token:{
         type:String,
     },
