@@ -63,7 +63,7 @@ exports.createStripeCustomer = useAsync(async (req, res) => {
                 ephemeralKey: ephemeralKey.secret,
                 customer: stripeCustomer.stripe_customer_id,
             }
-             
+
 
             return res.json(utils.JParser('Payment details Successfully', !!response, response));
         } else {
@@ -134,6 +134,36 @@ exports.createPaymentMethod = useAsync(async (req, res) => {
         }
 
         return res.json(utils.JParser('Subscription Created Successfully', true, response));
+
+    } catch (e) {
+        throw new errorHandle(e.message, 400)
+    }
+})
+
+exports.cancelSubscription = useAsync(async (req, res) => {
+
+
+    try {
+
+
+        const user = await MindCastUser.findOne({ _id: req.body.user_id });
+        if (user != null && user.subscription_id!=null) {
+            const deletedSubscription = await stripe.subscriptions.del(req.body.subscriptionId);
+
+            await MindCastUser.updateOne({ _id: req.body.user_id }, { 'subscription_id': null })
+            console.log(deletedSubscription);
+
+            let newUser = await MindCastUser.findOne({ _id: req.body.user_id });
+
+            return res.json(utils.JParser('Subscription canceled Successfully', true, newUser));
+        } else if(user.subscription_id==null) {
+            return res.json(utils.JParser('User does not have an active subscription ', false));
+        }else {
+            return res.json(utils.JParser('User does not exits ', false));
+        }
+
+
+
 
     } catch (e) {
         throw new errorHandle(e.message, 400)
