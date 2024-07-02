@@ -63,8 +63,9 @@ exports.createStripeCustomer = useAsync(async (req, res) => {
                 ephemeralKey: ephemeralKey.secret,
                 customer: stripeCustomer.stripe_customer_id,
             }
+             console.log(response);
 
-            return res.json(utils.JParser('Subscription Created Successfully', !!response, {"we":"have"}));
+            return res.json(utils.JParser('Payment details Successfully', !!response, {"we":"have"}));
         } else {
             return res.json(utils.JParser('Customer does not exist', false));
         }
