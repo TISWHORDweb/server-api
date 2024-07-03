@@ -154,7 +154,7 @@ exports.cancelSubscription = useAsync(async (req, res) => {
 
         const user = await MindCastUser.findOne({ _id: req.body.user_id });
         if (user != null && user.subscription_id != null) {
-            const deletedSubscription = await stripe.subscriptions.del(user.subscription_id);
+            const deletedSubscription = await stripe.subscriptions.cancel(user.subscription_id);
 
             await MindCastUser.updateOne({ _id: req.body.user_id }, { 'subscription_id': null, 'status': "free", 'mindCastSubscription_id': null,'subscription_product':null })
             console.log(deletedSubscription);
