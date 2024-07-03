@@ -8,7 +8,7 @@ const router = express.Router();
 const CoreError = require('./../core/core.error');
 const {  userSettings, singleUser, deleteUser,userHomeData, audit, singleAudit, deleteAudit, allUser, changePassword,hostPorfile, userUpdateMood, sendMoodCheck, checkUserSubscription} = require('../controller/controller.user');
 const { resources,allResources,resourceUpdate, singleResources, userResources, deleteResources, interestResources,interestAndResources ,searchResources, updatePlayCount,highResources} = require('../controller/controller.resources');
-const { deleteSubscription, userSubscription, singleSubscription, subscription, allSubscription } = require('../controller/controller.subscription');
+const { deleteSubscription, userSubscription, singleSubscription, subscription, allSubscription,updateSubscription } = require('../controller/controller.subscription');
 const { review, singleReview, userReview, deleteReview, allReview } = require('../controller/controller.review');
 const { interest,interestUpdate, singleInterest, allInterest, userInterest, deleteInterest, createUserInterest,deleteUserInterest, interestUser } = require('../controller/controller.interest');
 const { history, singleHistory, allHistory, userHistory, deleteHistory } = require('../controller/controller.history');
@@ -65,7 +65,9 @@ router.get('/resources/top/count', highResources);
 router.post('/subscription', subscription);
 router.get('/subscription/:id', singleSubscription);
 router.get('/subscriptions', allSubscription);
+router.post('/update-subscription/:id', updateSubscription);
 router.post('/subscription/delete', deleteSubscription);
+
 
 //REVIEW
 router.post('/review', review);

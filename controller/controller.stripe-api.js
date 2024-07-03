@@ -9,6 +9,7 @@ const handlebars = require("handlebars")
 const fs = require("fs")
 const path = require("path");
 const MindCastCouponPayment = require('../models/model.couponPayment');
+const MindCastSubscription = require('../models/model.subscription');
 const stripe = require('stripe')(process.env.SECRET_STP_KEY)
 
 
@@ -82,6 +83,7 @@ exports.createStripeSubscription = useAsync(async (req, res) => {
 
     const customerId = req.body.customerId;
     const priceId = req.body.priceId;
+    const mindcasrSubscription = await MindCastSubscription.findOne({ _id: req.body.mindCastSubscription_id });
 
     try {
         // Create the subscription. Note we're expanding the Subscription's
@@ -98,8 +100,8 @@ exports.createStripeSubscription = useAsync(async (req, res) => {
             payment_settings: { save_default_payment_method: 'on_subscription' },
             expand: ['latest_invoice.payment_intent'],
         });
-        await MindCastUser.updateOne({ _id: req.body.user_id }, { 'subscription_id': subscription.id })
-        console.log(subscription);
+        await MindCastUser.updateOne({ _id: req.body.user_id }, { 'subscription_id': subscription.id, 'mindCastSubscription_id':req.body.mindCastSubscription_id })
+       
         let subObject = {
             subscriptionId: subscription.id,
         }

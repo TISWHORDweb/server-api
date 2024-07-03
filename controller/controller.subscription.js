@@ -33,11 +33,33 @@ exports.singleSubscription = useAsync(async (req, res) => {
     }
 })
 
+exports.updateSubscription = useAsync(async (req, res) => {
+
+    try {
+        
+
+        await MindCastSubscription.updateOne({ _id: req.params.id }, req.body)
+
+        const resources = await MindCastSubscription.findOne({ _id: req.params.id });
+
+        return res.json(utils.JParser('Subscription fetch successfully', !!resources, resources));
+    } catch (e) {
+        throw new errorHandle(e.message, 400)
+    }
+})
+
 exports.allSubscription = useAsync(async (req, res) => {
 
     try {
-        const resources = await MindCastSubscription.find();
-        return res.json(utils.JParser('Subscriptions fetch successfully', !!resources, resources));
+
+        if(req.query.category){
+            const resources = await MindCastSubscription.find({category:req.query.category});
+            return res.json(utils.JParser('Subscriptions fetch successfully', !!resources, resources));
+        }else{
+            const resources = await MindCastSubscription.find();
+            return res.json(utils.JParser('Subscriptions fetch successfully', !!resources, resources));
+        }
+      
     } catch (e) {
         throw new errorHandle(e.message, 400)
     }

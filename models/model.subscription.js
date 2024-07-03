@@ -10,12 +10,21 @@ const MindCastSubscriptionSchema=new mongoose.Schema({
     price:{
         type:Number,    
     },
+    stripeID:{
+        type:String,    
+    },
     description:{
+        type:String,
+    },
+    oldPrice:{
+        type:Number,
+    },
+    category:{
         type:String,
     },
     type: {
         type: String,
-        enum : ['monthly','weekly','daily'],
+        enum : ['yearly','monthly','weekly','daily', ],
         default: 'monthly'
     },
     time_created:{type:Number, default:()=>Date.now()},	

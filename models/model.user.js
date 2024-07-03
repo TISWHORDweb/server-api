@@ -80,6 +80,9 @@ const MindCastUserSchema=new mongoose.Schema({
     subscription_id:{
         type:String,
     },
+    mindCastSubscription_id:{
+        type:String,
+    },
     coupon_code:{
         type:String,
     },
