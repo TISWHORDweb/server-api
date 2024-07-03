@@ -169,7 +169,7 @@ exports.checkActivecoupons = useAsync(async (req, res) => {
 
             if(firstDate < secondDate){
                 await MindCastCoupon.updateOne({ _id: data._id }, { status: "expired" })
-                await MindCastUser.updateOne({ _id: data.userID }, {"status":"free","subscription_product":null,})
+                await MindCastUser.updateOne({ _id: data.userID }, {"status":"free","subscription_product":null, 'subscription_end_date':null})
             }
 
         

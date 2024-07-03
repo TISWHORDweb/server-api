@@ -75,7 +75,7 @@ const MindCastUserSchema=new mongoose.Schema({
         type:String,
     },
     subscription_end_date:{
-        type:String,
+        type:Number,
     },
     subscription_id:{
         type:String,
