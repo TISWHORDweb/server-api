@@ -91,7 +91,8 @@ exports.createStripeSubscription = useAsync(async (req, res) => {
         // so we can pass it to the front end to confirm the payment
         const today = new Date();
         const nextThreeDays = new Date(today.setDate(today.getDate() + 3));
-        trial_end = nextThreeDays.getTime() / 1000;
+        let trial_end = nextThreeDays.getTime() / 1000;
+        console.log(`Trailes >>>>>>>>>>>>${trial_end}`);
 
         const subscription = await stripe.subscriptions.create({
             customer: customerId,
