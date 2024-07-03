@@ -92,14 +92,14 @@ exports.createStripeSubscription = useAsync(async (req, res) => {
         const today = new Date();
         const nextThreeDays = new Date(today.setDate(today.getDate() + 3));
         let trial_end = nextThreeDays.getTime() / 1000;
-        console.log(`Trailes >>>>>>>>>>>>${trial_end}`);
+        console.log(`Trailes >>>>>>>>>>>>${parseInt(trial_end, 10)}`);
 
         const subscription = await stripe.subscriptions.create({
             customer: customerId,
             items: [{
                 price: priceId,
             }],
-            trial_end: trial_end,
+            trial_end: parseInt(trial_end, 10) ,
             billing_cycle_anchor_config: {
                 day_of_month: 31,
             },
@@ -107,7 +107,7 @@ exports.createStripeSubscription = useAsync(async (req, res) => {
             payment_settings: { save_default_payment_method: 'on_subscription' },
             expand: ['latest_invoice.payment_intent'],
         });
-        await MindCastUser.updateOne({ _id: req.body.user_id }, { 'subscription_id': subscription.id, 'mindCastSubscription_id': req.body.mindCastSubscription_id, 'status': "paid" })
+        await MindCastUser.updateOne({ _id: req.body.user_id }, { 'subscription_id': subscription.id, 'mindCastSubscription_id': req.body.mindCastSubscription_id, 'status': "paid", 'subscription_product':"stripe" })
 
         let subObject = {
             subscriptionId: subscription.id,
@@ -156,7 +156,7 @@ exports.cancelSubscription = useAsync(async (req, res) => {
         if (user != null && user.subscription_id != null) {
             const deletedSubscription = await stripe.subscriptions.del(user.subscription_id);
 
-            await MindCastUser.updateOne({ _id: req.body.user_id }, { 'subscription_id': null, 'status': "free", 'mindCastSubscription_id': null })
+            await MindCastUser.updateOne({ _id: req.body.user_id }, { 'subscription_id': null, 'status': "free", 'mindCastSubscription_id': null,'subscription_product':null })
             console.log(deletedSubscription);
 
             let newUser = await MindCastUser.findOne({ _id: req.body.user_id });
@@ -191,7 +191,8 @@ exports.getAllStripeSubscription = useAsync(async (req, res) => {
                     element.status == "incomplete" || 
                     element.status == "incomplete_expired") {
 
-                    await MindCastUser.updateOne({ _id: user.id }, { 'subscription_id': null, 'status': "free", 'mindCastSubscription_id': null })
+                    await MindCastUser.updateOne({ _id: user.id }, { 'subscription_id': null, 'status': "free", 'mindCastSubscription_id': null 
+                        ,'subscription_product':null})
                 }
             }
             console.log(user);
