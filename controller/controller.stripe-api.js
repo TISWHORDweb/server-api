@@ -89,19 +89,25 @@ exports.createStripeSubscription = useAsync(async (req, res) => {
         // Create the subscription. Note we're expanding the Subscription's
         // latest invoice and that invoice's payment_intent
         // so we can pass it to the front end to confirm the payment
+        const today = new Date();
+        const nextThreeDays = new Date(today.setDate(today.getDate() + 3));
+        trial_end = nextThreeDays.getTime() / 1000;
+
         const subscription = await stripe.subscriptions.create({
             customer: customerId,
             items: [{
                 price: priceId,
             }],
-            trial_end: 1720166677,
-            billing_cycle_anchor: 1722845077,
+            trial_end: trial_end,
+            billing_cycle_anchor_config: {
+                day_of_month: 31,
+            },
             payment_behavior: 'default_incomplete',
             payment_settings: { save_default_payment_method: 'on_subscription' },
             expand: ['latest_invoice.payment_intent'],
         });
-        await MindCastUser.updateOne({ _id: req.body.user_id }, { 'subscription_id': subscription.id, 'mindCastSubscription_id':req.body.mindCastSubscription_id })
-       
+        await MindCastUser.updateOne({ _id: req.body.user_id }, { 'subscription_id': subscription.id, 'mindCastSubscription_id': req.body.mindCastSubscription_id, 'status': "paid" })
+
         let subObject = {
             subscriptionId: subscription.id,
         }
@@ -143,30 +149,54 @@ exports.createPaymentMethod = useAsync(async (req, res) => {
 })
 
 exports.cancelSubscription = useAsync(async (req, res) => {
-
-
     try {
 
-
         const user = await MindCastUser.findOne({ _id: req.body.user_id });
-        if (user != null && user.subscription_id!=null) {
-            const deletedSubscription = await stripe.subscriptions.del(req.body.subscriptionId);
+        if (user != null && user.subscription_id != null) {
+            const deletedSubscription = await stripe.subscriptions.del(user.subscription_id);
 
-            await MindCastUser.updateOne({ _id: req.body.user_id }, { 'subscription_id': null })
+            await MindCastUser.updateOne({ _id: req.body.user_id }, { 'subscription_id': null, 'status': "free", 'mindCastSubscription_id': null })
             console.log(deletedSubscription);
 
             let newUser = await MindCastUser.findOne({ _id: req.body.user_id });
 
             return res.json(utils.JParser('Subscription canceled Successfully', true, newUser));
-        } else if(user.subscription_id==null) {
+        } else if (user.subscription_id == null) {
             return res.json(utils.JParser('User does not have an active subscription ', false));
-        }else {
+        } else {
             return res.json(utils.JParser('User does not exits ', false));
         }
 
 
 
 
+    } catch (e) {
+        throw new errorHandle(e.message, 400)
+    }
+})
+
+exports.getAllStripeSubscription = useAsync(async (req, res) => {
+    try {
+
+        const subscriptions = await stripe.subscriptions.list({ status: "active", status: "trialing", });
+
+        subscriptions.data.forEach(async element => {
+            const user = await MindCastUser.findOne({ 'subscription_id': element.id });
+            if (user != null) {
+                if (element.status == "ended" || 
+                    element.status == "past_due" || 
+                    element.status == "unpaid" ||
+                    element.status == "canceled" || 
+                    element.status == "incomplete" || 
+                    element.status == "incomplete_expired") {
+
+                    await MindCastUser.updateOne({ _id: user.id }, { 'subscription_id': null, 'status': "free", 'mindCastSubscription_id': null })
+                }
+            }
+            console.log(user);
+        });
+
+        return res.json(utils.JParser('Load Subscriptions Successfully', true, subscriptions));
     } catch (e) {
         throw new errorHandle(e.message, 400)
     }

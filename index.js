@@ -7,6 +7,8 @@ const bodyParser = require('body-parser')
 const mindCastAuth = require('./routes/route.auth')
 const mindCastUser = require('./routes/route.user')
 const {  userUpdateMood, sendMoodCheck } = require('./controller/controller.user');
+const {  getAllStripeSubscription } = require('./controller/controller.stripe-api');
+
 
 const cron=require('node-cron')
 
@@ -61,6 +63,7 @@ app.listen(port, () => {
 
     cron.schedule("0 20 * * *", ()=>{
         sendMoodCheck()
+        getAllStripeSubscription()
         console.log("Notification sent successfully");
     })
 
