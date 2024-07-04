@@ -134,7 +134,7 @@ exports.assigncoupon = useAsync(async (req, res) => {
                 } else {
                     endDate = new Date(now.getFullYear(), now.getMonth() + totalMonths, 0);
                 }
-                let expDate = Date.parse(endDate).getTime() / 1000;
+                let expDate = Math.floor(new Date(endDate).getTime()/1000.0)
 
                 await MindCastCoupon.updateOne({ _id: coupon._id }, { exp_date: expDate, userID: req.body.userID, status: "active" })
 
@@ -199,6 +199,33 @@ exports.allcoupon = useAsync(async (req, res) => {
     try {
         const coupon = await MindCastCoupon.find();
         return res.json(utils.JParser('Subscription fetch successfully', !!coupon, coupon));
+    } catch (e) {
+        throw new errorHandle(e.message, 400)
+    }
+})
+
+
+exports.cancelCoupon = useAsync(async (req, res) => {
+    try {
+
+        const user = await MindCastUser.findOne({ _id: req.body.user_id });
+        if (user != null && user.subscription_product == "coupon") {
+
+            await MindCastUser.updateOne({ _id: req.body.user_id }, { 'subscription_id': null, 'status': "free", 'mindCastSubscription_id': null,'subscription_product':null, 'subscription_end_date':null })
+
+
+            return res.json(utils.JParser('Coupon Subscription canceled Successfully', false));
+
+
+        } else if (user.subscription_product == null) {
+            return res.json(utils.JParser('User does not have an active coupon ', false));
+        } else {
+            return res.json(utils.JParser('User does not exits ', false));
+        }
+
+
+
+
     } catch (e) {
         throw new errorHandle(e.message, 400)
     }

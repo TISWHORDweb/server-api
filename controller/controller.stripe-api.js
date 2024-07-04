@@ -156,13 +156,13 @@ exports.cancelSubscription = useAsync(async (req, res) => {
         if (user != null && user.subscription_id != null) {
             const deletedSubscription = await stripe.subscriptions.cancel(user.subscription_id);
 
-            await MindCastUser.updateOne({ _id: req.body.user_id }, { 'subscription_id': null, 'status': "free", 'mindCastSubscription_id': null,'subscription_product':null })
+            await MindCastUser.updateOne({ _id: req.body.user_id }, { 'subscription_id': null, 'status': "free", 'mindCastSubscription_id': null,'subscription_product':null,'subscription_end_date':null })
             console.log(deletedSubscription);
 
             let newUser = await MindCastUser.findOne({ _id: req.body.user_id });
 
-            return res.json(utils.JParser('Subscription canceled Successfully', true, newUser));
-        } else if (user.subscription_id == null) {
+            return res.json(utils.JParser('Stripe Subscription canceled Successfully', true, newUser));
+        }  else if (user.subscription_id == null) {
             return res.json(utils.JParser('User does not have an active subscription ', false));
         } else {
             return res.json(utils.JParser('User does not exits ', false));
