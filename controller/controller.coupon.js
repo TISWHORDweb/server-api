@@ -20,7 +20,7 @@ exports.stripePayment = useAsync(async (req, res) => {
         const paymentLink = await stripe.paymentLinks.create({
             line_items: [
               {
-                price: 'price_1PRUPNGrAkA0etTmllyi3VFu',
+                price: 'price_1PYiYOGrAkA0etTmGTQus5p9',
                 quantity: req.body.totalUsers,
               },
             ],
