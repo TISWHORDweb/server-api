@@ -20,7 +20,7 @@ exports.stripePayment = useAsync(async (req, res) => {
         const paymentLink = await stripe.paymentLinks.create({
             line_items: [
               {
-                price: 'price_1PRNFYGrAkA0etTmghQgnG13',
+                price: 'price_1PRUPNGrAkA0etTmllyi3VFu',
                 quantity: req.body.totalUsers,
               },
             ],
@@ -134,7 +134,7 @@ exports.assigncoupon = useAsync(async (req, res) => {
                 } else {
                     endDate = new Date(now.getFullYear(), now.getMonth() + totalMonths, 0);
                 }
-                let expDate = Date.parse(endDate) / 1000;
+                let expDate = Date.parse(endDate).getTime() / 1000;
 
                 await MindCastCoupon.updateOne({ _id: coupon._id }, { exp_date: expDate, userID: req.body.userID, status: "active" })
 
