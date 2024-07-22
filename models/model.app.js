@@ -1,6 +1,9 @@
 const mongoose = require('mongoose')
 
 const MindCastAppSchema=new mongoose.Schema({
+    device:{
+        type:String,
+    },
     v_code:{
         type:String,
     },

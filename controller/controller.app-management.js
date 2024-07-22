@@ -24,8 +24,15 @@ exports.app_version_create = useAsync(async (req, res) => {
 exports.singleAppVersion = useAsync(async (req, res) => {
 
     try {
-        const appVersions = await MindCastApp.find({}).sort({_id:-1}).limit(1);
+        if (req.query.os!=null) {
+            const appVersions = await MindCastApp.find({device:req.query.os}).sort({_id:-1}).limit(1);
+            return res.json(utils.JParser('App Version successfully', !!appVersions, appVersions[0]));
+
+        }else{
+            const appVersions = await MindCastApp.find({}).sort({_id:-1}).limit(1);
         return res.json(utils.JParser('App Version successfully', !!appVersions, appVersions[0]));
+        }
+       
     } catch (e) {
         throw new errorHandle(e.message, 400)
     }
