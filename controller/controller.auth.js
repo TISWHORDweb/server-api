@@ -22,6 +22,7 @@ const { useAsync, utils, errorHandle, } = require('./../core');
 const MindCastFavourite = require('../models/model.favourites')
 const MindCastUser = require('../models/model.user')
 const { EmailNote } = require('../core/core.notify')
+const { log } = require('console')
 
 
 
@@ -118,13 +119,14 @@ exports.userVerify = useAsync(async (req, res) => {
 
 
 exports.userLogin = useAsync(async (req, res) => {
-
+    
     try {
         res.header("Access-Control-Allow-Origin", "*");
         let UserPassword;
 
         const ip = address.ip();
         const user = await MindCastUser.findOne({ email: req.body.email })
+       
         let resultt;
         if (user) {
             resultt = user.blocked
@@ -135,10 +137,16 @@ exports.userLogin = useAsync(async (req, res) => {
 
         } else if (resultt === true) {
             return res.json(utils.JParser('Sorry your account is blocked', false, []));
+        }else{
+            return res.json(utils.JParser('Sorry your email does not exits', false, []));
         }
+        
 
         if (UserPassword) {
+           
             const originalPassword = await bcrypt.compare(req.body.password, UserPassword);
+
+            console.log(originalPassword);
 
             if (!originalPassword) {
                 return res.json(utils.JParser('Wrong password', false, []));
@@ -174,6 +182,7 @@ exports.userLogin = useAsync(async (req, res) => {
                 //     // }
 
                 // };
+                
 
                 await MindCastUser.updateOne({ _id: user._id }, { $set: { ip: ip, active: true, token: token, lastLogin: lastLogin } }).then(() => {
                     return res.json(utils.JParser('logged in successfuly', true, { user, token, IP_Address }));
