@@ -468,6 +468,50 @@ exports.usersGainedYearly = useAsync(async (req, res) => {
     }
 });
 
+// Route to get the number of users interested in each interest category
+exports.userPerInterest = useAsync(async (req, res) => {
+    try {
+        const interests = await MindCastInterest.find();
+        const interestData = await Promise.all(interests.map(async (interest) => {
+            const count = await MindCastUserInterest.countDocuments({ interest_id: interest._id });
+            return { name: interest.name, count };
+        }));
+        res.json(interestData);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Route to summarize the total number of resources per interest
+exports.resourcesPerInterest = useAsync(async (req, res) => {
+    try {
+        const resources = await MindCastResource.aggregate([
+            {
+                $group: {
+                    _id: "$interestID",
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { _id: 1 } }
+        ]);
+
+        const interests = await MindCastInterest.find();
+        const interestMap = interests.reduce((acc, interest) => {
+            acc[interest._id] = interest.name;
+            return acc;
+        }, {});
+
+        const summary = resources.map(resource => ({
+            interest: interestMap[resource._id] || "Unknown",
+            count: resource.count
+        }));
+
+        res.json(summary);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 
 // router.get("/:id", verify, async (req, res) => {
 

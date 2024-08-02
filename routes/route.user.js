@@ -19,7 +19,7 @@ const { recommend, singleRecommend, interestRecommend, deleteRecommend, allRecom
 const { app_message_create, app_version_create, singleAppMessage, singleAppVersion, deleteAppMessage, deleteAppVersion } = require('../controller/controller.app-management');
 const { generateCoupon, singlecoupon, allcoupon, deletecoupon, assigncoupon,stripePayment, cancelCoupon } = require('../controller/controller.coupon');
 const {createStripeCustomer,createStripeSubscription, createPaymentMethod, cancelSubscription, getAllStripeSubscription } = require('../controller/controller.stripe-api');
-const {usersGainedYearly}= require('../controller/controller.user');
+const {usersGainedYearly,userPerInterest,resourcesPerInterest}= require('../controller/controller.user');
 /**
  * auth routes
  */
@@ -38,6 +38,9 @@ router.get('/check-subscription', checkUserSubscription);
 
 //USER SUMMARY
 router.get('/users-gained-yearly', usersGainedYearly);
+router.get('/users-per-interest', userPerInterest);
+router.get('/resources-per-interest', resourcesPerInterest);
+
 
 
 //STRIPE
