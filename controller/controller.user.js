@@ -438,7 +438,6 @@ exports.changePassword = useAsync(async (req, res) => {
             await MindCastUser.updateOne({ _id: req.body.id }, { password: NewPassword }).then(async () => {
                 const New = await MindCastUser.findOne({ _id: req.body.id });
                 return res.json(utils.JParser('Password changed Successfully ', !!New, New));
-
             }).catch((err) => {
                 res.send(err)
             })
@@ -450,6 +449,24 @@ exports.changePassword = useAsync(async (req, res) => {
     }
 
 })
+
+
+exports.usersGainedYearly = useAsync(async (req, res) => {
+    try {
+        const users = await MindCastUser.aggregate([
+            {
+                $group: {
+                    _id: { $dateToString: { format: "%Y", date: { $toDate: "$time_created" } } },
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { _id: 1 } }
+        ]);
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 
 
 // router.get("/:id", verify, async (req, res) => {
