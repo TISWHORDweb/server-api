@@ -113,7 +113,7 @@ exports.highResources = useAsync(async (req, res) => {
 
 exports.top20Resources = useAsync(async (req, res) => {
     try {
-        let resources = await MindCastResource.find().sort({ no_plays: -1 }).limit(50);
+        let resources = await MindCastResource.find().sort({ no_plays: -1 }).limit(20);
         
         return res.json(utils.JParser('Resources fetch successfully', !!resources, resources));
     } catch (e) {
