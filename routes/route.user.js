@@ -7,7 +7,7 @@ const express = require('express');
 const router = express.Router();
 const CoreError = require('./../core/core.error');
 const {  userSettings, singleUser, deleteUser,userHomeData, audit, singleAudit, deleteAudit, allUser, changePassword,hostPorfile, userUpdateMood, sendMoodCheck, checkUserSubscription} = require('../controller/controller.user');
-const { resources,allResources,resourceUpdate, singleResources, userResources, deleteResources, interestResources,interestAndResources ,searchResources, updatePlayCount,highResources} = require('../controller/controller.resources');
+const { resources,top20Resources,allResources,resourceUpdate, singleResources, userResources, deleteResources, interestResources,interestAndResources ,searchResources, updatePlayCount,highResources} = require('../controller/controller.resources');
 const { deleteSubscription, userSubscription, singleSubscription, subscription, allSubscription,updateSubscription } = require('../controller/controller.subscription');
 const { review, singleReview, userReview, deleteReview, allReview } = require('../controller/controller.review');
 const { interest,interestUpdate, singleInterest, allInterest, userInterest, deleteInterest, createUserInterest,deleteUserInterest, interestUser } = require('../controller/controller.interest');
@@ -19,7 +19,7 @@ const { recommend, singleRecommend, interestRecommend, deleteRecommend, allRecom
 const { app_message_create, app_version_create, singleAppMessage, singleAppVersion, deleteAppMessage, deleteAppVersion } = require('../controller/controller.app-management');
 const { generateCoupon, singlecoupon, allcoupon, deletecoupon, assigncoupon,stripePayment, cancelCoupon } = require('../controller/controller.coupon');
 const {createStripeCustomer,createStripeSubscription, createPaymentMethod, cancelSubscription, getAllStripeSubscription } = require('../controller/controller.stripe-api');
-const {usersGainedYearly,userPerInterest,resourcesPerInterest}= require('../controller/controller.user');
+const {usersGainedYearly,userPerInterest,resourcesPerInterest, activeSubscriptions}= require('../controller/controller.user');
 /**
  * auth routes
  */
@@ -35,12 +35,12 @@ router.post('/mood-update/:id', userUpdateMood);
 router.get('/send-mood-check', sendMoodCheck);
 router.get('/check-subscription', checkUserSubscription);
 
-
 //USER SUMMARY
 router.get('/users-gained-yearly', usersGainedYearly);
 router.get('/users-per-interest', userPerInterest);
 router.get('/resources-per-interest', resourcesPerInterest);
-
+router.get('/active-subscriptions',activeSubscriptions);
+router.get('/top-resources',top20Resources);
 
 
 //STRIPE
@@ -49,7 +49,6 @@ router.post('/create-stripe-subscription', createStripeSubscription);
 router.post('/create-stripe-payment', createPaymentMethod);
 router.post('/cancel-stripe-subscription', cancelSubscription);
 router.get('/load-stripe-subscriptions', getAllStripeSubscription);
-
 
 //AUDIT
 router.post('/audit', audit);

@@ -512,6 +512,30 @@ exports.resourcesPerInterest = useAsync(async (req, res) => {
     }
 });
 
+// Route to get the total number of users with an active subscription per month
+exports.activeSubscriptions = useAsync(async (req, res) => {
+    try {
+        const now = Date.now();
+        const users = await MindCastUser.aggregate([
+            {
+                $match: {
+                    subscription_end_date: { $gte: now }
+                }
+            },
+            {
+                $group: {
+                    _id: { $dateToString: { format: "%Y-%m", date: { $toDate: "$subscription_end_date" } } },
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { _id: 1 } }
+        ]);
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 
 // router.get("/:id", verify, async (req, res) => {
 
