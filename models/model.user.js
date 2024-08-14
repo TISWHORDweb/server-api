@@ -100,6 +100,11 @@ const MindCastUserSchema=new mongoose.Schema({
         enum : [0,1,2],
         default: 0
     },
+    user_role:{
+        type:String,
+        enum : ['user','admin'],
+        default: 'user'
+    },
     time_created:{type:Number, default:()=>Date.now()},	
     updated_at:{type:Number, default:()=>Date.now()}	
 })
