@@ -198,7 +198,8 @@ exports.userLogin = useAsync(async (req, res) => {
 exports.userPasswordVerify = useAsync(async (req, res) => {
 
     try {
-
+        console.log("enter here");
+        
         let code = Math.floor(100000 + Math.random() * 900000)
         const user = await MindCastUser.findOne({ email: req.body.email });
 
@@ -206,11 +207,11 @@ exports.userPasswordVerify = useAsync(async (req, res) => {
             return res.json(utils.JParser('No User is registered with this email', false, []));
         } else {
             const Name = user.firstName + " " + user.lastName
+            await MindCastUser.updateOne( { email: req.body.email },{ $set: { otp_code: code } } )
 
             EmailNote(req.body.email, Name, 'Here is your 2FA verification code. verify the code .', "Verification Code", code)
 
             return res.json(utils.JParser('OTP sent successfully', !!user, code));
-
         }
 
     } catch (e) {
@@ -251,6 +252,38 @@ exports.updatePassword = useAsync(async (req, res) => {
         await MindCastUser.updateOne({ email: req.body.email }, { password: NewPassword }).then(async () => {
             // const New = await MindCastUser.findOne({ email: req.body.email });
             return res.json(utils.JParser('Password changed Successfully ', true, []));
+
+        }).catch((err) => {
+            res.send(err)
+        })
+
+    } catch (e) {
+        throw new errorHandle(e.message, 400)
+    }
+
+})
+
+exports.resetPassword = useAsync(async (req, res) => {
+
+    const user = await MindCastUser.findOne({ email: req.body.email , otp_code:req.body.otp_code });
+
+    try {
+        if (!req.body.email) return res.status(400).json({ msg: 'provide the id ?', status: 400 })
+        if (!req.body.otp_code) return res.status(400).json({ msg: 'provide the 2fa Code sent to your mail ?', status: 400 })
+
+        if (!user) {
+            return res.json(utils.JParser('No User is registered with this id', true, []));
+        }
+        
+
+        if (user.otp_code=="") {
+            return res.json(utils.JParser('Invalid OTP, please resend otp to your device', true, []));
+        }
+
+        const NewPassword = await bcrypt.hash(req.body.password, 13)
+        await MindCastUser.updateOne({ email: req.body.email }, { password: NewPassword , otp_code:""}).then(async () => {
+            // const New = await MindCastUser.findOne({ email: req.body.email });
+            return res.json(utils.JParser('Password updated Successfully ', true, []));
 
         }).catch((err) => {
             res.send(err)

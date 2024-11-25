@@ -71,6 +71,7 @@ const MindCastUserSchema=new mongoose.Schema({
         enum : ['free','paid','blocked'],
         default: 'free'
     },
+    
     subscription_product:{
         type:String,
     },
@@ -83,9 +84,7 @@ const MindCastUserSchema=new mongoose.Schema({
     mindCastSubscription_id:{
         type:String,
     },
-    coupon_code:{
-        type:String,
-    },
+     
     coupon_code:{
         type:String,
     },
@@ -104,6 +103,9 @@ const MindCastUserSchema=new mongoose.Schema({
         type:String,
         enum : ['user','admin'],
         default: 'user'
+    },
+    otp_code:{
+        type:String,
     },
     time_created:{type:Number, default:()=>Date.now()},	
     updated_at:{type:Number, default:()=>Date.now()}	
