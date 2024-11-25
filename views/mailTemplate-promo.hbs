@@ -72,7 +72,18 @@
                                                                 </ul>
                                                                 <li><b>Monitor and Manage Subscriptions:</b></li>
                                                                 <p>You can track which codes have been activated by logging into your MindCasts administrative account at 
-                                                                    [Admin Portal URL].</p>
+                                                                    <b><a href="crm.mindcasts.life">Mindcast CRM Portal</a></b>. <br><br>
+                                                                    <hr>
+                                                                    {{#if hasAccount}}
+                                                                        <b>Note:</b> If you have an account with mindcast, use your email {{ email }} and your password to login.
+                                                                    {{else}}
+                                                                        <b>Note:</b> An account has been created for you to access Mindcast <b>Mobile App</b> and <b>CMR</b>,<br>
+                                                                         use your email <b>{{ email }}</b> and this default password <b>{{ password }} </b> to login. <br>
+                                                                         Please Change your Password after your have login to your account for the first time.
+                                                                    {{/if}}
+                                                                    <hr>
+<br><br>
+                                                                </p>
                                                                 <p>If needed, you can reassign unused codes to different employees.</p>
                                                                </ol>
                                                                <h2>Need Assistance?</h2>

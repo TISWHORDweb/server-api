@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mongoro</title>
+    <title>Mindcasts</title>
     <script src="https://kit.fontawesome.com/13437b109b.js" crossorigin="anonymous"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,10 +19,10 @@
                         <tr>
                             <td>
                                 <a>
-                                    <div style='padding: 1rem; background: #FFF7E6;'>
+                                    <div style='padding: 1rem; background: ##EBDFFD;'>
                                         <img
                                             style='width: 7rem; display: block; margin: 0 auto'
-                                            src='http://res.cloudinary.com/dszrk3lcz/image/upload/v1681388703/dqfex6vpnnncytqrtntx.png'
+                                            src='https://res.cloudinary.com/da1mxvbx2/image/upload/v1708594588/simplecv/mindcast2024-02-22T09:36:28.068388.jpg'
                                             alt=''
                                         />
                                     </div>
@@ -47,55 +47,17 @@
                                                     <span>Regards,</span>
                                                 </p>
                                                 <p style='margin:2rem 0; color: #292929; line-height: 1.5rem;'>
-                                                    <span><b>Mongoro Team</b></span>
+                                                    <span><b>Mindcast Team</b></span>
                                                 </p>
                                                 <hr
                                                     style='border: none; border-bottom: 0.6px solid #FFF7E6'
                                                 />
-                                                <p style='color: #666666; text-align: center; font-size: 14px;'>
-                                                    Need help, or have questions?
-                                                    <br />
-                                                    <br />
-                                                    Please visit our <b><a href="https://mongoro.com/contact" style="text-decoration: none; color:inherit"> contact us </a></b> page or reply to this message.</p>
-                                                <hr
-                                                    style='border: none; border-bottom: 0.6px solid #FFF7E6'
-                                                />
+                                                
 
-                                                <p style='color: #666666; text-align: center; text-decoration: none; font-size: 14px; margin: 2rem 0 0 0'><a href="https://mongoro.com/">www.mongoro.com</a></p>
-                                                <p style='color: #666666; text-align: center; font-size: 14px;'>support@mongoro.com</p>
-                                                <p style='color: #666666; text-align: center; font-size: 14px;'>21 Blantyre Crescent, Wuse 2, Abuja.</p>
-                                                <div style="width: auto; margin: 2rem auto; text-align: center; gap: 10px">
-                                                    <a href='https://facebook.com/mongoroHQ' style="text-decoration: none; color:inherit">
-                                                        <img
-                                                            style="display: inline-block; width: 1.5rem; padding: 3px; border-radius: 50%; background:#C4C4C4; margin: 0 5px"
-                                                            src='http://res.cloudinary.com/dszrk3lcz/image/upload/v1685530697/wzpmacgj42qsjlcruirw.png'
-                                                            alt='Facebook'
-                                                        />
-                                                    </a>
-                                                    <a href='https://twitter.com/mongoroHQ' style="text-decoration: none; color:inherit">
-                                                        <img
-                                                            style="display: inline-block; width: 1.5rem; padding: 3px; border-radius: 50%; background:#fff; margin: 0 5px"
-                                                            src='http://res.cloudinary.com/dszrk3lcz/image/upload/v1685530804/buta2bohk1gwj2udgrlj.png'
-                                                            alt='Twitter'
-                                                        />
-                                                    </a>
-                                                    <a href='https://linkedin.com/in/mongoroHQ' style="text-decoration: none; color:inherit">
-                                                        <img
-                                                            style="display: inline-block; width: 1.5rem; padding: 3px; border-radius: 50%; background:#C4C4C4; margin: 0 5px"
-                                                            src='http://res.cloudinary.com/dszrk3lcz/image/upload/v1685530866/ffc2sbikl4ljjli3qga2.png'
-                                                            alt='Linkedin'
-                                                        />
-                                                    </a>
-                                                    <a href='https://instagram.com/mongoroHQ' style="text-decoration: none; color:inherit">
-                                                        <img
-                                                            style="display: inline-block; width: 1.5rem; padding: 3px; border-radius: 50%; background:#C4C4C4; margin: 0 5px"
-                                                            src='http://res.cloudinary.com/dszrk3lcz/image/upload/v1685530886/lby56vors6onqqx1noy4.png'
-                                                            alt='Instagram'
-                                                        />
-                                                    </a>
-                                                </div>
-                                                <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'> Having trouble viewing this email? Click here to view in your browser.</p>
-                                                <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'>© 2023  Reef Financial Solutions Ltd. All rights reserved.</p>
+                                                <p style='color: #666666; text-align: center; text-decoration: none; font-size: 14px; margin: 2rem 0 0 0'><a href="https://mindcasts.life/">www.mindcasts.life</a></p>
+                                                <p style='color: #666666; text-align: center; font-size: 14px;'>support@mindcasts.life</p> 
+                                                
+                                                 <p style='color: #666666; text-align: center; font-size: 14px; margin: 2rem 0 0 0'>© 2025  UXWEDESIGN Ltd. All rights reserved.</p>
                                         </td>
                                     </tr>
                                 </table>

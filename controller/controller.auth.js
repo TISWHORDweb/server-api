@@ -196,9 +196,7 @@ exports.userLogin = useAsync(async (req, res) => {
 
 //FORGOTPASSWORD 
 exports.userPasswordVerify = useAsync(async (req, res) => {
-
-    try {
-        console.log("enter here");
+    try { 
         
         let code = Math.floor(100000 + Math.random() * 900000)
         const user = await MindCastUser.findOne({ email: req.body.email });
@@ -209,7 +207,7 @@ exports.userPasswordVerify = useAsync(async (req, res) => {
             const Name = user.firstName + " " + user.lastName
             await MindCastUser.updateOne( { email: req.body.email },{ $set: { otp_code: code } } )
 
-            EmailNote(req.body.email, Name, 'Here is your 2FA verification code. verify the code .', "Verification Code", code)
+            EmailNote(req.body.email, Name, 'Here is your 2FA verification code. verify the code .', "Mindcasts Verification Code", code)
 
             return res.json(utils.JParser('OTP sent successfully', !!user, code));
         }

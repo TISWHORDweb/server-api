@@ -51,6 +51,7 @@ exports.generateCoupon = useAsync(async (req, res) => {
             let totalUsers = req.body.totalUsers
             let totalMonths = req.body.totalMonths;
             let email = req.body.email
+            let hasAccount=false;
     
              let allCodes=``
             for (let i = 0; i < totalUsers; i++) {
@@ -67,7 +68,19 @@ exports.generateCoupon = useAsync(async (req, res) => {
                 let cupon = { "coupon": code, "email": email, "duration": totalMonths, "price": 0, "assignedName": assignedName, }
                 
                 await MindCastCoupon.create(cupon)
+               
             }
+            const user = await MindCastUser.findOne({ email: req.body.email });
+
+            if(user==null){
+             req.body.password = await bcrypt.hash("Life123", 13)
+             req.body.username = req.body.assignedName
+             let newUser=await new MindCastUser(req.body)
+             await newUser.save();
+            }else{
+             hasAccount=true
+            }
+
             const coupons = await MindCastCoupon.find({ email: req.body.email });
             console.log(allCodes);
     
@@ -84,7 +97,7 @@ exports.generateCoupon = useAsync(async (req, res) => {
     
             const emailTemplateSource = fs.readFileSync(path.join(__dirname, "../views/mailTemplate-promo.hbs"), "utf8")
             const template = handlebars.compile(emailTemplateSource)
-            const htmlToSend = template({ name: req.body.assignedName, coupons:coupons, allCodes:allCodes, totalUsers:totalUsers })
+            const htmlToSend = template({ name: req.body.assignedName, coupons:coupons, allCodes:allCodes, totalUsers:totalUsers, hasAccount:hasAccount, password:"Life123", email:req.body.email })
     
             let mailOptions = {
                 from: "Mindcasts App  noreply@mindcasts.life",
@@ -236,6 +249,16 @@ exports.usercoupon = useAsync(async (req, res) => {
     try {
         const coupon = await MindCastCoupon.find({ userID: req.params.id });
         return res.json(utils.JParser('User Subscription fetch successfully', !!coupon, coupon));
+    } catch (e) {
+        throw new errorHandle(e.message, 400)
+    }
+})
+
+exports.companyCoupons = useAsync(async (req, res) => {
+
+    try {
+        const coupon = await MindCastCoupon.find({ email: req.body.email });
+        return res.json(utils.JParser('Company coupons fetch successfully', !!coupon, coupon));
     } catch (e) {
         throw new errorHandle(e.message, 400)
     }
