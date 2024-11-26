@@ -6,6 +6,7 @@ const MindCastUser = require('../models/model.user');
 const MindCastCoupon = require('../models/model.cuponCodes');
 const nodemailer = require('nodemailer');
 const handlebars = require("handlebars")
+const bcrypt = require('bcryptjs')
 const fs = require("fs")
 const path = require("path");
 const MindCastCouponPayment = require('../models/model.couponPayment');
@@ -46,12 +47,22 @@ exports.generateCoupon = useAsync(async (req, res) => {
 
         const payment = await MindCastCouponPayment.findOne({ email: req.body.email });
 
-        if(payment!=null){
+        if(payment==null){
             let assignedName = req.body.assignedName
             let totalUsers = req.body.totalUsers
             let totalMonths = req.body.totalMonths;
             let email = req.body.email
             let hasAccount=false;
+
+            let user = await MindCastUser.findOne({ email: req.body.email });
+            if(user==null){
+                req.body.password = await bcrypt.hash("Life123", 13)
+                req.body.username = req.body.assignedName
+                let newUser=await new MindCastUser(req.body)
+                user=await newUser.save();
+            }else{
+             hasAccount=true
+            }
     
              let allCodes=``
             for (let i = 0; i < totalUsers; i++) {
@@ -65,21 +76,12 @@ exports.generateCoupon = useAsync(async (req, res) => {
                 let code = randomString(8, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')
     
                 allCodes+=`<li>Code-${i+1} - <b>${code}</b></li> \n`
-                let cupon = { "coupon": code, "email": email, "duration": totalMonths, "price": 0, "assignedName": assignedName, }
+                let cupon = { "coupon": code, "email": email, "duration": totalMonths, "price": 0, "assignedName": assignedName, companyID:user.id }
                 
                 await MindCastCoupon.create(cupon)
                
             }
-            const user = await MindCastUser.findOne({ email: req.body.email });
-
-            if(user==null){
-             req.body.password = await bcrypt.hash("Life123", 13)
-             req.body.username = req.body.assignedName
-             let newUser=await new MindCastUser(req.body)
-             await newUser.save();
-            }else{
-             hasAccount=true
-            }
+           
 
             const coupons = await MindCastCoupon.find({ email: req.body.email });
             console.log(allCodes);

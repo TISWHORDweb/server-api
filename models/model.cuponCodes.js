@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-
+const { Schema } = mongoose;
 const MindCastCuponCodeSchema=new mongoose.Schema({
     coupon:{
         type:String,
@@ -17,7 +17,10 @@ const MindCastCuponCodeSchema=new mongoose.Schema({
         type:String,    
     },
     userID:{
-        type:String,
+        type: Schema.Types.ObjectId, ref: 'mindCastUser',
+    },
+    companyID:{
+        type: Schema.Types.ObjectId, ref: 'mindCastUser',
     },
    
     exp_date: {
