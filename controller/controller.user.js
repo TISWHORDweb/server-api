@@ -97,32 +97,27 @@ exports.sendMoodCheck = useAsync(async (req, res) => {
 
     try {
         let sendData={
-            "to":"/topics/MINDCAST-ALERT",
-             "priority": "high",
-             "content-available":true,
-            "notification": {
-                "title": "Mood Check",
-                "body": "Consistency is key to better mental health. Don't forget to track your mood today.",
-                "click_action": "FLUTTER_NOTIFICATION_CLICK",
-                "priority": "high",
-                "content_available": true,
-                 "sound": "default"
-            },
-            "data": {
-                "routeId": 6,
-                "page": "check_mood"
+            "message": {
+                "topic": "MINDCAST-ALERT",
+                "notification": {
+                    "title": "Mood Check",
+                    "body": "Consistency is key to better mental health. Don't forget to track your mood today."
+                },
+                "data": {
+                    "routeId": "6",
+                    "page": "check_mood"
+                }
             }
         }
-        
+    
 
         const headers = {
             'Content-Type': 'application/json',
-            'Authorization': `key=${process.env.FIREBASE_NOTIFICATION_KEY}`
+            'Authorization': `Bearer ${process.env.FIREBASE_NOTIFICATION_KEY}`
           }
           
-          
         
-        await axios.post('https://fcm.googleapis.com/fcm/send', sendData,{  headers: headers}).then((data)=>{
+        await axios.post(`https://fcm.googleapis.com/v1/projects/${process.env.FIREBASE_PROJECT_NAME}/messages:send`, sendData,{  headers: headers}).then((data)=>{
 
             return res.json(utils.JParser('Notification Sent Successfully'));
         })

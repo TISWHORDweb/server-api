@@ -12,23 +12,21 @@ const axios = require('axios')
 exports.resources = useAsync(async (req, res) => {
 
     try {
-        let sendData={
-            "to":"/topics/MINDCAST-ALERT",
-             "priority": "high",
-             "content-available":true,
-            "notification": {
-                "title": "New Content Available",
-                "body": `New! ${req.body.title} added. Listen now.`,
-                "click_action": "FLUTTER_NOTIFICATION_CLICK",
-                "priority": "high",
-                "content_available": true,
-                 "sound": "default"
-            },
-            "data": {
-                "routeId": 6,
-                "page": "home"
+        let sendData=
+        {
+            "message": {
+                "topic": "MINDCAST-ALERT",
+                "notification": {
+                    "title": "New Content Available",
+                    "body": `New! ${req.body.title} added. Listen now.`,
+                },
+                "data": {
+                    "routeId": "6",
+                    "page": "home"
+                }
             }
         }
+ 
         
 
         const headers = {
@@ -38,7 +36,7 @@ exports.resources = useAsync(async (req, res) => {
           
           
         
-        await axios.post('https://fcm.googleapis.com/fcm/send', sendData,{  headers: headers})
+        await axios.post(`https://fcm.googleapis.com/v1/projects/${process.env.FIREBASE_PROJECT_NAME}/messages:send`, sendData,{  headers: headers})
         .catch((error) => {
            console.log(error);
         })

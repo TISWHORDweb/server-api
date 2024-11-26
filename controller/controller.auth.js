@@ -11,6 +11,7 @@ const address = require('address');
 const CryptoJS = require("crypto-js")
 const axios = require('axios')
 const nodemailer = require('nodemailer');
+const handlebars = require("handlebars")
 const jwt = require("jsonwebtoken")
 const dotenv = require("dotenv")
 const sha1 = require('sha1');
@@ -197,17 +198,50 @@ exports.userLogin = useAsync(async (req, res) => {
 //FORGOTPASSWORD 
 exports.userPasswordVerify = useAsync(async (req, res) => {
     try { 
-        
+
         let code = Math.floor(100000 + Math.random() * 900000)
         const user = await MindCastUser.findOne({ email: req.body.email });
 
         if (!user) {
             return res.json(utils.JParser('No User is registered with this email', false, []));
         } else {
-            const Name = user.firstName + " " + user.lastName
+            const Name = user.username
             await MindCastUser.updateOne( { email: req.body.email },{ $set: { otp_code: code } } )
 
-            EmailNote(req.body.email, Name, 'Here is your 2FA verification code. verify the code .', "Mindcasts Verification Code", code)
+            // EmailNote(req.body.email, Name, 'Here is your 2FA verification code. verify the code .', "Mindcasts Verification Code", code)
+
+
+            let transporter = nodemailer.createTransport({
+                host: process.env.EMAIL_HOST,
+                port: 465,
+                encoding:"ssl",
+                secure: true,
+                auth: {
+                    user: process.env.EMAIL_ADDRESS,
+                    pass: process.env.APP_PASSWORD
+                }
+            });
+    
+            const emailTemplateSource = fs.readFileSync(path.join(__dirname, "../views/otp-template.hbs"), "utf8")
+            const template = handlebars.compile(emailTemplateSource)
+            const htmlToSend = template({ name: Name, code:code,  })
+    
+            let mailOptions = {
+                from: "Mindcasts App  noreply@mindcasts.life",
+                to: req.body.email,
+                subject: `Mindcasts OTP Code`,
+                html: htmlToSend,
+            };
+    
+           
+    
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log('Email sent: ' + info.response);
+                }
+            });
 
             return res.json(utils.JParser('OTP sent successfully', !!user, code));
         }
