@@ -31,6 +31,11 @@ const MindCastCuponCodeSchema=new mongoose.Schema({
         enum : ['pending','active','expired'],
         default: 'pending'
     },
+    duration_type: {
+        type: String, 
+        enum : ['month','week',],
+        default: 'month'
+    },
     time_created:{type:Number, default:()=>Date.now()},	
     updated_at:{type:Number, default:()=>Date.now()}	
 })
