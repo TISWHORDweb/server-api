@@ -33,7 +33,7 @@ const MindCastCuponCodeSchema=new mongoose.Schema({
     },
     duration_type: {
         type: String, 
-        enum : ['month','week',],
+        enum : ['month','week','day'],
         default: 'month'
     },
     time_created:{type:Number, default:()=>Date.now()},	

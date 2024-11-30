@@ -140,15 +140,24 @@ exports.assigncoupon = useAsync(async (req, res) => {
         if (coupon != null) {
 
             if (coupon.status == "pending") {
-                let totalMonths = coupon.duration;
+                let totalDuration = coupon.duration;
 
                 var now = new Date();
                 var endDate
-                if (now.getMonth() == 11) {
-                    endDate = new Date(now.getFullYear() + 1, totalMonths, 1);
-                } else {
-                    endDate = new Date(now.getFullYear(), now.getMonth() + totalMonths, 0);
+                if(coupon.duration_type=="month"){
+                    const now = new Date();
+                    const resultDate = new Date(now);
+                    endDate=resultDate.setMonth(now.getMonth() + months); 
+                }else if(coupon.duration_type=="week"){
+                    const now = new Date();
+                    const resultDate = new Date(now);
+                    endDate=resultDate.setDate(now.getDate() + totalDuration * 7); // Adds the number of days equivalent to the weeks
+                }else if(coupon.duration_type=="day"){
+                    const now = new Date();
+                    const resultDate = new Date(now);
+                    endDate=resultDate.setDate(now.getDate() + totalDuration); 
                 }
+
                 let expDate = Math.floor(new Date(endDate).getTime()/1000.0)
 
                 await MindCastCoupon.updateOne({ _id: coupon._id }, { exp_date: expDate, userID: req.body.userID, status: "active" })
@@ -265,6 +274,21 @@ exports.companyCoupons = useAsync(async (req, res) => {
         throw new errorHandle(e.message, 400)
     }
 })
+
+exports.updateCoupons = useAsync(async (req, res) => {
+
+    try {
+        let coupon =null
+         await MindCastCoupon.updateOne({ _id: req.body.coupon_id }, req.body ).then(async () => {
+            coupon = await MindCastCoupon.findOne({ _id: req.body.coupon_id})
+        });
+        return res.json(utils.JParser('coupons fetch successfully', !!coupon, coupon));
+    } catch (e) {
+        throw new errorHandle(e.message, 400)
+    }
+})
+
+ 
 
 exports.deletecoupon = useAsync(async (req, res) => {
     try {

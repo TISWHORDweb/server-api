@@ -35,7 +35,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/docs', express.static(path.join(__dirname, 'docs')));
 
 
-app.use(bodyParser.json())
+
 
 
 app.use("/api/v1/auth", mindCastAuth)
