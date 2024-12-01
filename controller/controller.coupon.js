@@ -141,7 +141,6 @@ exports.assigncoupon = useAsync(async (req, res) => {
 
             if (coupon.status == "pending") {
                 let totalDuration = coupon.duration;
-
                 var now = new Date();
                 var endDate
                 if(coupon.duration_type=="month"){
