@@ -210,7 +210,7 @@ exports.checkActivecoupons = useAsync(async (req, res) => {
 exports.singlecoupon = useAsync(async (req, res) => {
 
     try {
-        const coupon = await MindCastCoupon.findOne({ _id: req.params.id });
+        const coupon = await MindCastCoupon.findOne({ _id: req.params.id }).populate("userID", "_id username email ").populate("companyID", "_id username email ");
         return res.json(utils.JParser('Subscription fetch successfully', !!coupon, coupon));
     } catch (e) {
         throw new errorHandle(e.message, 400)
@@ -220,7 +220,7 @@ exports.singlecoupon = useAsync(async (req, res) => {
 exports.allcoupon = useAsync(async (req, res) => {
 
     try {
-        const coupon = await MindCastCoupon.find();
+        const coupon = await MindCastCoupon.find().populate("userID", "_id username email ").populate("companyID", "_id username email ");
         return res.json(utils.JParser('Subscription fetch successfully', !!coupon, coupon));
     } catch (e) {
         throw new errorHandle(e.message, 400)
@@ -257,7 +257,7 @@ exports.cancelCoupon = useAsync(async (req, res) => {
 exports.usercoupon = useAsync(async (req, res) => {
 
     try {
-        const coupon = await MindCastCoupon.find({ userID: req.params.id });
+        const coupon = await MindCastCoupon.find({ userID: req.params.id }).populate("userID", "_id username email ").populate("companyID", "_id username email ");
         return res.json(utils.JParser('User Subscription fetch successfully', !!coupon, coupon));
     } catch (e) {
         throw new errorHandle(e.message, 400)
@@ -267,12 +267,13 @@ exports.usercoupon = useAsync(async (req, res) => {
 exports.companyCoupons = useAsync(async (req, res) => {
 
     try {
-        const coupon = await MindCastCoupon.find({ email: req.body.email });
+        const coupon = await MindCastCoupon.find({ email: req.body.email }).populate("userID", "_id username email ").populate("companyID", "_id username email ");
         return res.json(utils.JParser('Company coupons fetch successfully', !!coupon, coupon));
     } catch (e) {
         throw new errorHandle(e.message, 400)
     }
 })
+
 
 exports.updateCoupons = useAsync(async (req, res) => {
 

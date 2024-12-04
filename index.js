@@ -43,6 +43,7 @@ app.use("/api/v1/user", mindCastUser)
 
 
 mongoose.set("strictQuery", true); 
+ 
     mongoose.connect(process.env.MONGO_URL)
     .then(() => {
         console.log("Database Connected")

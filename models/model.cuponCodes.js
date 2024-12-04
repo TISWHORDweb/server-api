@@ -22,7 +22,6 @@ const MindCastCuponCodeSchema=new mongoose.Schema({
     companyID:{
         type: Schema.Types.ObjectId, ref: 'mindCastUser',
     },
-   
     exp_date: {
         type: Number,
     },
