@@ -284,6 +284,64 @@ exports.activeCompanyCoupons = useAsync(async (req, res) => {
     }
 })
 
+exports.companyCouponSummary = useAsync(async (req, res) => {
+
+    try {
+
+        const companyEmail= req.body.email;
+
+        // Validate the email address
+        if (!companyEmail) {
+            
+            return res.json(utils.JParser('Company email is required', false, {}));
+        }
+
+        // Find the company by email
+        const company = await MindCastUser.findOne({ email: companyEmail });
+
+        if (!company) { 
+            return res.json(utils.JParser('Company not found', false, {}));
+        }
+
+        const email = company.email;
+
+        // Query the coupon model using the company ID
+        const totalCouponActive = await MindCastCoupon.countDocuments({
+            email,
+
+            status: 'active',
+        });
+
+        const totalCouponExpired = await MindCastCoupon.countDocuments({
+            email,
+            status: 'expired',
+        });
+
+        const totalPending = await MindCastCoupon.countDocuments({
+            email,
+            status: 'pending',
+        }); 
+
+        const totalCoupon = await MindCastCoupon.countDocuments({
+            email, 
+        }); 
+ 
+        const couponsWithUserID = await MindCastUser.find({ email, userID: { $exists: true, $ne: null } });
+
+        console.log(couponsWithUserID);
+        
+
+        return res.json(utils.JParser('Company Active fetch successfully', true, {
+            totalCoupon,
+            totalUsers:couponsWithUserID.length,
+            totalCouponActive,
+            totalCouponExpired,
+            totalPending}));
+    } catch (e) {
+        throw new errorHandle(e.message, 400)
+    }
+})
+
 
 exports.updateCoupons = useAsync(async (req, res) => {
 
