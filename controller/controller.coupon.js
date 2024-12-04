@@ -274,6 +274,16 @@ exports.companyCoupons = useAsync(async (req, res) => {
     }
 })
 
+exports.activeCompanyCoupons = useAsync(async (req, res) => {
+
+    try {
+        const coupon = await MindCastCoupon.find({ email: req.body.email, status:"active" }).populate("userID", "_id username email ").populate("companyID", "_id username email ");
+        return res.json(utils.JParser('Company Active fetch successfully', !!coupon, coupon));
+    } catch (e) {
+        throw new errorHandle(e.message, 400)
+    }
+})
+
 
 exports.updateCoupons = useAsync(async (req, res) => {
 
