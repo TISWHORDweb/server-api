@@ -65,6 +65,7 @@ app.listen(port, () => {
     cron.schedule("0 20 * * *", ()=>{
         sendMoodCheck()
         getAllStripeSubscription()
+        checkActivecoupons()
         console.log("Notification sent successfully");
     })
 

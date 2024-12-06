@@ -191,7 +191,7 @@ exports.checkActivecoupons = useAsync(async (req, res) => {
             const secondDate = new Date().getTime()/1000
 
             if(firstDate < secondDate){
-                await MindCastCoupon.updateOne({ _id: data._id }, { status: "expired" })
+                await MindCastCoupon.updateOne({ _id: data._id }, { status: "expired", userID:null })
                 await MindCastUser.updateOne({ _id: data.userID }, {"status":"free","subscription_product":null, 'subscription_end_date':null})
             }
 
@@ -235,7 +235,8 @@ exports.cancelCoupon = useAsync(async (req, res) => {
         if (user != null && user.subscription_product == "coupon") {
 
             await MindCastUser.updateOne({ _id: req.body.user_id }, { 'subscription_id': null, 'status': "free", 'mindCastSubscription_id': null,'subscription_product':null, 'subscription_end_date':null })
-
+            let coupon=await MindCastCoupon.findOne({ userID: req.params.user_id })
+            await MindCastCoupon.updateOne({ _id: coupon.id }, {userID:null, status:"pending"})
 
             return res.json(utils.JParser('Coupon Subscription canceled Successfully', false));
 
@@ -329,7 +330,6 @@ exports.companyCouponSummary = useAsync(async (req, res) => {
         const couponsWithUserID = await MindCastUser.find({ email, userID: { $exists: true, $ne: null } });
 
         console.log(couponsWithUserID);
-        
 
         return res.json(utils.JParser('Company Active fetch successfully', true, {
             totalCoupon,
@@ -356,7 +356,6 @@ exports.updateCoupons = useAsync(async (req, res) => {
     }
 })
 
- 
 
 exports.deletecoupon = useAsync(async (req, res) => {
     try {
